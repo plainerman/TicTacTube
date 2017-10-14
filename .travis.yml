@@ -1,9 +1,7 @@
 language: csharp
-dist: trusty
-dotnet: 2.0
 mono: none
-install:
-  - dotnet restore
+dotnet: 2.0.0
 script:
+  - dotnet restore
   - dotnet build
   - dotnet test TicTacCoreTest
