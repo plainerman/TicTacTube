@@ -1,18 +1,28 @@
-﻿using SystemPath = System.IO.Path;
+﻿using System;
+using System.IO;
 
 namespace TicTacCore.Sources.Files
 {
+	/// <summary>
+	/// The base implementation for any file source.
+	/// </summary>
 	public abstract class BaseFileSource : IFileSource
 	{
-		public string FileName { get; set; }
-		public string FileExtension { get; set; }
-		public string Path { get; set; }
+		public FileInfo FileInfo { get; }
+
+		public string FileName { get; }
+		public string FullFileName { get; }
+		public string FileExtension => FileInfo.Extension;
+		public string Path => FileInfo.Directory.FullName;
 
 		protected BaseFileSource(string filePath)
 		{
-			Path = SystemPath.GetPathRoot(filePath);
-			FileName = SystemPath.GetFileNameWithoutExtension(filePath);
-			FileExtension = SystemPath.GetExtension(filePath);
+			if (string.IsNullOrWhiteSpace(filePath))
+				throw new ArgumentException("Value cannot be null or whitespace.", nameof(filePath));
+
+			FileInfo = new FileInfo(filePath);
+			FullFileName = FileInfo.Name;
+			FileName = System.IO.Path.GetFileNameWithoutExtension(filePath);
 		}
 	}
 }
