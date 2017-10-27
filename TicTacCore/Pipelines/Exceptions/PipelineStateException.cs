@@ -1,4 +1,4 @@
-﻿namespace TicTacCore.Pipelines.Exceptions
+﻿namespace TicTacTubeCore.Pipelines.Exceptions
 {
 	public class PipelineStateException : PipelineException
 	{

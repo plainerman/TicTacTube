@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using TicTacCore.Pipelines.Exceptions;
-using TicTacCore.Processors;
+using TicTacTubeCore.Pipelines.Exceptions;
+using TicTacTubeCore.Processors;
 
-namespace TicTacCore.Pipelines
+namespace TicTacTubeCore.Pipelines
 {
 	/// <summary>
 	///     The default implementation for a pipeline builder (see <see cref="IDataPipelineBuilder" />).

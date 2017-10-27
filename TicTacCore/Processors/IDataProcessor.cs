@@ -1,4 +1,4 @@
-﻿namespace TicTacCore.Processors
+﻿namespace TicTacTubeCore.Processors
 {
 	public interface IDataProcessor : IDataProcessorOrBuilder
 	{

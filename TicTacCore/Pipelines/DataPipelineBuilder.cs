@@ -1,4 +1,4 @@
-﻿namespace TicTacCore.Pipelines
+﻿namespace TicTacTubeCore.Pipelines
 {
 	/// <summary>
 	///     A pipeline builder that builds a <see cref="IDataPipeline" />.

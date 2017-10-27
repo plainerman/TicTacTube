@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TicTacCore.Processors.Builders
+namespace TicTacTubeCore.Processors.Builders
 {
 	/// <summary>
 	///     A data processor builder that builds <see cref="IDataProcessor" /> based on a <see cref="Func{TResult}" />.

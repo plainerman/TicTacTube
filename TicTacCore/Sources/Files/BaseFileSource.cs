@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace TicTacCore.Sources.Files
+namespace TicTacTubeCore.Sources.Files
 {
 	/// <summary>
 	///     The base implementation for any file source.

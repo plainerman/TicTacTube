@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace TicTacCore.Sources.Files
+namespace TicTacTubeCore.Sources.Files
 {
 	/// <summary>
 	///     A datasource that is simply a file.

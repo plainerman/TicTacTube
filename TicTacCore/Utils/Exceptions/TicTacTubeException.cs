@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TicTacCore.Utils.Exceptions
+namespace TicTacTubeCore.Utils.Exceptions
 {
 	public abstract class TicTacException : Exception
 	{

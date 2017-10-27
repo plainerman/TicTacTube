@@ -1,6 +1,6 @@
-﻿using TicTacCore.Processors.Builders;
+﻿using TicTacTubeCore.Processors.Builders;
 
-namespace TicTacCore.Processors
+namespace TicTacTubeCore.Processors
 {
 	public abstract class BaseDataProcessorBuilder : IDataProcessorBuilder
 	{

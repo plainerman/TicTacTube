@@ -1,7 +1,7 @@
 ﻿using System;
-using TicTacCore.Utils.Exceptions;
+using TicTacTubeCore.Utils.Exceptions;
 
-namespace TicTacCore.Pipelines.Exceptions
+namespace TicTacTubeCore.Pipelines.Exceptions
 {
 	public class PipelineException : TicTacException
 	{

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using TicTacCore.Processors;
+using TicTacTubeCore.Processors;
 
-namespace TicTacCore.Pipelines
+namespace TicTacTubeCore.Pipelines
 {
 	public class DataPipeline : IDataPipeline
 	{

@@ -1,4 +1,4 @@
-﻿namespace TicTacCore.Sources
+﻿namespace TicTacTubeCore.Sources
 {
 	/// <summary>
 	///     A data source which can be processed.

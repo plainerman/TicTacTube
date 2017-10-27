@@ -1,9 +1,9 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
+﻿using System;
 using System.IO;
-using TicTacCore.Sources.Files;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using TicTacTubeCore.Sources.Files;
 
-namespace TicTacCoreTest.Sources.Files
+namespace TicTacTubeCoreTest.Sources.Files
 {
 	[TestClass]
 	public class TestFileSource

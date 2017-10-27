@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using TicTacCore.Processors;
+using TicTacTubeCore.Processors;
 
-namespace TicTacCore.Pipelines
+namespace TicTacTubeCore.Pipelines
 {
 	/// <summary>
 	///     A data pipeline builder that is capable of creating an actual data pipeline (see <see cref="IDataPipeline" />).

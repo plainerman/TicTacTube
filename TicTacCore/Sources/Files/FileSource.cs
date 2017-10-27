@@ -1,4 +1,4 @@
-﻿namespace TicTacCore.Sources.Files
+﻿namespace TicTacTubeCore.Sources.Files
 {
 	public class FileSource : BaseFileSource
 	{

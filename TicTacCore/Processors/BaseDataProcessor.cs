@@ -1,4 +1,4 @@
-﻿namespace TicTacCore.Processors
+﻿namespace TicTacTubeCore.Processors
 {
 	public abstract class BaseDataProcessor : IDataProcessor
 	{

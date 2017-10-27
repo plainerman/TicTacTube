@@ -1,4 +1,4 @@
-﻿namespace TicTacCore.Processors
+﻿namespace TicTacTubeCore.Processors
 {
 	/// <summary>
 	///     A data processor that actually processes data.
