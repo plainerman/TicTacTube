@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27004.2002
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TicTacTubeCore", "TicTacCore\TicTacTubeCore.csproj", "{1287B36D-9373-43AA-8989-4C8AF04743D3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TicTacTubeCore", "TicTacTubeCore\TicTacTubeCore.csproj", "{1287B36D-9373-43AA-8989-4C8AF04743D3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TicTacTubeCoreTest", "TicTacCoreTest\TicTacTubeCoreTest.csproj", "{5F41AB71-4DF3-4BB2-B3B4-9D3389526385}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TicTacTubeCoreTest", "TicTacTubeCoreTest\TicTacTubeCoreTest.csproj", "{5F41AB71-4DF3-4BB2-B3B4-9D3389526385}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
