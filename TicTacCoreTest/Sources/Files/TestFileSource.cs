@@ -22,7 +22,6 @@ namespace TicTacCoreTest.Sources.Files
 
 			Assert.AreEqual(filename, fileSource.FileName);
 			Assert.AreEqual(extension, fileSource.FileExtension);
-			Assert.AreEqual(path, fileSource.Path);
 		}
 
 		[TestMethod]
