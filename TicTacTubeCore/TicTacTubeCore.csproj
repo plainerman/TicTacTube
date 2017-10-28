@@ -2,6 +2,28 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageId>TicTacTube</PackageId>
+    <Authors>Almir Ahmetagic, Michael Plainer</Authors>
+    <Company />
+    <Product>TicTacTube</Product>
+    <Description>An easy to use data processing pipeline.</Description>
+    <PackageLicenseUrl>https://choosealicense.com/licenses/mit/</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/plainerman/TicTacTube</PackageProjectUrl>
+    <Copyright>MIT</Copyright>
+    <RepositoryUrl>https://github.com/plainerman/TicTacTube</RepositoryUrl>
+    <RepositoryType>Git</RepositoryType>
+    <Version>0.1.0</Version>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>bin\Debug\netcoreapp2.0\TicTacTubeCore.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>bin\Release\netcoreapp2.0\TicTacTubeCore.xml</DocumentationFile>
   </PropertyGroup>
 
 </Project>

@@ -15,9 +15,14 @@ namespace TicTacTubeCore.Schedulers
 		{
 		}
 
-		public virtual void Fire(object sender, EventArgs args)
+		public virtual void Fire()
 		{
 			Execute();
+		}
+
+		public virtual void Fire(object sender, EventArgs args)
+		{
+			Fire();
 		}
 	}
 }
