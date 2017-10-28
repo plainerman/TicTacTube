@@ -9,7 +9,7 @@
 		public bool LazyLoading { get; }
 
 		/// <inheritdoc />
-		public abstract string Fetch(string destinationPath);
+		public abstract string FetchFile(string destinationPath);
 
 		/// <summary>
 		/// Create a new <see cref="IExternalFileSource"/> and define whether it is lazy loaded or not.

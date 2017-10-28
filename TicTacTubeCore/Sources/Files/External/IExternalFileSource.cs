@@ -15,6 +15,6 @@
 		/// </summary>
 		/// <param name="destinationPath"></param>
 		/// <returns>The path of the newly downloaded file.</returns>
-		string Fetch(string destinationPath);
+		string FetchFile(string destinationPath);
 	}
 }

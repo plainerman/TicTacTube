@@ -29,8 +29,12 @@ namespace TicTacTubeCore.Sources.Files.External
 			Url = url;
 		}
 
-		/// <inheritdoc />
-		public override string Fetch(string destinationPath)
+		/// <summary>
+		/// Download the given <see cref="Url"/> with the provided name (from the webserver).
+		/// </summary>
+		/// <param name="destinationPath">The folder where the file will be downloaded and stored.</param>
+		/// <returns>The path of the newly downloaded file.</returns>
+		public override string FetchFile(string destinationPath)
 		{
 			string path;
 
@@ -40,6 +44,11 @@ namespace TicTacTubeCore.Sources.Files.External
 
 				string headerContentDisposition = client.ResponseHeaders["content-disposition"];
 				string filename = new ContentDisposition(headerContentDisposition).FileName;
+
+				if (string.IsNullOrWhiteSpace(filename))
+				{
+					filename = "download.dat";
+				}
 
 				path = Path.Combine(destinationPath, filename);
 

@@ -72,7 +72,7 @@ namespace TicTacTubeCore.Sources.Files
 
 			Log.Info($"Fetching external source {_externalSource} to {_filePath}.");
 
-			string path = _externalSource.Fetch(_filePath);
+			string path = _externalSource.FetchFile(_filePath);
 
 			AssignFilePath(path);
 
