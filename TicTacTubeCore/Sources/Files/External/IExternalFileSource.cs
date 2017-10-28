@@ -1,4 +1,4 @@
-﻿namespace TicTacTubeCore.Sources.Files
+﻿namespace TicTacTubeCore.Sources.Files.External
 {
 	/// <summary>
 	///     An external file source (e.g. stored on a web server)
@@ -8,12 +8,13 @@
 		/// <summary>
 		///     Whether this file should be loaded asap or not.
 		/// </summary>
-		bool LazyLoading { get; set; }
+		bool LazyLoading { get; }
 
 		/// <summary>
 		///     Fetch the file from the source.
 		/// </summary>
 		/// <param name="destinationPath"></param>
-		void Fetch(string destinationPath);
+		/// <returns>The path of the newly downloaded file.</returns>
+		string Fetch(string destinationPath);
 	}
 }

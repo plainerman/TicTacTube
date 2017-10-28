@@ -1,4 +1,6 @@
-﻿namespace TicTacTubeCore.Sources.Files
+﻿using TicTacTubeCore.Sources.Files.External;
+
+namespace TicTacTubeCore.Sources.Files
 {
 	/// <summary>
 	///     The default implementation of a file source.
@@ -11,6 +13,12 @@
 		/// <param name="filePath">The absolute or relative filepath. This may not be <c>null</c> or empty.</param>
 		public FileSource(string filePath) : base(filePath)
 		{
+		}
+
+		/// <inheritdoc />
+		public FileSource(IExternalFileSource externalSource, string localPath) : base(externalSource, localPath)
+		{
+
 		}
 	}
 }
