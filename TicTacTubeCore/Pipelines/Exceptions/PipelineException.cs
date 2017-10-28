@@ -4,12 +4,12 @@ using TicTacTubeCore.Utils.Exceptions;
 namespace TicTacTubeCore.Pipelines.Exceptions
 {
 	/// <summary>
-	/// An exception that is thrown if an error occurs in the pipeline.
+	///     An exception that is thrown if an error occurs in the pipeline.
 	/// </summary>
 	public class PipelineException : TicTacException
 	{
 		/// <summary>
-		/// Create a <see cref="PipelineException"/> with a given message.
+		///     Create a <see cref="PipelineException" /> with a given message.
 		/// </summary>
 		/// <param name="message">The message (i.e. cause) of the exception.</param>
 		public PipelineException(string message) : base(message)
@@ -17,7 +17,7 @@ namespace TicTacTubeCore.Pipelines.Exceptions
 		}
 
 		/// <summary>
-		/// Create a <see cref="PipelineException"/> with a given message and an inner exception.
+		///     Create a <see cref="PipelineException" /> with a given message and an inner exception.
 		/// </summary>
 		/// <param name="message">The message (i.e. cause) of the exception.</param>
 		/// <param name="innerException">The inner (causing) exception of this exception.</param>

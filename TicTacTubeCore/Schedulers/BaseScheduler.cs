@@ -12,12 +12,12 @@ namespace TicTacTubeCore.Schedulers
 	public abstract class BaseScheduler : IScheduler
 	{
 		/// <summary>
-		/// Multiple pipelines that are executed on a certion condition / event.
+		///     Multiple pipelines that are executed on a certion condition / event.
 		/// </summary>
 		protected readonly List<IDataPipeline> InternalPipelines;
 
 		/// <summary>
-		/// The default constructor.
+		///     The default constructor.
 		/// </summary>
 		protected BaseScheduler()
 		{
@@ -35,10 +35,16 @@ namespace TicTacTubeCore.Schedulers
 		public ReadOnlyCollection<IDataPipeline> Pipelines { get; }
 
 		/// <inheritdoc />
-		public virtual void Add(IDataPipeline pipeline) => InternalPipelines.Add(pipeline);
+		public virtual void Add(IDataPipeline pipeline)
+		{
+			InternalPipelines.Add(pipeline);
+		}
 
 		/// <inheritdoc />
-		public virtual void Add(IDataPipelineBuilder builder) => Add(builder.Build());
+		public virtual void Add(IDataPipelineBuilder builder)
+		{
+			Add(builder.Build());
+		}
 
 
 		/// <inheritdoc />

@@ -8,12 +8,12 @@ namespace TicTacTubeCore.Processors.Builders
 	public class LambdaDataProcessorBuilder : BaseDataProcessorBuilder
 	{
 		/// <summary>
-		/// The method that is used to create a data processor (see <see cref="IDataProcessor"/>).
+		///     The method that is used to create a data processor (see <see cref="IDataProcessor" />).
 		/// </summary>
 		protected readonly Func<IDataProcessor> CreationMethod;
 
 		/// <summary>
-		/// Create a new builder that uses a function to create a data processor (<see cref="IDataProcessor"/>).
+		///     Create a new builder that uses a function to create a data processor (<see cref="IDataProcessor" />).
 		/// </summary>
 		/// <param name="creationMethod">The method that is used to create a data processor.</param>
 		public LambdaDataProcessorBuilder(Func<IDataProcessor> creationMethod)

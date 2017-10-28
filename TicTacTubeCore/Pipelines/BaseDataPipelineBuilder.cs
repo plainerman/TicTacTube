@@ -16,7 +16,7 @@ namespace TicTacTubeCore.Pipelines
 		protected readonly List<IDataProcessorOrBuilder> InternalPipeline;
 
 		/// <summary>
-		/// The default constructor.
+		///     The default constructor.
 		/// </summary>
 		protected BaseDataPipelineBuilder()
 		{
@@ -35,7 +35,7 @@ namespace TicTacTubeCore.Pipelines
 		// todo: data pipeline source?
 
 		/// <summary>
-		/// Append a dataprocessor or builder. This can only be done, if the pipeline is not locked.
+		///     Append a dataprocessor or builder. This can only be done, if the pipeline is not locked.
 		/// </summary>
 		/// <param name="dataProcessorOrBuilder">The processor or builder that will be added.</param>
 		/// <returns>The builder itself.</returns>
@@ -50,7 +50,7 @@ namespace TicTacTubeCore.Pipelines
 		}
 
 		/// <summary>
-		/// Lock the builder (i.e. forbid modification of the pipeline).
+		///     Lock the builder (i.e. forbid modification of the pipeline).
 		/// </summary>
 		/// <returns>The builder itself.</returns>
 		public IDataPipelineBuilder LockBuilder()
@@ -61,7 +61,7 @@ namespace TicTacTubeCore.Pipelines
 		}
 
 		/// <summary>
-		/// Generate an actual pipeline from the builder.
+		///     Generate an actual pipeline from the builder.
 		/// </summary>
 		/// <returns>The newly created pipeline.</returns>
 		public abstract IDataPipeline Build();

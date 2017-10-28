@@ -1,4 +1,5 @@
 ﻿using System;
+using TicTacTubeCore.Schedulers.Exceptions;
 
 namespace TicTacTubeCore.Schedulers
 {
@@ -8,29 +9,35 @@ namespace TicTacTubeCore.Schedulers
 	public class EventFiringScheduler : BaseScheduler
 	{
 		/// <summary>
-		/// Execute the start of the scheduler.
+		///     Execute the start of the scheduler.
 		/// </summary>
 		protected override void ExecuteStart()
 		{
 		}
 
 		/// <summary>
-		/// Execute the stop of the scheduler.
+		///     Execute the stop of the scheduler.
 		/// </summary>
 		protected override void ExecuteStop()
 		{
 		}
 
 		/// <summary>
-		/// Force the scheduler to execute the pipeline.
+		///     Force the scheduler to execute the pipeline.
 		/// </summary>
+		/// <exception cref="SchedulerStateException">
+		///     If the scheduler is not running. Call <see cref="BaseScheduler.Start" />
+		/// </exception>
 		public virtual void Fire()
 		{
-			Execute();
+			if (IsRunning)
+				Execute();
+			else
+				throw new SchedulerStateException("The scheduler is not running.");
 		}
 
 		/// <summary>
-		/// A method that ignores the parmeters but is handy for adding it to an external event.
+		///     A method that ignores the parmeters but is handy for adding it to an external event.
 		/// </summary>
 		/// <param name="sender">Ignored.</param>
 		/// <param name="args">Ignored.</param>
