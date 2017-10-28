@@ -6,33 +6,42 @@ using TicTacTubeCore.Schedulers.Events;
 
 namespace TicTacTubeCore.Schedulers
 {
+	/// <summary>
+	///     A scheduler that executes a data pipeline on some event.
+	/// </summary>
 	public abstract class BaseScheduler : IScheduler
 	{
+		/// <summary>
+		/// Multiple pipelines that are executed on a certion condition / event.
+		/// </summary>
 		protected readonly List<IDataPipeline> InternalPipelines;
 
+		/// <summary>
+		/// The default constructor.
+		/// </summary>
 		protected BaseScheduler()
 		{
 			InternalPipelines = new List<IDataPipeline>();
 			Pipelines = InternalPipelines.AsReadOnly();
 		}
 
+		/// <inheritdoc />
 		public event EventHandler<SchedulerLifeCycleEventArgs> LifeCycleEvent;
 
+		/// <inheritdoc />
 		public bool IsRunning { get; protected set; }
 
+		/// <inheritdoc />
 		public ReadOnlyCollection<IDataPipeline> Pipelines { get; }
 
-		public virtual void Add(IDataPipeline pipeline)
-		{
-			InternalPipelines.Add(pipeline);
-		}
+		/// <inheritdoc />
+		public virtual void Add(IDataPipeline pipeline) => InternalPipelines.Add(pipeline);
 
-		public virtual void Add(IDataPipelineBuilder builder)
-		{
-			Add(builder.Build());
-		}
+		/// <inheritdoc />
+		public virtual void Add(IDataPipelineBuilder builder) => Add(builder.Build());
 
 
+		/// <inheritdoc />
 		public virtual void Start()
 		{
 			ExecuteStart();
@@ -40,6 +49,7 @@ namespace TicTacTubeCore.Schedulers
 			ExecuteEvent(SchedulerLifeCycleEventType.Start);
 		}
 
+		/// <inheritdoc />
 		public virtual void Stop()
 		{
 			ExecuteStop();

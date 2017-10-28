@@ -21,7 +21,7 @@ namespace TicTacTubeCore.Schedulers
 		ReadOnlyCollection<IDataPipeline> Pipelines { get; }
 
 		/// <summary>
-		///     The event that will be called on every lifecycle event.
+		/// An event that is called whenever a lifecycle event has been called (e.g. start, pipeline executed, stopped ...)
 		/// </summary>
 		event EventHandler<SchedulerLifeCycleEventArgs> LifeCycleEvent;
 

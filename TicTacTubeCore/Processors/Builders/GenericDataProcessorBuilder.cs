@@ -6,6 +6,7 @@
 	/// <typeparam name="T">The type that is used to create data processors.</typeparam>
 	public class GenericDataProcessorBuilder<T> : BaseDataProcessorBuilder where T : IDataProcessor, new()
 	{
+		/// <inheritdoc />
 		public override IDataProcessor Build()
 		{
 			return new T();

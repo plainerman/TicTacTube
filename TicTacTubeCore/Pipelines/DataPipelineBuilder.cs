@@ -5,6 +5,7 @@
 	/// </summary>
 	public class DataPipelineBuilder : BaseDataPipelineBuilder
 	{
+		/// <inheritdoc />
 		public override IDataPipeline Build()
 		{
 			return new DataPipeline(InternalPipeline);
