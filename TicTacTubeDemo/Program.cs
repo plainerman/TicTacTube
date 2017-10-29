@@ -4,6 +4,7 @@ using System;
 using System.IO;
 using System.Reflection;
 using TicTacTubeCore.Pipelines;
+using TicTacTubeCore.Processors;
 using TicTacTubeCore.Schedulers;
 using TicTacTubeCore.Sources.Files;
 using TicTacTubeCore.Sources.Files.External;
@@ -21,10 +22,17 @@ namespace TicTacTubeDemo
 			var pipelineBuilder = new DataPipelineBuilder();
 
 			//var source = new FileSource(@"C:\Marshmello - You And Me (Official Music Video).mp3");
-			var source =
+			/*var source =
 				new FileSource(
 					new UrlSource(@"https://www.dropbox.com/s/4uz4sx5q3mrfg4s/Old%20Telephone%20Uncompressed%20WAVE.wav?dl=1"),
 					@"C:\Users\plain\Desktop\newFolder\subfolder\");
+			*/
+
+			FileSource source = @"C:\Users\plain\Desktop\test.mp3";
+
+			pipelineBuilder
+				.Append(new SourceCloner(@"C:\Users\plain\Desktop\newFolder", false, true))
+				.Append(new SourceMover(@"C:\Users\plain\Desktop\newFolder\test2.mp3"));
 
 			//pipelineBuilder
 			//	.Append(new SourceConverter(Type.Mp3))
@@ -39,7 +47,7 @@ namespace TicTacTubeDemo
 
 			scheduler.Add(pipelineBuilder);
 			scheduler.Start();
-			scheduler.Fire();
+			scheduler.Fire(source);
 
 			Console.ReadKey();
 		}

@@ -68,6 +68,24 @@ namespace TicTacTubeCore.Sources.Files
 		/// <inheritdoc />
 		public string Path => FileInfo?.Directory.FullName;
 
+		/// <inheritdoc />
+		public void Init()
+		{
+			FetchExternalSource(false);
+		}
+
+		/// <inheritdoc />
+		public void BeginExecute()
+		{
+
+		}
+
+		/// <inheritdoc />
+		public void EndExecute()
+		{
+
+		}
+
 		/// <summary>
 		///     Assign all local variables from the given filepath.
 		/// </summary>

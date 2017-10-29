@@ -1,8 +1,10 @@
-﻿using System;
+﻿using log4net;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using TicTacTubeCore.Pipelines;
 using TicTacTubeCore.Schedulers.Events;
+using TicTacTubeCore.Sources.Files;
 
 namespace TicTacTubeCore.Schedulers
 {
@@ -11,6 +13,8 @@ namespace TicTacTubeCore.Schedulers
 	/// </summary>
 	public abstract class BaseScheduler : IScheduler
 	{
+		private static readonly ILog Log = LogManager.GetLogger(typeof(BaseScheduler));
+
 		/// <summary>
 		///     Multiple pipelines that are executed on a certion condition / event.
 		/// </summary>
@@ -76,10 +80,11 @@ namespace TicTacTubeCore.Schedulers
 		/// <summary>
 		///     The method that will be called internally to execute the pipeline.
 		/// </summary>
-		protected virtual void Execute( /* TODO: args */)
+		/// <param name="fileSource">The filesource with which the execute will be triggered.</param>
+		protected virtual void Execute(IFileSource fileSource)
 		{
-			// TODO: execute the complete pipeline
-			//InternalPipelines.ForEach(p => p.Execute(...));
+			Log.Info($"Scheduler has been triggered, executing {InternalPipelines.Count} pipeline(s).");
+			InternalPipelines.ForEach(p => p.Execute(fileSource));
 			ExecuteEvent(SchedulerLifeCycleEventType.Execute);
 		}
 

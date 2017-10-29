@@ -1,4 +1,6 @@
-﻿namespace TicTacTubeCore.Processors
+﻿using TicTacTubeCore.Sources.Files;
+
+namespace TicTacTubeCore.Processors
 {
 	/// <summary>
 	///     A data processor that actually processes data.
@@ -10,6 +12,9 @@
 		{
 			return this;
 		}
+
+		/// <inheritdoc />
+		public abstract IFileSource Execute(IFileSource fileSoure);
 
 		/// <summary>
 		///     Check whether the object is a builder or not. (Hint: it is never a builder).

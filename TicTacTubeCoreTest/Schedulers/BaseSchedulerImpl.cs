@@ -1,4 +1,5 @@
 ﻿using TicTacTubeCore.Schedulers;
+using TicTacTubeCore.Sources.Files;
 
 namespace TicTacTubeCoreTest.Schedulers
 {
@@ -12,9 +13,9 @@ namespace TicTacTubeCoreTest.Schedulers
 		{
 		}
 
-		public new void Execute()
+		public new void Execute(IFileSource fileSource)
 		{
-			base.Execute();
+			base.Execute(fileSource);
 		}
 	}
 }

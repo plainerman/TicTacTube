@@ -1,5 +1,6 @@
 ﻿using System;
 using TicTacTubeCore.Schedulers.Exceptions;
+using TicTacTubeCore.Sources.Files;
 
 namespace TicTacTubeCore.Schedulers
 {
@@ -25,14 +26,15 @@ namespace TicTacTubeCore.Schedulers
 		/// <summary>
 		///     Force the scheduler to execute the pipeline.
 		/// </summary>
+		/// <param name="fileSource">The file source that will be processed.</param>
 		/// <exception cref="SchedulerStateException">
 		///     If the scheduler is not running. Call <see cref="BaseScheduler.Start" />
 		/// </exception>
-		public virtual void Fire()
+		public virtual void Fire(IFileSource fileSource)
 		{
 			if (IsRunning)
 			{
-				Execute();
+				Execute(fileSource);
 			}
 			else
 			{
@@ -45,9 +47,10 @@ namespace TicTacTubeCore.Schedulers
 		/// </summary>
 		/// <param name="sender">Ignored.</param>
 		/// <param name="args">Ignored.</param>
-		public virtual void Fire(object sender, EventArgs args)
+		/// <param name="fileSource">The file source that will be processed.</param>
+		public virtual void Fire(object sender, EventArgs args, IFileSource fileSource)
 		{
-			Fire();
+			Fire(fileSource);
 		}
 	}
 }

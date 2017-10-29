@@ -20,7 +20,7 @@ namespace TicTacTubeCoreTest.Schedulers
 
 			eventFiringScheduler.Start();
 
-			TestEvent += eventFiringScheduler.Fire;
+			TestEvent += EmptyFire;
 
 			Assert.AreEqual(0, executeCounter);
 
@@ -35,7 +35,7 @@ namespace TicTacTubeCoreTest.Schedulers
 
 			Assert.AreEqual(2, executeCounter);
 
-			TestEvent -= eventFiringScheduler.Fire;
+			TestEvent -= EmptyFire;
 
 			void Executed(object sender, SchedulerLifeCycleEventArgs args)
 			{
@@ -43,6 +43,11 @@ namespace TicTacTubeCoreTest.Schedulers
 				{
 					executeCounter++;
 				}
+			}
+
+			void EmptyFire(object sender, EventArgs args)
+			{
+				eventFiringScheduler.Fire(sender, args, null);
 			}
 		}
 	}

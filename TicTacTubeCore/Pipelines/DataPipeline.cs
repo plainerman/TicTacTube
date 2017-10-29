@@ -1,7 +1,9 @@
-﻿using System;
+﻿using log4net;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using TicTacTubeCore.Processors;
+using TicTacTubeCore.Sources.Files;
 
 namespace TicTacTubeCore.Pipelines
 {
@@ -10,6 +12,8 @@ namespace TicTacTubeCore.Pipelines
 	/// </summary>
 	public class DataPipeline : IDataPipeline
 	{
+		private static readonly ILog Log = LogManager.GetLogger(typeof(DataPipeline));
+
 		/// <summary>
 		///     The collection of data processor that are the actual pipeline processors.
 		/// </summary>
@@ -38,6 +42,29 @@ namespace TicTacTubeCore.Pipelines
 		{
 			DataProcessors = dataProcessorsOrBuilder?.Select(d => d.Build()).ToList() ??
 							throw new ArgumentNullException(nameof(dataProcessorsOrBuilder));
+		}
+
+		/// <inheritdoc />
+		public void Execute(IFileSource fileSource)
+		{
+			Log.Info($"Executing pipeline with filesource {fileSource.GetType().Name}");
+			IFileSource prev = null;
+			DataProcessors.Aggregate(fileSource, (current, processor) =>
+			{
+				if (current != prev)
+				{
+					current.Init();
+					prev = current;
+				}
+
+				current.BeginExecute();
+
+				var newSource = processor.Execute(current);
+
+				current.EndExecute();
+
+				return newSource;
+			});
 		}
 	}
 }

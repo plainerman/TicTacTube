@@ -19,8 +19,8 @@ namespace TicTacTubeCoreTest.Schedulers
 
 			desiredType = SchedulerLifeCycleEventType.Execute;
 
-			scheduler.Execute();
-			scheduler.Execute();
+			scheduler.Execute(null);
+			scheduler.Execute(null);
 
 			desiredType = SchedulerLifeCycleEventType.Stop;
 			desiredRunning = false;
