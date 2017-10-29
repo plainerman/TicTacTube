@@ -98,7 +98,7 @@ namespace TicTacTubeCore.Sources.Files
 				Log.Info($"Creating directory {_filePath}");
 			}
 
-			Log.Info($"Fetching external source {_externalSource} to {_filePath}" + (async ? "asynchronously." : "."));
+			Log.Info($"Fetching external source {_externalSource} to {_filePath}" + (async ? " asynchronously." : "."));
 
 			if (async)
 			{
