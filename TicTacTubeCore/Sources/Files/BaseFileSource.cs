@@ -10,12 +10,11 @@ namespace TicTacTubeCore.Sources.Files
 	/// </summary>
 	public abstract class BaseFileSource : IFileSource
 	{
+		private static readonly ILog Log = LogManager.GetLogger(typeof(BaseFileSource));
 		private IExternalFileSource _externalSource;
 
-		private static readonly ILog Log = LogManager.GetLogger(typeof(BaseFileSource));
-
 		/// <summary>
-		/// The local filepath used temporarily for external sources;
+		///     The local filepath used temporarily for external sources;
 		/// </summary>
 		private string _filePath;
 
@@ -26,16 +25,11 @@ namespace TicTacTubeCore.Sources.Files
 		protected BaseFileSource(string filePath)
 		{
 			if (string.IsNullOrWhiteSpace(filePath))
+			{
 				throw new ArgumentException("Value cannot be null or whitespace.", nameof(filePath));
+			}
 
 			AssignFilePath(filePath);
-		}
-
-		private void AssignFilePath(string filePath)
-		{
-			FileInfo = new FileInfo(filePath);
-			FullFileName = FileInfo.Name;
-			FileName = System.IO.Path.GetFileNameWithoutExtension(filePath);
 		}
 
 		/// <summary>
@@ -46,40 +40,17 @@ namespace TicTacTubeCore.Sources.Files
 		protected BaseFileSource(IExternalFileSource externalSource, string localPath)
 		{
 			if (string.IsNullOrWhiteSpace(localPath))
+			{
 				throw new ArgumentException("Value cannot be null or whitespace.", nameof(localPath));
+			}
 
 			_externalSource = externalSource ?? throw new ArgumentNullException(nameof(externalSource));
 			_filePath = localPath;
 
 			if (!_externalSource.LazyLoading)
 			{
-				FetchExternalSource();
+				FetchExternalSource(true);
 			}
-		}
-
-		/// <summary>
-		/// Fetch the external source, if correctly fetched, set to <c>null</c>.
-		/// </summary>
-		protected virtual void FetchExternalSource()
-		{
-			if (_externalSource == null) return;
-
-			if (!Directory.Exists(_filePath))
-			{
-				Directory.CreateDirectory(_filePath);
-				Log.Info($"Creating directory {_filePath}");
-			}
-
-			Log.Info($"Fetching external source {_externalSource} to {_filePath}.");
-
-			string path = _externalSource.FetchFile(_filePath);
-
-			AssignFilePath(path);
-
-			Log.Info($"Fetched external source {_externalSource} to {path}.");
-
-			_externalSource = null;
-			_filePath = null;
 		}
 
 		/// <inheritdoc />
@@ -96,5 +67,54 @@ namespace TicTacTubeCore.Sources.Files
 
 		/// <inheritdoc />
 		public string Path => FileInfo?.Directory.FullName;
+
+		/// <summary>
+		///     Assign all local variables from the given filepath.
+		/// </summary>
+		/// <param name="filePath">The file path that will be analyzed.</param>
+		private void AssignFilePath(string filePath)
+		{
+			FileInfo = new FileInfo(filePath);
+			FullFileName = FileInfo.Name;
+			FileName = System.IO.Path.GetFileNameWithoutExtension(filePath);
+		}
+
+		/// <summary>
+		///     Fetch the external source, if correctly fetched, set to <c>null</c>.
+		///     If fetched asynchronously, the method will return immediately. It has to be called synchronously
+		///     before actually using the external file source.
+		/// </summary>
+		/// <param name="async">Whether the external source will be fetched asynchronously or not.</param>
+		protected virtual void FetchExternalSource(bool async)
+		{
+			if (_externalSource == null)
+			{
+				return;
+			}
+
+			if (!Directory.Exists(_filePath))
+			{
+				Directory.CreateDirectory(_filePath);
+				Log.Info($"Creating directory {_filePath}");
+			}
+
+			Log.Info($"Fetching external source {_externalSource} to {_filePath}" + (async ? "asynchronously." : "."));
+
+			if (async)
+			{
+				_externalSource.FetchFileAsync(_filePath);
+			}
+			else
+			{
+				string path = _externalSource.FetchFile(_filePath);
+
+				AssignFilePath(path);
+
+				Log.Info($"Fetched external source {_externalSource} to {path}.");
+
+				_externalSource = null;
+				_filePath = null;
+			}
+		}
 	}
 }

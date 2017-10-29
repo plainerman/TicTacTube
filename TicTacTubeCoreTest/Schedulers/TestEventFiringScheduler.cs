@@ -1,5 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
+﻿using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TicTacTubeCore.Schedulers;
 using TicTacTubeCore.Schedulers.Events;
 
@@ -40,7 +40,9 @@ namespace TicTacTubeCoreTest.Schedulers
 			void Executed(object sender, SchedulerLifeCycleEventArgs args)
 			{
 				if (args.EventType == SchedulerLifeCycleEventType.Execute)
+				{
 					executeCounter++;
+				}
 			}
 		}
 	}

@@ -21,8 +21,10 @@ namespace TicTacTubeDemo
 			var pipelineBuilder = new DataPipelineBuilder();
 
 			//var source = new FileSource(@"C:\Marshmello - You And Me (Official Music Video).mp3");
-			var source = new FileSource(new UrlSource(@"https://www.dropbox.com/s/4uz4sx5q3mrfg4s/Old%20Telephone%20Uncompressed%20WAVE.wav?dl=1"), @"C:\Users\plain\Desktop\newFolder\subfolder\");
-
+			var source =
+				new FileSource(
+					new UrlSource(@"https://www.dropbox.com/s/4uz4sx5q3mrfg4s/Old%20Telephone%20Uncompressed%20WAVE.wav?dl=1"),
+					@"C:\Users\plain\Desktop\newFolder\subfolder\");
 
 			//pipelineBuilder
 			//	.Append(new SourceConverter(Type.Mp3))

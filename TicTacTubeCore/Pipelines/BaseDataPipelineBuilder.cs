@@ -41,8 +41,14 @@ namespace TicTacTubeCore.Pipelines
 		/// <returns>The builder itself.</returns>
 		public IDataPipelineBuilder Append(IDataProcessorOrBuilder dataProcessorOrBuilder)
 		{
-			if (dataProcessorOrBuilder == null) throw new ArgumentNullException(nameof(dataProcessorOrBuilder));
-			if (IsLocked) throw new PipelineStateException("The pipeline is locked and cannot be modified.");
+			if (dataProcessorOrBuilder == null)
+			{
+				throw new ArgumentNullException(nameof(dataProcessorOrBuilder));
+			}
+			if (IsLocked)
+			{
+				throw new PipelineStateException("The pipeline is locked and cannot be modified.");
+			}
 
 			InternalPipeline.Add(dataProcessorOrBuilder);
 

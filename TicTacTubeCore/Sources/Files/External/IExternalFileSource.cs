@@ -11,10 +11,18 @@
 		bool LazyLoading { get; }
 
 		/// <summary>
-		///     Fetch the file from the source.
+		///     Fetch the file from the source. If it has already been fetched asnychronously,
+		///     this method waits for the download to finish and then returns the new file path.
 		/// </summary>
-		/// <param name="destinationPath"></param>
+		/// <param name="destinationPath">The folder where the file should be stored.</param>
 		/// <returns>The path of the newly downloaded file.</returns>
 		string FetchFile(string destinationPath);
+
+		/// <summary>
+		///     Fetch the file from the source asynchronously. See <see cref="FetchFile" />
+		///     to get the path to the downloaded file.
+		/// </summary>
+		/// <param name="destinationPath">The folder where the file should be stored.</param>
+		void FetchFileAsync(string destinationPath);
 	}
 }

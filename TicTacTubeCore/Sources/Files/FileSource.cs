@@ -18,7 +18,6 @@ namespace TicTacTubeCore.Sources.Files
 		/// <inheritdoc />
 		public FileSource(IExternalFileSource externalSource, string localPath) : base(externalSource, localPath)
 		{
-
 		}
 	}
 }
