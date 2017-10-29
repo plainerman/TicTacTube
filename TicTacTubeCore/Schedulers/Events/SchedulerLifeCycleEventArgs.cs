@@ -30,6 +30,16 @@ namespace TicTacTubeCore.Schedulers.Events
 	public class SchedulerLifeCycleEventArgs : SchedulerEventArgs
 	{
 		/// <summary>
+		///     The running state.Determines whether the scheduler is currently active or not.
+		/// </summary>
+		public bool IsRunning { get; }
+
+		/// <summary>
+		///     The current lifecycle type (i.e. method that caused the event).
+		/// </summary>
+		public SchedulerLifeCycleEventType EventType { get; }
+
+		/// <summary>
 		///     Create given event args with the current running state and the event type.
 		/// </summary>
 		/// <param name="isRunning">The running state. Determines whether the scheduler is currently active or not.</param>
@@ -44,15 +54,5 @@ namespace TicTacTubeCore.Schedulers.Events
 			IsRunning = isRunning;
 			EventType = eventType;
 		}
-
-		/// <summary>
-		///     The running state.Determines whether the scheduler is currently active or not.
-		/// </summary>
-		public bool IsRunning { get; }
-
-		/// <summary>
-		///     The current lifecycle type (i.e. method that caused the event).
-		/// </summary>
-		public SchedulerLifeCycleEventType EventType { get; }
 	}
 }
