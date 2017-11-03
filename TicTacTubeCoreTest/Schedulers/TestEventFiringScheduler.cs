@@ -30,7 +30,6 @@ namespace TicTacTubeCoreTest.Schedulers
 			TestEvent?.Invoke(this, EventArgs.Empty);
 			Assert.AreEqual(2, executeCounter);
 
-
 			eventFiringScheduler.Stop();
 
 			Assert.AreEqual(2, executeCounter);
