@@ -9,7 +9,7 @@ using TicTacTubeCore.Sources.Files;
 namespace TicTacTubeCore.Schedulers
 {
 	/// <summary>
-	///     A scheduler that executes a data pipeline on some event.
+	///     A scheduler that executes a data pipelineOrBuilder on some event.
 	/// </summary>
 	public abstract class BaseScheduler : IScheduler
 	{
@@ -18,14 +18,14 @@ namespace TicTacTubeCore.Schedulers
 		/// <summary>
 		///     Multiple pipelines that are executed on a certion condition / event.
 		/// </summary>
-		protected readonly List<IDataPipeline> InternalPipelines;
+		protected readonly List<IDataPipelineOrBuilder> InternalPipelines;
 
 		/// <summary>
 		///     The default constructor.
 		/// </summary>
 		protected BaseScheduler()
 		{
-			InternalPipelines = new List<IDataPipeline>();
+			InternalPipelines = new List<IDataPipelineOrBuilder>();
 			Pipelines = InternalPipelines.AsReadOnly();
 		}
 
@@ -36,18 +36,13 @@ namespace TicTacTubeCore.Schedulers
 		public bool IsRunning { get; protected set; }
 
 		/// <inheritdoc />
-		public ReadOnlyCollection<IDataPipeline> Pipelines { get; }
+		public ReadOnlyCollection<IDataPipelineOrBuilder> Pipelines { get; }
 
 		/// <inheritdoc />
-		public virtual void Add(IDataPipeline pipeline)
+		public virtual IDataPipelineOrBuilder Add(IDataPipelineOrBuilder pipelineOrBuilder)
 		{
-			InternalPipelines.Add(pipeline);
-		}
-
-		/// <inheritdoc />
-		public virtual void Add(IDataPipelineBuilder builder)
-		{
-			Add(builder.Build());
+			InternalPipelines.Add(pipelineOrBuilder);
+			return pipelineOrBuilder;
 		}
 
 
@@ -78,13 +73,13 @@ namespace TicTacTubeCore.Schedulers
 		protected abstract void ExecuteStop();
 
 		/// <summary>
-		///     The method that will be called internally to execute the pipeline.
+		///     The method that will be called internally to execute the pipelineOrBuilder.
 		/// </summary>
 		/// <param name="fileSource">The filesource with which the execute will be triggered.</param>
 		protected virtual void Execute(IFileSource fileSource)
 		{
-			Log.Info($"Scheduler has been triggered, executing {InternalPipelines.Count} pipeline(s).");
-			InternalPipelines.ForEach(p => p.Execute(fileSource));
+			Log.Info($"Scheduler has been triggered, executing {InternalPipelines.Count} pipelineOrBuilder(s).");
+			InternalPipelines.ForEach(p => p.Build().Execute(fileSource));
 			ExecuteEvent(SchedulerLifeCycleEventType.Execute);
 		}
 

@@ -67,9 +67,15 @@ namespace TicTacTubeCore.Pipelines
 		}
 
 		/// <summary>
-		///     Generate an actual pipeline from the builder.
+		///     Check whether the object is a builder or not. (Hint: it is always a builder).
 		/// </summary>
-		/// <returns>The newly created pipeline.</returns>
+		public bool IsBuilder => true;
+
+		/// <summary>
+		///     Build the data pipeline. This can be done any time.
+		///     A new reference is created every time, this method is called.
+		/// </summary>
+		/// <returns>The newly create <see cref="IDataPipeline" />.</returns>
 		public abstract IDataPipeline Build();
 	}
 }

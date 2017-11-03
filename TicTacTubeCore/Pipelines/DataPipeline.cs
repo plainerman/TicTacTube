@@ -66,5 +66,16 @@ namespace TicTacTubeCore.Pipelines
 				return newSource;
 			});
 		}
+
+		/// <summary>
+		///     Check whether the object is a builder or not. (Hint: it is never a builder).
+		/// </summary>
+		public bool IsBuilder => false;
+
+		/// <inheritdoc />
+		public IDataPipeline Build()
+		{
+			return this;
+		}
 	}
 }

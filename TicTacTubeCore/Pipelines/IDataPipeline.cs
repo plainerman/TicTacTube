@@ -5,7 +5,7 @@ namespace TicTacTubeCore.Pipelines
 	/// <summary>
 	///     A pipeline that stores multiple processors that process / modify / ... some sort of data.
 	/// </summary>
-	public interface IDataPipeline
+	public interface IDataPipeline : IDataPipelineOrBuilder
 	{
 		/// <summary>
 		///		Actually execute the complete pipeline
