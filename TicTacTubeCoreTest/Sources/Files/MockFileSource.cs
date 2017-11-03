@@ -10,5 +10,14 @@ namespace TicTacTubeCoreTest.Sources.Files
 		public string FullFileName => null;
 		public string FileExtension => null;
 		public string Path => null;
+
+		public void Init()
+		{ }
+
+		public void BeginExecute()
+		{ }
+
+		public void EndExecute()
+		{ }
 	}
 }
