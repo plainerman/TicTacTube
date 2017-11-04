@@ -40,7 +40,6 @@ namespace TicTacTubeCore.Processors.Logical
 		///     Create a new conditional processor with a given condition.
 		///     If the condition is <c>true</c>, <paramref name="dataProcessorA" /> will be used and executed - otherwise nothing
 		///     will be executed.
-		///     ///
 		/// </summary>
 		/// <param name="condition">The condition that is used to evaluate. May not be <c>null</c>.</param>
 		/// <param name="dataProcessorA">

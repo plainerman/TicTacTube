@@ -1,9 +1,10 @@
-﻿using System.IO;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.IO;
 using TicTacTubeCore.Processors.Filesystem;
+using TicTacTubeCore.Sources.Files;
 using TicTacTubeCoreTest.Sources.Files;
 
-namespace TicTacTubeCoreTest.Processors
+namespace TicTacTubeCoreTest.Processors.Filesystem
 {
 	[TestClass]
 	public class TestSourceMover
@@ -30,7 +31,7 @@ namespace TicTacTubeCoreTest.Processors
 			TestFileMovement(destinationFile, scheduler, source, sourceSize, destinatioPath);
 		}
 
-		private static void TestFileMovement(string destinationFile, SimpleTestScheduler scheduler, TempFileSource source,
+		private static void TestFileMovement(string destinationFile, SimpleTestScheduler scheduler, IFileSource source,
 			long sourceSize, string destinatioPath)
 		{
 			Assert.AreEqual(false, File.Exists(destinationFile));

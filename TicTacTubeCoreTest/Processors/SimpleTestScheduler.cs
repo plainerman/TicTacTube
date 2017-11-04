@@ -6,19 +6,19 @@ namespace TicTacTubeCoreTest.Processors
 {
 	public class SimpleTestScheduler
 	{
-		private readonly BaseSchedulerImpl _scheduler;
 		public readonly IDataPipelineBuilder Builder;
+		public readonly BaseSchedulerImpl Scheduler;
 
 		public SimpleTestScheduler()
 		{
-			_scheduler = new BaseSchedulerImpl();
+			Scheduler = new BaseSchedulerImpl();
 			Builder = new DataPipelineBuilder();
-			_scheduler.Add(Builder);
+			Scheduler.Add(Builder);
 		}
 
 		public virtual void Execute(IFileSource source)
 		{
-			_scheduler.Execute(source);
+			Scheduler.Execute(source);
 		}
 	}
 }
