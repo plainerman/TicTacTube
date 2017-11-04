@@ -8,10 +8,7 @@ namespace TicTacTubeCore.Processors.Definitions
 	public abstract class BaseDataProcessor : IDataProcessor
 	{
 		/// <inheritdoc />
-		public IDataProcessor Build()
-		{
-			return this;
-		}
+		public IDataProcessor Build() => this;
 
 		/// <inheritdoc />
 		public abstract IFileSource Execute(IFileSource fileSoure);

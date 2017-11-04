@@ -8,10 +8,7 @@ namespace TicTacTubeCoreTest.Sources.Files
 	[TestClass]
 	public class TestFileSource
 	{
-		private static IFileSource GenerateFileSource(string path)
-		{
-			return new FileSource(path);
-		}
+		private static IFileSource GenerateFileSource(string path) => new FileSource(path);
 
 		[DataTestMethod]
 		[DataRow(@"C:\", "test", ".txt")]

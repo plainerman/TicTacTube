@@ -23,9 +23,6 @@ namespace TicTacTubeCore.Processors.Builders
 		}
 
 		/// <inheritdoc />
-		public override IDataProcessor Build()
-		{
-			return CreationMethod();
-		}
+		public override IDataProcessor Build() => CreationMethod();
 	}
 }

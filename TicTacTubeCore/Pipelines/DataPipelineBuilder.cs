@@ -6,9 +6,6 @@
 	public class DataPipelineBuilder : BaseDataPipelineBuilder
 	{
 		/// <inheritdoc />
-		public override IDataPipeline Build()
-		{
-			return new DataPipeline(InternalPipeline);
-		}
+		public override IDataPipeline Build() => new DataPipeline(InternalPipeline);
 	}
 }

@@ -24,9 +24,6 @@ namespace TicTacTubeCore.Sources.Files
 		///     Automatically create a new file source from a given string (i.e. the path to the file).
 		/// </summary>
 		/// <param name="path">The absolute or relative filepath. This may not be <c>null</c> or empty.</param>
-		public static implicit operator FileSource(string path)
-		{
-			return new FileSource(path);
-		}
+		public static implicit operator FileSource(string path) => new FileSource(path);
 	}
 }

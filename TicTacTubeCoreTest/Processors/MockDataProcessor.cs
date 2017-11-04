@@ -5,9 +5,6 @@ namespace TicTacTubeCoreTest.Processors
 {
 	public class MockDataProcessor : BaseDataProcessor
 	{
-		public override IFileSource Execute(IFileSource fileSoure)
-		{
-			return fileSoure;
-		}
+		public override IFileSource Execute(IFileSource fileSoure) => fileSoure;
 	}
 }

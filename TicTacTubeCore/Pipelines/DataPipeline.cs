@@ -73,9 +73,6 @@ namespace TicTacTubeCore.Pipelines
 		public bool IsBuilder => false;
 
 		/// <inheritdoc />
-		public IDataPipeline Build()
-		{
-			return this;
-		}
+		public IDataPipeline Build() => this;
 	}
 }

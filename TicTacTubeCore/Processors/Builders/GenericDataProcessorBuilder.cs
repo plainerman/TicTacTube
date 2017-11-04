@@ -9,9 +9,6 @@ namespace TicTacTubeCore.Processors.Builders
 	public class GenericDataProcessorBuilder<T> : BaseDataProcessorBuilder where T : IDataProcessor, new()
 	{
 		/// <inheritdoc />
-		public override IDataProcessor Build()
-		{
-			return new T();
-		}
+		public override IDataProcessor Build() => new T();
 	}
 }

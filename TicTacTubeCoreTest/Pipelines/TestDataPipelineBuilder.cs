@@ -8,10 +8,7 @@ namespace TicTacTubeCoreTest.Pipelines
 	[TestClass]
 	public class TestDataPipelineBuilder
 	{
-		protected virtual IDataPipelineBuilder CreatePipelineBuilder()
-		{
-			return new DataPipelineBuilder();
-		}
+		protected virtual IDataPipelineBuilder CreatePipelineBuilder() => new DataPipelineBuilder();
 
 		[TestMethod]
 		public void TestBuild()
