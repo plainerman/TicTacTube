@@ -4,8 +4,8 @@
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>TicTacTube</PackageId>
-    <Authors>Almir Ahmetagic, Michael Plainer</Authors>
-    <Company />
+    <Authors>Michael Plainer</Authors>
+    <Company>Michael Plainer</Company>
     <Product>TicTacTube</Product>
     <Description>An easy to use data processing pipeline.</Description>
     <PackageLicenseUrl>https://choosealicense.com/licenses/mit/</PackageLicenseUrl>
