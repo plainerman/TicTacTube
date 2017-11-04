@@ -1,4 +1,5 @@
 ﻿using TicTacTubeCore.Processors;
+using TicTacTubeCore.Processors.Definitions;
 using TicTacTubeCore.Sources.Files;
 
 namespace TicTacTubeCoreTest.Processors

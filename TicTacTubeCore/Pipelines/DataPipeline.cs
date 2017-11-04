@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using TicTacTubeCore.Processors;
+using TicTacTubeCore.Processors.Definitions;
 using TicTacTubeCore.Sources.Files;
 
 namespace TicTacTubeCore.Pipelines

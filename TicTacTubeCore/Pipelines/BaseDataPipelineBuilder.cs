@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using TicTacTubeCore.Pipelines.Exceptions;
 using TicTacTubeCore.Processors;
+using TicTacTubeCore.Processors.Definitions;
 
 namespace TicTacTubeCore.Pipelines
 {

@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TicTacTubeCore.Processors;
+using TicTacTubeCore.Processors.Filesystem;
 using TicTacTubeCoreTest.Sources.Files;
 
 namespace TicTacTubeCoreTest.Processors

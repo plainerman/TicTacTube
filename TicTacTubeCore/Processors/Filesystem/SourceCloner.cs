@@ -1,34 +1,40 @@
 ﻿using System.IO;
+using TicTacTubeCore.Processors.Definitions;
 using TicTacTubeCore.Sources.Files;
 
-namespace TicTacTubeCore.Processors
+namespace TicTacTubeCore.Processors.Filesystem
 {
 	/// <summary>
-	/// A data processer that can move a file source to another path.
+	/// A data processor that can duplicate a given source.s
 	/// </summary>
-	public class SourceMover : BaseDataProcessor
+	public class SourceCloner : BaseDataProcessor
 	{
 		private readonly string _destinationPath;
+		private readonly bool _workOnClone;
 		private readonly bool _keepName;
 
 		/// <summary>
-		/// Create a source mover that moves a source to a complete path (also rename the file).
+		/// Create a source cloner that clones a source to a complete path (also rename the file).
 		/// </summary>
 		/// <param name="destinationPath">The complete new path (inclusive file name).</param>
-		public SourceMover(string destinationPath)
+		/// <param name="workOnClone">Determine whether work should on continue on the new source or not.</param>
+		public SourceCloner(string destinationPath, bool workOnClone)
 		{
 			_destinationPath = destinationPath;
+			_workOnClone = workOnClone;
 			_keepName = false;
 		}
 
 		/// <summary>
-		/// Create a source mover that moves a source to another directory and keeps the name. 
+		/// Create a source cloner that clones a source to another directory and keeps the name. 
 		/// </summary>
 		/// <param name="destinationFolder">The folder where the source will be moved to.</param>
 		/// <param name="keepName">Just a field to indicate a different constructor.</param>
-		public SourceMover(string destinationFolder, bool keepName)
+		/// <param name="workOnClone">Determine whether work should on continue on the new source or not.</param>
+		public SourceCloner(string destinationFolder, bool workOnClone, bool keepName)
 		{
 			_destinationPath = destinationFolder;
+			_workOnClone = workOnClone;
 			_keepName = true;
 		}
 
@@ -43,9 +49,9 @@ namespace TicTacTubeCore.Processors
 				Directory.CreateDirectory(directory);
 			}
 
-			fileSoure.FileInfo.MoveTo(dest);
+			fileSoure.FileInfo.CopyTo(dest);
 
-			return new FileSource(dest);
+			return _workOnClone ? new FileSource(dest) : fileSoure;
 		}
 	}
 }

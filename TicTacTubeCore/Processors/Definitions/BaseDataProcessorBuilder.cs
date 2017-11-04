@@ -1,6 +1,6 @@
 ﻿using TicTacTubeCore.Processors.Builders;
 
-namespace TicTacTubeCore.Processors
+namespace TicTacTubeCore.Processors.Definitions
 {
 	/// <summary>
 	///     A a builder capable of creating a data processor (see <see cref="IDataProcessorOrBuilder" /> and

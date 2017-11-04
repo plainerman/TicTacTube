@@ -5,6 +5,7 @@ using System.IO;
 using System.Reflection;
 using TicTacTubeCore.Pipelines;
 using TicTacTubeCore.Processors;
+using TicTacTubeCore.Processors.Filesystem;
 using TicTacTubeCore.Schedulers;
 using TicTacTubeCore.Sources.Files;
 

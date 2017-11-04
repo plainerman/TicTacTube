@@ -1,6 +1,6 @@
 ﻿using TicTacTubeCore.Sources.Files;
 
-namespace TicTacTubeCore.Processors
+namespace TicTacTubeCore.Processors.Definitions
 {
 	/// <summary>
 	///     A data processor that actually processes data.

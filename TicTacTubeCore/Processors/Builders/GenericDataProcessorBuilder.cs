@@ -1,4 +1,6 @@
-﻿namespace TicTacTubeCore.Processors.Builders
+﻿using TicTacTubeCore.Processors.Definitions;
+
+namespace TicTacTubeCore.Processors.Builders
 {
 	/// <summary>
 	///     A data processor builder that builds <see cref="IDataProcessor" /> based on a generic type.

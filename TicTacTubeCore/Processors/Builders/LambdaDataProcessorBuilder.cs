@@ -1,4 +1,5 @@
 ﻿using System;
+using TicTacTubeCore.Processors.Definitions;
 
 namespace TicTacTubeCore.Processors.Builders
 {
