@@ -1,6 +1,7 @@
 ﻿using System;
 using log4net;
 using TicTacTubeCore.Sources.Files;
+using TicTacTubeCore.Sources.Files.External;
 using SystemPath = System.IO.Path;
 
 namespace TicTacTubeCoreTest.Sources.Files
@@ -13,6 +14,11 @@ namespace TicTacTubeCoreTest.Sources.Files
 		{
 		}
 
+		public TempFileSource(IExternalFileSource externalSource) : base(externalSource, SystemPath.GetTempPath())
+		{
+		}
+
+
 		~TempFileSource()
 		{
 			try
@@ -22,7 +28,7 @@ namespace TicTacTubeCoreTest.Sources.Files
 			catch (Exception)
 			{
 				Log.Warn(
-					$"Could not delete temporary file source {FileInfo.FullName} in directory {FileInfo.Directory}. - Maybe clean it yourself? Tests work nonetheless.");
+					$"Could not delete temporary file source {FileInfo?.FullName} in directory {FileInfo?.Directory}. - Maybe clean it yourself? Tests work nonetheless.");
 			}
 		}
 	}

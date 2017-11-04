@@ -1,6 +1,6 @@
-﻿using log4net;
-using System;
+﻿using System;
 using System.IO;
+using log4net;
 using TicTacTubeCore.Sources.Files.External;
 
 namespace TicTacTubeCore.Sources.Files

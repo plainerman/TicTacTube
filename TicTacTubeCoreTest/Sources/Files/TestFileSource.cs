@@ -28,5 +28,23 @@ namespace TicTacTubeCoreTest.Sources.Files
 			Assert.ThrowsException<ArgumentException>(() => GenerateFileSource(""));
 			Assert.ThrowsException<ArgumentException>(() => GenerateFileSource("  "));
 		}
+
+		[TestMethod]
+		public void TestFetchExternalSource()
+		{
+			var source = new TempFileSource(new TempExternalFileSource(false));
+
+			source.Init();
+
+			Assert.AreEqual(true, File.Exists(source.FileInfo.FullName));
+			Assert.AreEqual(TempExternalFileSource.DummyText, File.ReadAllText(source.FileInfo.FullName));
+
+			source = new TempFileSource(new TempExternalFileSource(true));
+
+			source.Init();
+
+			Assert.AreEqual(true, File.Exists(source.FileInfo.FullName));
+			Assert.AreEqual(TempExternalFileSource.DummyText, File.ReadAllText(source.FileInfo.FullName));
+		}
 	}
 }

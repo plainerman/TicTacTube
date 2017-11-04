@@ -1,5 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TicTacTubeCore.Processors.Logical;
 using TicTacTubeCore.Schedulers.Events;
 using TicTacTubeCore.Sources.Files;

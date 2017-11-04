@@ -1,5 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TicTacTubeCore.Processors.Filesystem;
 using TicTacTubeCore.Sources.Files;
 using TicTacTubeCoreTest.Sources.Files;

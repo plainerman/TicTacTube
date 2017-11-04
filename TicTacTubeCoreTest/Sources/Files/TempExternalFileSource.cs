@@ -5,7 +5,7 @@ namespace TicTacTubeCoreTest.Sources.Files
 {
 	public class TempExternalFileSource : BaseExternalFileSource
 	{
-		protected const string DummyText =
+		public const string DummyText =
 			"This is a temporary file for testing purposes. Only delete if no test is running";
 
 		public TempExternalFileSource(bool lazyLoading) : base(lazyLoading)
