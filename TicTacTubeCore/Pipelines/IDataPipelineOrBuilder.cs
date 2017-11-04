@@ -1,7 +1,7 @@
 ﻿namespace TicTacTubeCore.Pipelines
 {
 	/// <summary>
-	/// A data pipeline (a set of multiple data processors), or the builder for the pipeline.
+	///     A data pipeline (a set of multiple data processors), or the builder for the pipeline.
 	/// </summary>
 	public interface IDataPipelineOrBuilder
 	{

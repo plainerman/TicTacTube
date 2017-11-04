@@ -1,7 +1,7 @@
-﻿using log4net;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using log4net;
 using TicTacTubeCore.Pipelines;
 using TicTacTubeCore.Schedulers.Events;
 using TicTacTubeCore.Sources.Files;

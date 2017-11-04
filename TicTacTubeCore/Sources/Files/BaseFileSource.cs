@@ -77,13 +77,11 @@ namespace TicTacTubeCore.Sources.Files
 		/// <inheritdoc />
 		public void BeginExecute()
 		{
-
 		}
 
 		/// <inheritdoc />
 		public void EndExecute()
 		{
-
 		}
 
 		/// <summary>

@@ -33,17 +33,17 @@ namespace TicTacTubeCore.Sources.Files
 		string Path { get; }
 
 		/// <summary>
-		/// This method will be called before executing this source for the first time.
+		///     This method will be called before executing this source for the first time.
 		/// </summary>
 		void Init();
 
 		/// <summary>
-		/// This method will be called before executing a data processor.
+		///     This method will be called before executing a data processor.
 		/// </summary>
 		void BeginExecute();
 
 		/// <summary>
-		/// This method will be called after executing a data processor.
+		///     This method will be called after executing a data processor.
 		/// </summary>
 		void EndExecute();
 	}

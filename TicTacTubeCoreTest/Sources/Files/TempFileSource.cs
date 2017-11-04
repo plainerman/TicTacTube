@@ -10,7 +10,8 @@ namespace TicTacTubeCoreTest.Sources.Files
 		private static readonly ILog Log = LogManager.GetLogger(typeof(TempFileSource));
 
 		public TempFileSource() : base(SystemPath.GetTempFileName())
-		{ }
+		{
+		}
 
 		~TempFileSource()
 		{
@@ -20,7 +21,8 @@ namespace TicTacTubeCoreTest.Sources.Files
 			}
 			catch (Exception)
 			{
-				Log.Warn($"Could not delete temporary file source {FileInfo.FullName} in directory {FileInfo.Directory}. - Maybe clean it yourself? Tests work nonetheless.");
+				Log.Warn(
+					$"Could not delete temporary file source {FileInfo.FullName} in directory {FileInfo.Directory}. - Maybe clean it yourself? Tests work nonetheless.");
 			}
 		}
 	}

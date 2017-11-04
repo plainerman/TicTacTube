@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using TicTacTubeCore.Processors;
 using TicTacTubeCore.Processors.Definitions;
 
 namespace TicTacTubeCore.Pipelines

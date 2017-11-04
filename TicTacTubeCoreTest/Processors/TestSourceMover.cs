@@ -1,6 +1,5 @@
 ﻿using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TicTacTubeCore.Processors;
 using TicTacTubeCore.Processors.Filesystem;
 using TicTacTubeCoreTest.Sources.Files;
 
@@ -13,7 +12,7 @@ namespace TicTacTubeCoreTest.Processors
 		public void TestMoveKeepFileName()
 		{
 			var scheduler = PrepareMove(out var source, out var sourceSize, out var destinatioPath);
-			var destinationFile = Path.Combine(destinatioPath, source.FileInfo.Name);
+			string destinationFile = Path.Combine(destinatioPath, source.FileInfo.Name);
 
 			scheduler.Builder.Append(new SourceMover(destinatioPath, true));
 
@@ -24,7 +23,7 @@ namespace TicTacTubeCoreTest.Processors
 		public void TestMove()
 		{
 			var scheduler = PrepareMove(out var source, out var sourceSize, out var destinatioPath);
-			var destinationFile = Path.Combine(destinatioPath, "newFile");
+			string destinationFile = Path.Combine(destinatioPath, "newFile");
 
 			scheduler.Builder.Append(new SourceMover(destinationFile));
 

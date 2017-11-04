@@ -21,13 +21,14 @@ namespace TicTacTubeCore.Schedulers
 		ReadOnlyCollection<IDataPipelineOrBuilder> Pipelines { get; }
 
 		/// <summary>
-		///     An event that is called whenever a lifecycle event has been called (e.g. start, pipelineOrBuilder executed, stopped ...)
+		///     An event that is called whenever a lifecycle event has been called (e.g. start, pipelineOrBuilder executed, stopped
+		///     ...)
 		/// </summary>
 		event EventHandler<SchedulerLifeCycleEventArgs> LifeCycleEvent;
 
 		/// <summary>
-		///     Add a new pipelineOrBuilder to the scheduler. This can either be the pipelineOrBuilder itself 
-		///		or a builder for a pipelineOrBuilder.
+		///     Add a new pipelineOrBuilder to the scheduler. This can either be the pipelineOrBuilder itself
+		///     or a builder for a pipelineOrBuilder.
 		/// </summary>
 		/// <param name="pipeline">The pipelineOrBuilder that will be added.</param>
 		/// <returns>The added data pipelineOrBuilder.</returns>

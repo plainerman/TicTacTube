@@ -1,5 +1,4 @@
-﻿using System.Reflection.Metadata.Ecma335;
-using TicTacTubeCore.Sources.Files.External;
+﻿using TicTacTubeCore.Sources.Files.External;
 
 namespace TicTacTubeCore.Sources.Files
 {
@@ -22,7 +21,7 @@ namespace TicTacTubeCore.Sources.Files
 		}
 
 		/// <summary>
-		/// Automatically create a new file source from a given string (i.e. the path to the file).
+		///     Automatically create a new file source from a given string (i.e. the path to the file).
 		/// </summary>
 		/// <param name="path">The absolute or relative filepath. This may not be <c>null</c> or empty.</param>
 		public static implicit operator FileSource(string path)

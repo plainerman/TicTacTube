@@ -1,9 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TicTacTubeCore.Pipelines;
 using TicTacTubeCore.Pipelines.Exceptions;
-using TicTacTubeCore.Sources.Files;
 using TicTacTubeCoreTest.Processors;
-using TicTacTubeCoreTest.Sources.Files;
 
 namespace TicTacTubeCoreTest.Pipelines
 {

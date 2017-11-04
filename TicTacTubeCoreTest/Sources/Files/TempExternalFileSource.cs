@@ -13,7 +13,7 @@ namespace TicTacTubeCoreTest.Sources.Files
 		}
 
 		/// <summary>
-		/// This method returns a full path (i.e. a file). This file does not exist yet and can be created. 
+		///     This method returns a full path (i.e. a file). This file does not exist yet and can be created.
 		/// </summary>
 		/// <param name="path">The path to the folder where the file should be created.</param>
 		/// <returns>The full path to a possible file.</returns>
@@ -26,11 +26,11 @@ namespace TicTacTubeCoreTest.Sources.Files
 				return Path.Combine(path, baseFilename);
 			}
 
-			var index = 0;
+			int index = 0;
 
 			while (true)
 			{
-				var fileName = Path.Combine(path, $"{baseFilename}-{index}");
+				string fileName = Path.Combine(path, $"{baseFilename}-{index}");
 
 				if (!File.Exists(fileName))
 				{

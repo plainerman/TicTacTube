@@ -5,16 +5,16 @@ using TicTacTubeCore.Sources.Files;
 namespace TicTacTubeCore.Processors.Filesystem
 {
 	/// <summary>
-	/// A data processor that can duplicate a given source.s
+	///     A data processor that can duplicate a given source.s
 	/// </summary>
 	public class SourceCloner : BaseDataProcessor
 	{
 		private readonly string _destinationPath;
-		private readonly bool _workOnClone;
 		private readonly bool _keepName;
+		private readonly bool _workOnClone;
 
 		/// <summary>
-		/// Create a source cloner that clones a source to a complete path (also rename the file).
+		///     Create a source cloner that clones a source to a complete path (also rename the file).
 		/// </summary>
 		/// <param name="destinationPath">The complete new path (inclusive file name).</param>
 		/// <param name="workOnClone">Determine whether work should on continue on the new source or not.</param>
@@ -26,7 +26,7 @@ namespace TicTacTubeCore.Processors.Filesystem
 		}
 
 		/// <summary>
-		/// Create a source cloner that clones a source to another directory and keeps the name. 
+		///     Create a source cloner that clones a source to another directory and keeps the name.
 		/// </summary>
 		/// <param name="destinationFolder">The folder where the source will be moved to.</param>
 		/// <param name="keepName">Just a field to indicate a different constructor.</param>
@@ -41,9 +41,9 @@ namespace TicTacTubeCore.Processors.Filesystem
 		/// <inheritdoc />
 		public override IFileSource Execute(IFileSource fileSoure)
 		{
-			var dest = _keepName ? Path.Combine(_destinationPath, fileSoure.FileInfo.Name) : _destinationPath;
+			string dest = _keepName ? Path.Combine(_destinationPath, fileSoure.FileInfo.Name) : _destinationPath;
 
-			var directory = Path.GetDirectoryName(dest);
+			string directory = Path.GetDirectoryName(dest);
 			if (!Directory.Exists(directory))
 			{
 				Directory.CreateDirectory(directory);

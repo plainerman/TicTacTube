@@ -1,10 +1,9 @@
-﻿using log4net;
-using log4net.Config;
-using System;
+﻿using System;
 using System.IO;
 using System.Reflection;
+using log4net;
+using log4net.Config;
 using TicTacTubeCore.Pipelines;
-using TicTacTubeCore.Processors;
 using TicTacTubeCore.Processors.Filesystem;
 using TicTacTubeCore.Schedulers;
 using TicTacTubeCore.Sources.Files;

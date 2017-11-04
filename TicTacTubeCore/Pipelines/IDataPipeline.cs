@@ -8,7 +8,7 @@ namespace TicTacTubeCore.Pipelines
 	public interface IDataPipeline : IDataPipelineOrBuilder
 	{
 		/// <summary>
-		///		Actually execute the complete pipeline
+		///     Actually execute the complete pipeline
 		/// </summary>
 		/// <param name="fileSource">The filesource this pipeline is executed on.</param>
 		void Execute(IFileSource fileSource);

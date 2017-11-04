@@ -1,11 +1,11 @@
 ﻿using System.IO;
-using TicTacTubeCore.Sources.Files;
 using TicTacTubeCore.Processors.Definitions;
+using TicTacTubeCore.Sources.Files;
 
 namespace TicTacTubeCore.Processors.Filesystem
 {
 	/// <summary>
-	/// A data processer that can move a file source to another path.
+	///     A data processer that can move a file source to another path.
 	/// </summary>
 	public class SourceMover : BaseDataProcessor
 	{
@@ -13,7 +13,7 @@ namespace TicTacTubeCore.Processors.Filesystem
 		private readonly bool _keepName;
 
 		/// <summary>
-		/// Create a source mover that moves a source to a complete path (also rename the file).
+		///     Create a source mover that moves a source to a complete path (also rename the file).
 		/// </summary>
 		/// <param name="destinationPath">The complete new path (inclusive file name).</param>
 		public SourceMover(string destinationPath)
@@ -23,7 +23,7 @@ namespace TicTacTubeCore.Processors.Filesystem
 		}
 
 		/// <summary>
-		/// Create a source mover that moves a source to another directory and keeps the name. 
+		///     Create a source mover that moves a source to another directory and keeps the name.
 		/// </summary>
 		/// <param name="destinationFolder">The folder where the source will be moved to.</param>
 		/// <param name="keepName">Just a field to indicate a different constructor.</param>
@@ -36,9 +36,9 @@ namespace TicTacTubeCore.Processors.Filesystem
 		/// <inheritdoc />
 		public override IFileSource Execute(IFileSource fileSoure)
 		{
-			var dest = _keepName ? Path.Combine(_destinationPath, fileSoure.FileInfo.Name) : _destinationPath;
+			string dest = _keepName ? Path.Combine(_destinationPath, fileSoure.FileInfo.Name) : _destinationPath;
 
-			var directory = Path.GetDirectoryName(dest);
+			string directory = Path.GetDirectoryName(dest);
 			if (!Directory.Exists(directory))
 			{
 				Directory.CreateDirectory(directory);

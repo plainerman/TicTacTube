@@ -1,8 +1,7 @@
-﻿using log4net;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using TicTacTubeCore.Processors;
+using log4net;
 using TicTacTubeCore.Processors.Definitions;
 using TicTacTubeCore.Sources.Files;
 

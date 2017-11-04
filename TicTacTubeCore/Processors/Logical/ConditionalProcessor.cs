@@ -5,7 +5,7 @@ using TicTacTubeCore.Sources.Files;
 namespace TicTacTubeCore.Processors.Logical
 {
 	/// <summary>
-	/// A dataprocessor that can decide between two data processors to execute from.
+	///     A dataprocessor that can decide between two data processors to execute from.
 	/// </summary>
 	public class ConditionalProcessor : BaseDataProcessor
 	{
@@ -14,13 +14,11 @@ namespace TicTacTubeCore.Processors.Logical
 		private readonly IDataProcessorOrBuilder _dataProcessorB;
 
 		/// <summary>
-		/// Create a new conditional processor with a given condition.
-		/// 
-		/// If the condition is <c>true</c>, <paramref name="dataProcessorA"/> will be used.
-		/// If the condition is <c>false</c>, <paramref name="dataProcessorB"/> will be used.
-		/// 
-		/// One of the two data processors may be <c>null</c> (but not both). If a given data processor is null, it will be not be executed.
-		/// 
+		///     Create a new conditional processor with a given condition.
+		///     If the condition is <c>true</c>, <paramref name="dataProcessorA" /> will be used.
+		///     If the condition is <c>false</c>, <paramref name="dataProcessorB" /> will be used.
+		///     One of the two data processors may be <c>null</c> (but not both). If a given data processor is null, it will be not
+		///     be executed.
 		/// </summary>
 		/// <param name="condition">The condition that is used to evaluate. May not be <c>null</c>.</param>
 		/// <param name="dataProcessorA">The data processor that is executed when the condition evaluates to <c>true</c>.</param>
@@ -39,23 +37,25 @@ namespace TicTacTubeCore.Processors.Logical
 		}
 
 		/// <summary>
-		/// Create a new conditional processor with a given condition.
-		/// 
-		/// If the condition is <c>true</c>, <paramref name="dataProcessorA"/> will be used and executed - otherwise nothing will be executed.
-		/// 		/// 
+		///     Create a new conditional processor with a given condition.
+		///     If the condition is <c>true</c>, <paramref name="dataProcessorA" /> will be used and executed - otherwise nothing
+		///     will be executed.
+		///     ///
 		/// </summary>
 		/// <param name="condition">The condition that is used to evaluate. May not be <c>null</c>.</param>
-		/// <param name="dataProcessorA">The data processor that is executed when the condition evaluates to <c>true</c>. May not be <c>null</c>.</param>
+		/// <param name="dataProcessorA">
+		///     The data processor that is executed when the condition evaluates to <c>true</c>. May not
+		///     be <c>null</c>.
+		/// </param>
 		public ConditionalProcessor(Func<IFileSource, bool> condition, IDataProcessorOrBuilder dataProcessorA) : this(
 			condition, dataProcessorA, null)
 		{
-
 		}
 
 		/// <inheritdoc />
 		public override IFileSource Execute(IFileSource fileSoure)
 		{
-			var eval = _condition(fileSoure);
+			bool eval = _condition(fileSoure);
 			if (eval)
 			{
 				if (_dataProcessorA != null)
