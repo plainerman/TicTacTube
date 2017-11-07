@@ -25,9 +25,7 @@ namespace TicTacTubeCore.Sources.Files
 		protected BaseFileSource(string filePath)
 		{
 			if (string.IsNullOrWhiteSpace(filePath))
-			{
 				throw new ArgumentException("Value cannot be null or whitespace.", nameof(filePath));
-			}
 
 			AssignFilePath(filePath);
 		}
@@ -40,17 +38,13 @@ namespace TicTacTubeCore.Sources.Files
 		protected BaseFileSource(IExternalFileSource externalSource, string localPath)
 		{
 			if (string.IsNullOrWhiteSpace(localPath))
-			{
 				throw new ArgumentException("Value cannot be null or whitespace.", nameof(localPath));
-			}
 
 			_externalSource = externalSource ?? throw new ArgumentNullException(nameof(externalSource));
 			_filePath = localPath;
 
 			if (!_externalSource.LazyLoading)
-			{
 				FetchExternalSource(true);
-			}
 		}
 
 		/// <inheritdoc />
@@ -104,9 +98,7 @@ namespace TicTacTubeCore.Sources.Files
 		protected virtual void FetchExternalSource(bool async)
 		{
 			if (_externalSource == null)
-			{
 				return;
-			}
 
 			if (!Directory.Exists(_filePath))
 			{
@@ -122,7 +114,7 @@ namespace TicTacTubeCore.Sources.Files
 			}
 			else
 			{
-				string path = _externalSource.FetchFile(_filePath);
+				var path = _externalSource.FetchFile(_filePath);
 
 				AssignFilePath(path);
 

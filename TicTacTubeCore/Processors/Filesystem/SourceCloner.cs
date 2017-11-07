@@ -45,9 +45,7 @@ namespace TicTacTubeCore.Processors.Filesystem
 
 			string directory = Path.GetDirectoryName(dest);
 			if (!Directory.Exists(directory))
-			{
 				Directory.CreateDirectory(directory);
-			}
 
 			fileSoure.FileInfo.CopyTo(dest);
 

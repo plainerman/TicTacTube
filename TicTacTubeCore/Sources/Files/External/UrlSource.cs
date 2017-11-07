@@ -11,11 +11,6 @@ namespace TicTacTubeCore.Sources.Files.External
 	public class UrlSource : BaseExternalFileSource
 	{
 		/// <summary>
-		///     The url from which the file will be fetched.
-		/// </summary>
-		public string Url { get; }
-
-		/// <summary>
 		///     Create a new <see cref="IExternalFileSource" /> that will be fetched from an url and define whether it is lazy
 		///     loaded or not.
 		/// </summary>
@@ -24,12 +19,15 @@ namespace TicTacTubeCore.Sources.Files.External
 		public UrlSource(string url, bool lazyLoading = false) : base(lazyLoading)
 		{
 			if (string.IsNullOrWhiteSpace(url))
-			{
 				throw new ArgumentException("Value cannot be null or whitespace", nameof(url));
-			}
 
 			Url = url;
 		}
+
+		/// <summary>
+		///     The url from which the file will be fetched.
+		/// </summary>
+		public string Url { get; }
 
 		/// <summary>
 		///     This method returns the preferred filepath based on the given <see ref="destinationPath" /> and the default
@@ -43,8 +41,8 @@ namespace TicTacTubeCore.Sources.Files.External
 		{
 			client.OpenRead(Url);
 
-			string headerContentDisposition = client.ResponseHeaders["content-disposition"];
-			string filename = new ContentDisposition(headerContentDisposition).FileName;
+			var headerContentDisposition = client.ResponseHeaders["content-disposition"];
+			var filename = new ContentDisposition(headerContentDisposition).FileName;
 
 			filename = GetAllowedFileName(destinationPath, filename);
 

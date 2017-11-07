@@ -98,28 +98,22 @@ namespace TicTacTubeCore.Sources.Files.External
 		protected virtual string GetAllowedFileName(string destinationPath, string desiredFileName)
 		{
 			if (string.IsNullOrWhiteSpace(desiredFileName))
-			{
 				desiredFileName = "download.dat";
-			}
 
-			string path = Path.Combine(destinationPath, desiredFileName);
+			var path = Path.Combine(destinationPath, desiredFileName);
 
 			if (!File.Exists(path))
-			{
 				return desiredFileName;
-			}
 
-			int index = 1;
+			var index = 1;
 			while (true)
 			{
-				string currentDesiredFilename =
+				var currentDesiredFilename =
 					$"{Path.GetFileNameWithoutExtension(desiredFileName)}_{index}{Path.GetExtension(desiredFileName)}";
 				path = Path.Combine(destinationPath, currentDesiredFilename);
 
 				if (!File.Exists(path))
-				{
 					return currentDesiredFilename;
-				}
 
 				index++;
 			}

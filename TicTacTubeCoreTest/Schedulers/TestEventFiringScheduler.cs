@@ -13,7 +13,7 @@ namespace TicTacTubeCoreTest.Schedulers
 		[TestMethod]
 		public void TestExecute()
 		{
-			int executeCounter = 0;
+			var executeCounter = 0;
 
 			var eventFiringScheduler = new EventFiringScheduler();
 			eventFiringScheduler.LifeCycleEvent += Executed;
@@ -39,9 +39,7 @@ namespace TicTacTubeCoreTest.Schedulers
 			void Executed(object sender, SchedulerLifeCycleEventArgs args)
 			{
 				if (args.EventType == SchedulerLifeCycleEventType.Execute)
-				{
 					executeCounter++;
-				}
 			}
 
 			void EmptyFire(object sender, EventArgs args)

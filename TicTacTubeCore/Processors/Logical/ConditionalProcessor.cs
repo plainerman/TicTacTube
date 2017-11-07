@@ -27,9 +27,7 @@ namespace TicTacTubeCore.Processors.Logical
 			IDataProcessorOrBuilder dataProcessorB)
 		{
 			if (dataProcessorA == null && dataProcessorB == null)
-			{
 				throw new ArgumentNullException(nameof(dataProcessorA), "Both parameters may not be null.");
-			}
 
 			_condition = condition ?? throw new ArgumentNullException(nameof(condition));
 			_dataProcessorA = dataProcessorA;
@@ -58,16 +56,12 @@ namespace TicTacTubeCore.Processors.Logical
 			if (eval)
 			{
 				if (_dataProcessorA != null)
-				{
 					return _dataProcessorA.Build().Execute(fileSoure);
-				}
 			}
 			else
 			{
 				if (_dataProcessorB != null)
-				{
 					return _dataProcessorB.Build().Execute(fileSoure);
-				}
 			}
 
 			return fileSoure;
