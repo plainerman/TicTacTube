@@ -13,7 +13,7 @@
     <Copyright>MIT</Copyright>
     <RepositoryUrl>https://github.com/plainerman/TicTacTube</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
-    <Version>0.1.0</Version>
+    <Version>0.1.1</Version>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <SignAssembly>false</SignAssembly>
     <AssemblyVersion>0.1.1.0</AssemblyVersion>
