@@ -18,7 +18,6 @@ namespace TicTacTubeCoreTest.Sources.Files
 		{
 		}
 
-
 		~TempFileSource()
 		{
 			try

@@ -33,13 +33,9 @@ namespace TicTacTubeCore.Schedulers
 		public virtual void Fire(IFileSource fileSource)
 		{
 			if (IsRunning)
-			{
 				Execute(fileSource);
-			}
 			else
-			{
 				throw new SchedulerStateException("The scheduler is not running.");
-			}
 		}
 
 		/// <summary>

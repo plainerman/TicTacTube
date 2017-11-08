@@ -22,9 +22,7 @@ namespace TicTacTubeCoreTest.Sources.Files
 			const string baseFilename = ".tictactemp";
 
 			if (!File.Exists(Path.Combine(path, baseFilename)))
-			{
 				return Path.Combine(path, baseFilename);
-			}
 
 			int index = 0;
 
@@ -33,9 +31,7 @@ namespace TicTacTubeCoreTest.Sources.Files
 				string fileName = Path.Combine(path, $"{baseFilename}-{index}");
 
 				if (!File.Exists(fileName))
-				{
 					return fileName;
-				}
 
 				index++;
 			}
