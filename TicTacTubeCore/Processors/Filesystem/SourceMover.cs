@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using TicTacTubeCore.Processors.Definitions;
 using TicTacTubeCore.Sources.Files;
 
@@ -9,6 +10,7 @@ namespace TicTacTubeCore.Processors.Filesystem
 	/// </summary>
 	public class SourceMover : BaseDataProcessor
 	{
+		private readonly Func<IFileSource, string> _processingFunction;
 		private readonly string _destinationPath;
 		private readonly bool _keepName;
 
@@ -33,10 +35,31 @@ namespace TicTacTubeCore.Processors.Filesystem
 			_keepName = true;
 		}
 
+		/// <summary>
+		///		Create a source mover that moves a source to another directory. The full
+		///		path to the new file is created by the processing function.
+		/// </summary>
+		/// <param name="processingFunction">The processing function returns for a given <see cref="IFileSource"/>
+		///		a full path to the new file.
+		/// </param>
+		public SourceMover(Func<IFileSource, string> processingFunction)
+		{
+			_processingFunction = processingFunction ?? throw new ArgumentNullException(nameof(processingFunction));
+		}
+
 		/// <inheritdoc />
 		public override IFileSource Execute(IFileSource fileSoure)
 		{
-			string dest = _keepName ? Path.Combine(_destinationPath, fileSoure.FileInfo.Name) : _destinationPath;
+			string dest = _destinationPath;
+
+			if (_processingFunction != null)
+			{
+				dest = _processingFunction(fileSoure);
+			}
+			else if (_keepName)
+			{
+				dest = Path.Combine(_destinationPath, fileSoure.FileInfo.Name);
+			}
 
 			string directory = Path.GetDirectoryName(dest);
 			if (!Directory.Exists(directory))
