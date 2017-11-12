@@ -1,10 +1,13 @@
-﻿using System;
+﻿using log4net;
+using log4net.Config;
+using System;
 using System.IO;
 using System.Reflection;
-using log4net;
-using log4net.Config;
 using TicTacTubeCore.Pipelines;
 using TicTacTubeCore.Processors.Filesystem;
+using TicTacTubeCore.Processors.Media;
+using TicTacTubeCore.Processors.Media.Songs;
+using TicTacTubeCore.Processors.Songs;
 using TicTacTubeCore.Schedulers;
 using TicTacTubeCore.Sources.Files;
 
@@ -19,6 +22,8 @@ namespace TicTacTubeDemo
 
 			var scheduler = new EventFiringScheduler();
 			var pipelineBuilder = new DataPipelineBuilder();
+
+			new MediaRenamer<SongInfo>("This is my pattern {Title} {Artists} {Var2}", new SongInfoExtractor());
 
 			//var source = new FileSource(@"C:\Marshmello - You And Me (Official Music Video).mp3");
 			/*var source =
