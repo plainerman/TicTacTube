@@ -38,7 +38,7 @@ namespace TicTacTubeCoreTest.Processors.Filesystem
 
 			scheduler.Execute(source);
 
-			Assert.AreEqual(true, File.Exists(destinationFile));
+			Assert.IsTrue(File.Exists(destinationFile));
 			Assert.AreEqual(sourceSize, new FileInfo(destinationFile).Length);
 
 			Directory.Delete(destinatioPath, true);

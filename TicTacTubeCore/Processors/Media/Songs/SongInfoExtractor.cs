@@ -1,5 +1,4 @@
-﻿using TicTacTubeCore.Processors.Songs;
-using TicTacTubeCore.Sources.Files;
+﻿using TicTacTubeCore.Sources.Files;
 
 namespace TicTacTubeCore.Processors.Media.Songs
 {

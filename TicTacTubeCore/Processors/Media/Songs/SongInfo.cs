@@ -1,6 +1,4 @@
-﻿using TicTacTubeCore.Processors.Media;
-
-namespace TicTacTubeCore.Processors.Songs
+﻿namespace TicTacTubeCore.Processors.Media.Songs
 {
 	/// <summary>
 	/// Info for a given song.

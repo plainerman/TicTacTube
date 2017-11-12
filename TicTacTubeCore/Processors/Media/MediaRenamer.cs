@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Linq;
-using System.Reflection;
-using System.Text.RegularExpressions;
 using TicTacTubeCore.Processors.Filesystem;
 using TicTacTubeCore.Sources.Files;
-using TicTacTubeCore.Utils.Extensions;
 
 namespace TicTacTubeCore.Processors.Media
 {
@@ -13,57 +9,47 @@ namespace TicTacTubeCore.Processors.Media
 	/// </summary>
 	public class MediaRenamer<T> : SourceRenamer where T : IMediaInfo
 	{
-		private static readonly Regex CurlyBracketsMatcher = new Regex("{(.*?)}");
-
+		/// <summary>
+		/// The media info extractor that is used to correctly extract the media info.
+		/// </summary>
 		protected readonly IMediaInfoExtractor<T> MediaInfoExtractor;
+		/// <summary>
+		/// The name generator that generates the names for a given <see cref="IMediaInfo"/>.
+		/// </summary>
+		protected readonly IMediaNameGenerator<T> NameGenerator;
 
-		protected readonly string Pattern;
-
-		protected string[] VariableNames;
-
-		public MediaRenamer(string pattern, IMediaInfoExtractor<T> extractor)
+		/// <summary>
+		/// Create a new media renamer that uses a <see cref="IMediaNameGenerator{T}"/> to generate a filename (without extension)
+		/// based on the media info extracted by the <see cref="IMediaInfoExtractor{T}"/>.
+		/// </summary>
+		/// <param name="nameGenerator">The name generator that generates the new file names.</param>
+		/// <param name="extractor">The extractor that extracts a media info from the file source.</param>
+		public MediaRenamer(IMediaNameGenerator<T> nameGenerator, IMediaInfoExtractor<T> extractor)
 		{
-			if (pattern == null) throw new ArgumentNullException(nameof(pattern));
-
+			NameGenerator = nameGenerator ?? throw new ArgumentNullException(nameof(nameGenerator));
 			MediaInfoExtractor = extractor ?? throw new ArgumentNullException(nameof(extractor));
 			NameProducer = ProduceName;
-
-			Pattern = PreparePattern(pattern);
 		}
 
-		protected string PreparePattern(string pattern)
+		/// <summary>
+		/// Create a new media renamer that uses a <see cref="IMediaNameGenerator{T}"/> to generate a filename (without extension)
+		/// based on the media info extracted by the <see cref="IMediaInfoExtractor{T}"/>.
+		/// 
+		/// A <see cref="PatternMediaNameGenerator{T}"/> is used as <see cref="IMediaNameGenerator{T}"/>.
+		/// </summary>
+		/// <param name="pattern">The pattern that is used to generate filenames. See <see cref="PatternMediaNameGenerator{T}"/> for more information..</param>
+		/// <param name="extractor">The extractor that extracts a media info from the file source.</param>
+		public MediaRenamer(string pattern, IMediaInfoExtractor<T> extractor) : this(
+			new PatternMediaNameGenerator<T>(pattern), extractor)
 		{
-			int openCount = pattern.Count(f => f == '{');
-			int closeCount = pattern.Count(f => f == '}');
-
-			if (openCount > closeCount) throw new ArgumentException("Bad formatting - } missing.", nameof(pattern));
-			if (openCount < closeCount) throw new ArgumentException("Bad formatting - { missing.", nameof(pattern));
-
-			var matches = CurlyBracketsMatcher.Matches(pattern);
-			VariableNames = new string[matches.Count];
-
-			int offset = 0;
-
-			for (int i = 0; i < matches.Count; i++)
-			{
-				VariableNames[i] = matches[i].Groups[1].Value;
-				if (typeof(T).GetField(VariableNames[i], BindingFlags.Public | BindingFlags.Instance) == null)
-					throw new FormatException($"Unknown parameter \"{VariableNames[i]}\"");
-
-				string replace = i.ToString();
-				pattern = pattern.ReplaceFirst(VariableNames[i], replace, matches[i].Index + offset);
-
-				offset -= VariableNames[i].Length - replace.Length;
-			}
-
-			return pattern;
 		}
 
-		protected string ProduceName(IFileSource source) => ParsePattern(MediaInfoExtractor.Extract(source));
-
-		protected virtual string ParsePattern(T info)
-		{
-			throw new NotImplementedException();
-		}
+		/// <summary>
+		/// This method will be assigned as name producer to the renamer. 
+		/// Per default, it simple uses the media info extractor and name generator.
+		/// </summary>
+		/// <param name="source">The file source that will be parsed.</param>
+		/// <returns>The new filename for the file source (with the file extension).</returns>
+		protected virtual string ProduceName(IFileSource source) => NameGenerator.Parse(MediaInfoExtractor.Extract(source)) + source.FileExtension;
 	}
 }
