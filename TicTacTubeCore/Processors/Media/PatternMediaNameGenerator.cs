@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -11,7 +12,7 @@ namespace TicTacTubeCore.Processors.Media
 	/// <summary>
 	/// A <see cref="IMediaNameGenerator{T}"/> that works by using patterns and the corresponding file names.
 	/// </summary>
-	public class PatternMediaNameGenerator<T> : IMediaNameGenerator<T> where T: IMediaInfo
+	public class PatternMediaNameGenerator<T> : IMediaNameGenerator<T> where T : IMediaInfo
 	{
 		/// <summary>
 		/// A simple regex matcher is used to find curly brackets with text inside them.
@@ -31,8 +32,8 @@ namespace TicTacTubeCore.Processors.Media
 		/// <summary>
 		/// The bracket that is used to begin a variable reference in a pattern.
 		/// </summary>
-		public const char OpenBracket ='{';
-		
+		public const char OpenBracket = '{';
+
 		/// <summary>
 		/// The bracket that is used to end a variable reference in a pattern.
 		/// </summary>
@@ -57,12 +58,21 @@ namespace TicTacTubeCore.Processors.Media
 
 			for (int i = 0; i < VariableNames.Length; i++)
 			{
-				object current = typeof(T).GetField(VariableNames[i], BindingFlags.Public | BindingFlags.Instance).GetValue(info);
+				var current = typeof(T).GetField(VariableNames[i], BindingFlags.Public | BindingFlags.Instance).GetValue(info);
 
-				name = name.Replace($"{OpenBracket}{i}{CloseBracket}", current.ToString());
+				string currentAsString;
+				if (current is Array)
+				{
+					currentAsString = string.Join(", ", ((IEnumerable)current).Cast<object>().Select(o => o.ToString()));
+				}
+				else
+				{
+					currentAsString = current.ToString();
+				}
+				//= current is Array ? string.Join(", ", current) : current.ToString();
+
+				name = name.Replace($"{OpenBracket}{i}{CloseBracket}", currentAsString);
 			}
-
-			// TODO check if array
 
 			return name;
 		}
