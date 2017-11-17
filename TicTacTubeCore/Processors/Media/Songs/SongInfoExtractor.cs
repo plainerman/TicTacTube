@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using TicTacTubeCore.Sources.Files;
@@ -22,7 +21,7 @@ namespace TicTacTubeCore.Processors.Media.Songs
 		protected string[] ArtistSeperator = { @"\svs.?\s", @"\s&\s", @",\s", @"\swith\s" };
 		protected string[] FeaturingEnd = { @"\)", FeaturingRegex };
 
-		protected string[] PostProcessing = { @"\(\s*\)", FeaturingRegex };
+		protected string[] Postprocessors = { FeaturingRegex, @"\(\s*\)" };
 
 		/// <summary>
 		/// Determine whether the title should be used as album, if no album could be found.
@@ -37,8 +36,11 @@ namespace TicTacTubeCore.Processors.Media.Songs
 			var songInfo = ExtractFromFileName(fileName);
 
 			//TODO: implement
-			throw new System.NotImplementedException();
+			//throw new System.NotImplementedException();
 			//return songInfo
+			//TODO: get from file (bitrate)
+
+			return songInfo;
 		}
 
 		protected virtual SongInfo ExtractFromFileName(string fileName)
@@ -72,18 +74,25 @@ namespace TicTacTubeCore.Processors.Media.Songs
 			// split was successful
 			if (split != null)
 			{
-				var a1 = SearchForArtists(split[0], true);
-				var a2 = SearchForArtists(split[1], false);
+				var artists = new List<string>();
+				artists.AddRange(SearchForArtists(ref split[0], true));
+				artists.AddRange(SearchForArtists(ref split[1], false));
+
+				songInfo.Artists = artists.ToArray();
+
+				songInfo.Title = Postprocessors.Aggregate(split[1], (current, postprocessor) => Regex.Replace(current, postprocessor, "")).Trim();
 			}
+			//TODO: else - throw exception?
 
 			return songInfo;
 		}
+		//TODO: organize and document
 
-		protected virtual IEnumerable<string> SearchForArtists(string input, bool artistsOnly)
+		protected virtual IEnumerable<string> SearchForArtists(ref string input, bool artistsOnly)
 		{
 			var artists = new List<string>();
 
-			var featuringParts = FindFeaturingParts(input, artistsOnly);
+			var featuringParts = FindFeaturingParts(ref input, artistsOnly);
 
 			foreach (string featuringPart in featuringParts)
 			{
@@ -94,7 +103,7 @@ namespace TicTacTubeCore.Processors.Media.Songs
 		}
 
 		// search the string and find all new start indexes for featuring
-		private IEnumerable<string> FindFeaturingParts(string input, bool artistsOnly)
+		protected virtual IEnumerable<string> FindFeaturingParts(ref string input, bool artistsOnly)
 		{
 			// the indexes where a new autor line begins or ends
 			var splitStartIndexes = new List<int>();
@@ -111,8 +120,16 @@ namespace TicTacTubeCore.Processors.Media.Songs
 			// do the same for the end, although, we possibly do not need all ends
 			StoreAllMatchIndexes(input, FeaturingEnd, splitEndIndexes, false);
 
-			List<string> featuringParts = new List<string>();
-			//TODO: beautify
+			var featuringParts = SplitFeaturing(ref input, splitStartIndexes, splitEndIndexes);
+
+			return featuringParts;
+		}
+
+		private static IEnumerable<string> SplitFeaturing(ref string input, IEnumerable<int> splitStartIndexes, IReadOnlyCollection<int> splitEndIndexes)
+		{
+			var splits = new List<RegexUtils.RegexSplit>();
+
+			var featuringParts = new List<string>();
 			foreach (int splitStart in splitStartIndexes)
 			{
 				int? end = FindClosest(splitStart, splitEndIndexes);
@@ -129,6 +146,8 @@ namespace TicTacTubeCore.Processors.Media.Songs
 				}
 
 				featuringParts.Add(input.SubstringByIndex(splitStart, splitEnd));
+				//TODO: validate off by one error
+				splits.Add(new RegexUtils.RegexSplit(splitStart, splitEnd - splitStart));
 
 				if (toBreak)
 				{
@@ -136,10 +155,12 @@ namespace TicTacTubeCore.Processors.Media.Songs
 				}
 			}
 
+			input = RegexUtils.StringRemove(input, splits);
+
 			return featuringParts;
 		}
 
-		private void StoreAllMatchIndexes(string input, string[] regexes, List<int> indexes, bool addMatchOffset)
+		private static void StoreAllMatchIndexes(string input, IEnumerable<string> regexes, List<int> indexes, bool addMatchOffset)
 		{
 			foreach (string regex in regexes)
 			{

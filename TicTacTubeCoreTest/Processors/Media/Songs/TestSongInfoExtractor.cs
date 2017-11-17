@@ -1,5 +1,5 @@
-﻿using System.IO;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.IO;
 using TicTacTubeCore.Processors.Media.Songs;
 using TicTacTubeCore.Sources.Files;
 
@@ -11,7 +11,7 @@ namespace TicTacTubeCoreTest.Processors.Media.Songs
 		[DataTestMethod]
 		[DataRow("Selena Gomez, Marshmello - Wolves feat. Test & Test2 feat. Test3, Test4 & Test5", "Wolves", new[] { "Selena Gomez", "Marshmello", "Test", "Test2", "Test3", "Test4", "Test5" })]
 		[DataRow("WE ARE FURY - Waiting (feat. Olivia Lunny)", "Waiting", new[] { "WE ARE FURY", "Olivia Lunny" })]
-		[DataRow("Laura Brehm - Breathe (Last Heroes & Crystal Skies Remix) (Lyric Video)", "Breathe", new[] { "Laura Brehm", "Last Heroes & Crystal Skies" })]
+		[DataRow("Laura Brehm - Breathe (Last Heroes & Crystal Skies Remix) (Lyric Video)", "Breathe (Last Heroes & Crystal Skies Remix)", new[] { "Laura Brehm" })]
 		[DataRow("Rita Ora - Your Song(Official Lyric Video)", "Your Song", new[] { "Rita Ora" })]
 		[DataRow("Rita Ora - Your Song(Official Video)", "Your Song", new[] { "Rita Ora" })]
 		[DataRow("Dua Lipa - New Rules(Official Music Video)", "New Rules", new[] { "Dua Lipa" })]
