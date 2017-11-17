@@ -18,5 +18,14 @@ namespace TicTacTubeCoreTest.Utils.Extensions
 		{
 			Assert.AreEqual(result, baseString.ReplaceFirst(search, replace, startIndex));
 		}
+
+		[DataTestMethod]
+		[DataRow(@"Game over", 0, 1, @"G")]
+		[DataRow(@"Game over", 0, 2, @"Ga")]
+		[DataRow(@"Game over", 1, 3, @"am")]
+		public void TestSubstringByIndex(string baseString, int start, int end, string result)
+		{
+			Assert.AreEqual(result, baseString.SubstringByIndex(start, end));
+		}
 	}
 }

@@ -22,5 +22,17 @@ namespace TicTacTubeCore.Utils.Extensions
 
 			return text.Substring(0, pos) + replace + text.Substring(pos + search.Length);
 		}
+		/// <summary>
+		/// This method returns a substring with a given start (inclusive) and end position (exclusive).
+		/// </summary>
+		/// <param name="text">The string to test.</param>
+		/// <param name="start">The start index.</param>
+		/// <param name="end">The end index.</param>
+		/// <returns>A new substring inclusive start- exclusive endpos.</returns>
+		public static string SubstringByIndex(this string text, int start, int end)
+		{
+
+			return text.Substring(start, Math.Min(text.Length, end) - start);
+		}
 	}
 }

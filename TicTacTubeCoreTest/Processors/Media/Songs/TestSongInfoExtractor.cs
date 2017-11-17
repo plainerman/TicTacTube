@@ -9,7 +9,7 @@ namespace TicTacTubeCoreTest.Processors.Media.Songs
 	public class TestSongInfoExtractor
 	{
 		[DataTestMethod]
-		[DataRow("Selena Gomez, Marshmello - Wolves feat. Test & Test2 feat. Test3", "Wolves", new[] { "Selena Gomez", "Marshmello", "Test", "Test2", "Test3" })]
+		[DataRow("Selena Gomez, Marshmello - Wolves feat. Test & Test2 feat. Test3, Test4 & Test5", "Wolves", new[] { "Selena Gomez", "Marshmello", "Test", "Test2", "Test3", "Test4", "Test5" })]
 		[DataRow("WE ARE FURY - Waiting (feat. Olivia Lunny)", "Waiting", new[] { "WE ARE FURY", "Olivia Lunny" })]
 		[DataRow("Laura Brehm - Breathe (Last Heroes & Crystal Skies Remix) (Lyric Video)", "Breathe", new[] { "Laura Brehm", "Last Heroes & Crystal Skies" })]
 		[DataRow("Rita Ora - Your Song(Official Lyric Video)", "Your Song", new[] { "Rita Ora" })]

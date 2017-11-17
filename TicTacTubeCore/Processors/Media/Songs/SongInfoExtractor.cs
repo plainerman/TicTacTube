@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using TicTacTubeCore.Sources.Files;
+using TicTacTubeCore.Utils;
+using TicTacTubeCore.Utils.Extensions;
 
 namespace TicTacTubeCore.Processors.Media.Songs
 {
@@ -13,14 +15,14 @@ namespace TicTacTubeCore.Processors.Media.Songs
 	{
 		protected const string FeaturingRegex = @"\s?f(ea)?t\.?\s";
 
-		protected readonly string[] Delimiters = { @"\s-\s", "|" };
-		protected readonly string[] Preprocessors = { @"\[.*?\]", @"(?i)\([^)]*video\)" };
+		protected string[] Delimiters = { @"\s-\s", @"\|" };
+		protected string[] Preprocessors = { @"\[.*?\]", @"(?i)\([^)]*video\)" };
 
-		protected readonly string[] FeaturingStart = { FeaturingRegex };
-		protected readonly string[] ArtistSeperator = { @"\svs.?\s", @"\s&\s", @",\s", @"\swith\s" };
-		protected readonly string[] FeaturingEnd = { @"\)" };
+		protected string[] FeaturingStart = { FeaturingRegex };
+		protected string[] ArtistSeperator = { @"\svs.?\s", @"\s&\s", @",\s", @"\swith\s" };
+		protected string[] FeaturingEnd = { @"\)", FeaturingRegex };
 
-		protected readonly string[] PostProcessing = { @"\(\s*\)", FeaturingRegex };
+		protected string[] PostProcessing = { @"\(\s*\)", FeaturingRegex };
 
 		/// <summary>
 		/// Determine whether the title should be used as album, if no album could be found.
@@ -46,7 +48,8 @@ namespace TicTacTubeCore.Processors.Media.Songs
 
 			string[] split = null;
 
-			foreach (var delimiter in Delimiters)
+			// try all delemiters, and always split into two parts (before the first occurence, and after)
+			foreach (string delimiter in Delimiters)
 			{
 				var parts = Regex.Split(fileName, delimiter);
 				if (parts.Length > 1)
@@ -80,6 +83,19 @@ namespace TicTacTubeCore.Processors.Media.Songs
 		{
 			var artists = new List<string>();
 
+			var featuringParts = FindFeaturingParts(input, artistsOnly);
+
+			foreach (string featuringPart in featuringParts)
+			{
+				artists.AddRange(RegexUtils.SplitMulti(featuringPart, ArtistSeperator));
+			}
+
+			return artists;
+		}
+
+		// search the string and find all new start indexes for featuring
+		private IEnumerable<string> FindFeaturingParts(string input, bool artistsOnly)
+		{
 			// the indexes where a new autor line begins or ends
 			var splitStartIndexes = new List<int>();
 			var splitEndIndexes = new List<int>();
@@ -90,10 +106,10 @@ namespace TicTacTubeCore.Processors.Media.Songs
 			}
 
 			// test all start strings (starting a new artist) and store the indexes.
-			StoreAllMatchIndexes(input, FeaturingStart, splitStartIndexes);
+			StoreAllMatchIndexes(input, FeaturingStart, splitStartIndexes, true);
 
 			// do the same for the end, although, we possibly do not need all ends
-			StoreAllMatchIndexes(input, FeaturingEnd, splitEndIndexes);
+			StoreAllMatchIndexes(input, FeaturingEnd, splitEndIndexes, false);
 
 			List<string> featuringParts = new List<string>();
 			//TODO: beautify
@@ -104,7 +120,7 @@ namespace TicTacTubeCore.Processors.Media.Songs
 				bool toBreak = false;
 				if (end.HasValue)
 				{
-					splitEnd = end.Value -1;
+					splitEnd = end.Value;
 				}
 				else
 				{
@@ -112,7 +128,7 @@ namespace TicTacTubeCore.Processors.Media.Songs
 					toBreak = true;
 				}
 
-				featuringParts.Add(input.Substring(splitStart, Math.Min(input.Length, splitEnd) - splitStart));
+				featuringParts.Add(input.SubstringByIndex(splitStart, splitEnd));
 
 				if (toBreak)
 				{
@@ -120,30 +136,24 @@ namespace TicTacTubeCore.Processors.Media.Songs
 				}
 			}
 
-			//TODO split featuring with ArtistSeperator
-			foreach (var featuringPart in featuringParts)
-			{
-				
-			}
-
-			return artists;
+			return featuringParts;
 		}
 
-		private void StoreAllMatchIndexes(string input, string[] regexes, List<int> indexes)
+		private void StoreAllMatchIndexes(string input, string[] regexes, List<int> indexes, bool addMatchOffset)
 		{
 			foreach (string regex in regexes)
 			{
-				StoreMatchIndexes(input, regex, indexes);
+				StoreMatchIndexes(input, regex, indexes, addMatchOffset);
 			}
 			indexes.Sort();
 		}
 
-		private static void StoreMatchIndexes(string input, string regex, ICollection<int> splitStartIndexes)
+		private static void StoreMatchIndexes(string input, string regex, ICollection<int> splitStartIndexes, bool addMatchOffset)
 		{
 			var matches = Regex.Matches(input, regex);
 			foreach (Match match in matches)
 			{
-				splitStartIndexes.Add(match.Index + match.Length);
+				splitStartIndexes.Add(addMatchOffset ? match.Index + match.Length : match.Index);
 			}
 		}
 
