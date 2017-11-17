@@ -73,7 +73,7 @@ namespace TicTacTubeCore.Utils.Extensions.Strings
 		/// <param name="text">The string this operation is based on.</param>
 		/// <param name="splits">Multiple splits that define the positions that will be removed.</param>
 		/// <returns></returns>
-		public static string StringRemove(this string text, IReadOnlyList<StringPosition> splits)
+		public static string Remove(this string text, IReadOnlyList<StringPosition> splits)
 		{
 			var localSplit = new List<StringPosition>(splits);
 			localSplit.Sort();

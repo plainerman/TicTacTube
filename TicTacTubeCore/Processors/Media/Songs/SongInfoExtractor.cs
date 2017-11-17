@@ -191,7 +191,7 @@ namespace TicTacTubeCore.Processors.Media.Songs
 		/// </summary>
 		private IEnumerable<string> SplitFeaturing(ref string input, IEnumerable<int> splitStartIndexes, IReadOnlyCollection<int> splitEndIndexes)
 		{
-			var splits = new List<RegexUtils.StringPosition>();
+			var splits = new List<StringPosition>();
 
 			var featuringParts = new List<string>();
 			foreach (int splitStart in splitStartIndexes)
@@ -212,7 +212,7 @@ namespace TicTacTubeCore.Processors.Media.Songs
 
 				featuringParts.Add(input.SubstringByIndex(splitStart, splitEnd));
 
-				splits.Add(new RegexUtils.StringPosition(splitStart, splitEnd - splitStart));
+				splits.Add(new StringPosition(splitStart, splitEnd - splitStart));
 
 				if (toBreak)
 				{
@@ -220,7 +220,7 @@ namespace TicTacTubeCore.Processors.Media.Songs
 				}
 			}
 
-			input = RegexUtils.StringRemove(input, splits);
+			input = input.Remove(splits);
 
 			return featuringParts;
 
