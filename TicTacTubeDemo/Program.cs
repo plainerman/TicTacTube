@@ -24,6 +24,23 @@ namespace TicTacTubeDemo
 
 			new MediaRenamer<SongInfo>("This is my pattern {Title} {Artists} {Title}", new SongInfoExtractor());
 
+			string[] testVals = { "WE ARE FURY - Waiting (feat. Olivia Lunny)",
+				"Laura Brehm - Breathe (Last Heroes & Crystal Skies Remix) (Lyric Video)",
+				"Laura Brehm - Breathe (Last Heroes & Crystal Skies Remix) (Lyric Video)",
+				"Rita Ora - Your Song(Official Lyric Video)",
+				"Rita Ora - Your Song(Official Video)",
+				"Dua Lipa - New Rules(Official Music Video)",
+				"Snugs - Radio Silence (ft. HAILZ) [Lyric Video]",
+				"Selena Gomez, Marshmello - Wolves"
+			};
+
+		 	/*var extractor = new SongInfoExtractor();
+			foreach (var testVal in testVals)
+			{
+				extractor.ExtractFromFileName(testVal);
+			}*/
+
+
 			//var source = new FileSource(@"C:\Marshmello - You And Me (Official Music Video).mp3");
 			/*var source =
 				new FileSource(

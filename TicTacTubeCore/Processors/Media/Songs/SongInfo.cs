@@ -30,6 +30,11 @@
 		/// </summary>
 		public string Year;
 
+		/// <summary>
+		/// The bitrate in kbps.
+		/// </summary>
+		public int Bitrate;
+
 		//TOOD: cover art
 	}
 }
