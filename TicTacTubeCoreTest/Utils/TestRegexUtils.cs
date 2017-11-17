@@ -1,5 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TicTacTubeCore.Utils;
+using TicTacTubeCore.Utils.Extensions.Strings;
 
 namespace TicTacTubeCoreTest.Utils
 {
@@ -10,7 +10,7 @@ namespace TicTacTubeCoreTest.Utils
 
 		[DataTestMethod]
 		[DataRow(BasicTest, new[] { @"\s" }, new[] { "This", "is-a,simple-test" })]
-		[DataRow(BasicTest, new[] { @"\s", "-" }, new[] { "This", "is","a,simple", "test" })]
+		[DataRow(BasicTest, new[] { @"\s", "-" }, new[] { "This", "is", "a,simple", "test" })]
 		[DataRow(BasicTest, new[] { @"\s", "," }, new[] { "This", "is-a", "simple-test" })]
 		[DataRow(BasicTest, new[] { @"\s", "-", "," }, new[] { "This", "is", "a", "simple", "test" })]
 		public void TestSplitMulti(string input, string[] patterns, string[] result)

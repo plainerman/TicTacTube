@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using TicTacTubeCore.Sources.Files;
-using TicTacTubeCore.Utils;
-using TicTacTubeCore.Utils.Extensions;
+using TicTacTubeCore.Utils.Extensions.Strings;
 
 namespace TicTacTubeCore.Processors.Media.Songs
 {
@@ -12,16 +12,42 @@ namespace TicTacTubeCore.Processors.Media.Songs
 	/// </summary>
 	public class SongInfoExtractor : IMediaInfoExtractor<SongInfo>
 	{
+		/// <summary>
+		/// The regex that matches featuring in song titles.
+		/// </summary>
 		protected const string FeaturingRegex = @"\s?f(ea)?t\.?\s";
 
+		/// <summary>
+		/// Common delimiters for song titles (seperate songname from main artist)
+		/// </summary>
 		protected string[] Delimiters = { @"\s-\s", @"\|" };
+		/// <summary>
+		/// The preprocessors that will be executed and delete certain parts.
+		/// </summary>
 		protected string[] Preprocessors = { @"\[.*?\]", @"(?i)\([^)]*video\)" };
 
+		/// <summary>
+		/// All sequences that define a list of sequences. Also add those to the <see cref="Postprocessors"/>.
+		/// </summary>
 		protected string[] FeaturingStart = { FeaturingRegex };
+		/// <summary>
+		/// All delimiters that indicate another artist following.
+		/// </summary>
 		protected string[] ArtistSeperator = { @"\svs.?\s", @"\s&\s", @",\s", @"\swith\s" };
+		/// <summary>
+		/// All delimiters that mark the end of a chain of artists.
+		/// </summary>
 		protected string[] FeaturingEnd = { @"\)", FeaturingRegex };
 
+		/// <summary>
+		/// The postprocessors that will be executed and deltete certain parts.
+		/// </summary>
 		protected string[] Postprocessors = { FeaturingRegex, @"\(\s*\)" };
+
+		/// <summary>
+		/// The text that will be appended, if <see cref="UseTitleAsAlbum"/> is active.
+		/// </summary>
+		public const string Single = " (Single)";
 
 		/// <summary>
 		/// Determine whether the title should be used as album, if no album could be found.
@@ -32,40 +58,50 @@ namespace TicTacTubeCore.Processors.Media.Songs
 		public SongInfo Extract(IFileSource song)
 		{
 			string fileName = song.FileName;
-			// todo: first try from metadata
+
 			var songInfo = ExtractFromFileName(fileName);
 
-			//TODO: implement
-			//throw new System.NotImplementedException();
-			//return songInfo
 			//TODO: get from file (bitrate)
 
 			return songInfo;
 		}
 
-		protected virtual SongInfo ExtractFromFileName(string fileName)
+		/// <summary>
+		/// This method extracts songinfo from a given string (<paramref name="songTitle"/>).
+		/// Other features like bitrate won't be extracted here.
+		/// 
+		/// It works with formatting like:
+		/// Laura Brehm - Breathe (Last Heroes &amp; Crystal Skies Remix) (Lyric Video)
+		/// </summary>
+		/// <param name="songTitle">The string that should be as verbose as possible for the program to correctly identify the song.</param>
+		/// <returns>A <see cref="SongInfo"/> containing the title and artists.</returns>
+		public virtual SongInfo ExtractFromFileName(string songTitle)
 		{
 			var songInfo = new SongInfo();
-			fileName = Preprocessors.Aggregate(fileName, (current, preprocessor) => Regex.Replace(current, preprocessor, ""));
+			// apply the preprocessors
+			songTitle = Preprocessors.Aggregate(songTitle, (current, preprocessor) => Regex.Replace(current, preprocessor, ""));
 
 			string[] split = null;
 
 			// try all delemiters, and always split into two parts (before the first occurence, and after)
+			// Artist - Song name -> {"Artist", "Song name"}
 			foreach (string delimiter in Delimiters)
 			{
-				var parts = Regex.Split(fileName, delimiter);
+				var parts = Regex.Split(songTitle, delimiter);
+
+				// if it could correctly split it
 				if (parts.Length > 1)
 				{
 					split = new string[2];
 					split[0] = parts[0];
 
-					string rest = "";
+					string remaining = "";
 					for (int i = 1; i < parts.Length; i++)
 					{
-						rest += parts[i];
+						remaining += parts[i];
 					}
 
-					split[1] = rest;
+					split[1] = remaining;
 
 					break;
 				}
@@ -80,14 +116,32 @@ namespace TicTacTubeCore.Processors.Media.Songs
 
 				songInfo.Artists = artists.ToArray();
 
-				songInfo.Title = Postprocessors.Aggregate(split[1], (current, postprocessor) => Regex.Replace(current, postprocessor, "")).Trim();
+				// apply the post processors
+				songInfo.Title = Postprocessors
+					.Aggregate(split[1], (current, postprocessor) => Regex.Replace(current, postprocessor, "")).Trim();
+
+				if (UseTitleAsAlbum && songInfo.Album == null)
+				{
+					songInfo.Album = songInfo.Title + Single;
+				}
 			}
-			//TODO: else - throw exception?
+			else
+			{
+				throw new FormatException($"'{songTitle}' could not be split. Manually add a split delimiter.");
+			}
 
 			return songInfo;
 		}
-		//TODO: organize and document
 
+		/// <summary>
+		/// This method searches for artists in a given string and automatically removes the found artist from the given <paramref name="input"/>.
+		/// 
+		/// This method is intended to be used twice, once with the artist part of a song name, and once with the actual song name.
+		/// In the song name it has to be searched for identifiers like feat. to start finding artists (set <paramref name="artistsOnly"/> to <c>false</c>).
+		/// </summary>
+		/// <param name="input">One of the two song identifier halfs. This string will not contain the artists after this operation.</param>
+		/// <param name="artistsOnly">Determines, whether to look for an <see cref="FeaturingStart"/> to search for artists. If <c>true</c>, it will not search for <see cref="FeaturingStart"/>.</param>
+		/// <returns>A collection of all found artists.</returns>
 		protected virtual IEnumerable<string> SearchForArtists(ref string input, bool artistsOnly)
 		{
 			var artists = new List<string>();
@@ -102,7 +156,13 @@ namespace TicTacTubeCore.Processors.Media.Songs
 			return artists;
 		}
 
-		// search the string and find all new start indexes for featuring
+		/// <summary>
+		/// This method searches for multiple start indexes of featuring lists. So, essentially, all feat. ... .
+		/// These are then returned and the input correctly adapted (to not contain the artists). 
+		/// </summary>
+		/// <param name="input">One of the two song identifier halfs. This string will not contain the artists after this operation.</param>
+		/// <param name="artistsOnly">Determines, whether to look for an <see cref="FeaturingStart"/> to search for artists. If <c>true</c>, it will not search for <see cref="FeaturingStart"/>.</param>
+		/// <returns>A collection of all found featuring parts (e.g. Marshmello, Porter Robinson).</returns>
 		protected virtual IEnumerable<string> FindFeaturingParts(ref string input, bool artistsOnly)
 		{
 			// the indexes where a new autor line begins or ends
@@ -120,18 +180,23 @@ namespace TicTacTubeCore.Processors.Media.Songs
 			// do the same for the end, although, we possibly do not need all ends
 			StoreAllMatchIndexes(input, FeaturingEnd, splitEndIndexes, false);
 
-			var featuringParts = SplitFeaturing(ref input, splitStartIndexes, splitEndIndexes);
-
-			return featuringParts;
+			return SplitFeaturing(ref input, splitStartIndexes, splitEndIndexes);
 		}
 
-		private static IEnumerable<string> SplitFeaturing(ref string input, IEnumerable<int> splitStartIndexes, IReadOnlyCollection<int> splitEndIndexes)
+		/// <summary>
+		/// This method gets the split indexes (indexes where featurings could start or could end), and will then create the actual featuring parts.
+		/// This method is intended to be used by <see cref="FindFeaturingParts"/> that has already searched the parts.
+		/// 
+		/// The featuring parts are stripped away from the input in this method.
+		/// </summary>
+		private IEnumerable<string> SplitFeaturing(ref string input, IEnumerable<int> splitStartIndexes, IReadOnlyCollection<int> splitEndIndexes)
 		{
-			var splits = new List<RegexUtils.RegexSplit>();
+			var splits = new List<RegexUtils.StringPosition>();
 
 			var featuringParts = new List<string>();
 			foreach (int splitStart in splitStartIndexes)
 			{
+				// find the closest matching end indexs (e.g. closes closing bracket)
 				int? end = FindClosest(splitStart, splitEndIndexes);
 				int splitEnd;
 				bool toBreak = false;
@@ -146,8 +211,8 @@ namespace TicTacTubeCore.Processors.Media.Songs
 				}
 
 				featuringParts.Add(input.SubstringByIndex(splitStart, splitEnd));
-				//TODO: validate off by one error
-				splits.Add(new RegexUtils.RegexSplit(splitStart, splitEnd - splitStart));
+
+				splits.Add(new RegexUtils.StringPosition(splitStart, splitEnd - splitStart));
 
 				if (toBreak)
 				{
@@ -158,39 +223,48 @@ namespace TicTacTubeCore.Processors.Media.Songs
 			input = RegexUtils.StringRemove(input, splits);
 
 			return featuringParts;
+
+			// Find the next biggest end index to a given split start.
+			int? FindClosest(int search, IEnumerable<int> toSearch)
+			{
+				foreach (int i in toSearch)
+				{
+					if (i > search)
+					{
+						return i;
+					}
+				}
+
+				return null;
+			}
 		}
 
+		/// <summary>
+		/// This method calls <see cref="StoreMatchIndexes"/> multiple times with a list of regexes and then sorts the indexes.
+		/// This allows to find multiple split indexes that are sorted after their index.
+		/// </summary>
 		private static void StoreAllMatchIndexes(string input, IEnumerable<string> regexes, List<int> indexes, bool addMatchOffset)
 		{
 			foreach (string regex in regexes)
 			{
 				StoreMatchIndexes(input, regex, indexes, addMatchOffset);
 			}
+
 			indexes.Sort();
 		}
 
-		private static void StoreMatchIndexes(string input, string regex, ICollection<int> splitStartIndexes, bool addMatchOffset)
+		/// <summary>
+		/// This method stores all matches of a regex into the given collection <paramref name="indexes"/>. 
+		/// If <paramref name="addMatchOffset"/> is <c>true</c>, it skips the matched regex (e.g. feat. ab will start at index of ab).
+		/// </summary>
+		private static void StoreMatchIndexes(string input, string regex, ICollection<int> indexes, bool addMatchOffset)
 		{
 			var matches = Regex.Matches(input, regex);
+
 			foreach (Match match in matches)
 			{
-				splitStartIndexes.Add(addMatchOffset ? match.Index + match.Length : match.Index);
+				indexes.Add(addMatchOffset ? match.Index + match.Length : match.Index);
 			}
-		}
-
-		//todo: convert to extension method? if so, better name since it finds the first bigger
-		private static int? FindClosest(int search, IEnumerable<int> toSearch)
-		{
-			// todo: if extension, sort toSearch
-			foreach (int i in toSearch)
-			{
-				if (i > search)
-				{
-					return i;
-				}
-			}
-
-			return null;
 		}
 	}
 }

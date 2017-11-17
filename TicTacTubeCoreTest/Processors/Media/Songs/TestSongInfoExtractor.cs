@@ -20,6 +20,7 @@ namespace TicTacTubeCoreTest.Processors.Media.Songs
 		[DataRow("Snugs & HAILZ - Radio Silence [Lyric Video]", "Radio Silence", new[] { "Snugs", "HAILZ" })]
 		[DataRow("Snugs vs. HAILZ - Radio Silence [Lyric Video]", "Radio Silence", new[] { "Snugs", "HAILZ" })]
 		[DataRow("Alan Walker - All Falls Down (feat. Noah Cyrus with Digital Farm Animals)", "All Falls Down", new[] { "Alan Walker", "Noah Cyrus", "Digital Farm Animals" })]
+		[DataRow("Avicii - Lonely Together ft. Rita Ora", "Lonely Together", new[] { "Avicii", "Rita Ora" })]
 		public void TestSongInfoExtraction(string input, string title, string[] artists)
 		{
 			//TODO: readd / think about other concept, once the file has to exist in order to be analyzed

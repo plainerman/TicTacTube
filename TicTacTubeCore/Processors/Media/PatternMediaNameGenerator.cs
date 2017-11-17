@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using TicTacTubeCore.Processors.Media.Songs;
-using TicTacTubeCore.Utils.Extensions;
+using TicTacTubeCore.Utils.Extensions.Strings;
 
 namespace TicTacTubeCore.Processors.Media
 {

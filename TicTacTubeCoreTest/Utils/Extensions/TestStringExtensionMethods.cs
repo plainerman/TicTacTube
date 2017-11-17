@@ -1,5 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TicTacTubeCore.Utils.Extensions;
+using TicTacTubeCore.Utils.Extensions.Strings;
 
 namespace TicTacTubeCoreTest.Utils.Extensions
 {
