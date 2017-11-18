@@ -4,12 +4,12 @@ using System.Collections.Generic;
 namespace TicTacTubeCore.Utils.Extensions.Strings
 {
 	/// <summary>
-	/// This class is for useful string extensions.
+	///     This class is for useful string extensions.
 	/// </summary>
 	public static class StringExtensionMethods
 	{
 		/// <summary>
-		/// This method replaces the first occurence of a given string, beginning from a given start position.
+		///     This method replaces the first occurence of a given string, beginning from a given start position.
 		/// </summary>
 		/// <param name="text">The string this operation is based on.</param>
 		/// <param name="search">The search string.</param>
@@ -19,24 +19,26 @@ namespace TicTacTubeCore.Utils.Extensions.Strings
 		public static string ReplaceFirst(this string text, string search, string replace, int startIndex = 0)
 		{
 			int pos = text.IndexOf(search, startIndex, StringComparison.Ordinal);
-			if (pos < 0) return text;
+			if (pos < 0)
+			{
+				return text;
+			}
 
 			return text.Substring(0, pos) + replace + text.Substring(pos + search.Length);
 		}
+
 		/// <summary>
-		/// This method returns a substring with a given start (inclusive) and end position (exclusive).
+		///     This method returns a substring with a given start (inclusive) and end position (exclusive).
 		/// </summary>
 		/// <param name="text">The string this operation is based on.</param>
 		/// <param name="start">The start index.</param>
 		/// <param name="end">The end index.</param>
 		/// <returns>A new substring inclusive start- exclusive endpos.</returns>
-		public static string SubstringByIndex(this string text, int start, int end)
-		{
-			return text.Substring(start, Math.Min(text.Length, end) - start);
-		}
+		public static string SubstringByIndex(this string text, int start, int end) => text.Substring(start,
+			Math.Min(text.Length, end) - start);
 
 		/// <summary>
-		/// This method splits a given string on multiple string positions, where the individual string positions are removed.
+		///     This method splits a given string on multiple string positions, where the individual string positions are removed.
 		/// </summary>
 		/// <param name="text">The string this operation is based on.</param>
 		/// <param name="splits">Multiple splits that define the position of the splits.</param>
@@ -66,8 +68,9 @@ namespace TicTacTubeCore.Utils.Extensions.Strings
 		}
 
 		/// <summary>
-		/// This method allows to remove multiple sets of strings, and automatically updates the following split values to the new ones. (new indexes after some parts are removed)
-		/// If the split ranges overlap, <b>undefined behavior</b> will occur.
+		///     This method allows to remove multiple sets of strings, and automatically updates the following split values to the
+		///     new ones. (new indexes after some parts are removed)
+		///     If the split ranges overlap, <b>undefined behavior</b> will occur.
 		/// </summary>
 		/// <param name="text">The string this operation is based on.</param>
 		/// <param name="splits">Multiple splits that define the positions that will be removed.</param>

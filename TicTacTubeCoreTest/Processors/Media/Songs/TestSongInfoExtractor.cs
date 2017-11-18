@@ -34,7 +34,7 @@ namespace TicTacTubeCoreTest.Processors.Media.Songs
 
 			Assert.AreEqual(artists.Length, extracted.Artists.Length);
 
-			for (var i = 0; i < artists.Length; i++)
+			for (int i = 0; i < artists.Length; i++)
 			{
 				Assert.AreEqual(artists[i], extracted.Artists[i]);
 			}

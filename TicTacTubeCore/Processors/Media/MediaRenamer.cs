@@ -5,22 +5,24 @@ using TicTacTubeCore.Sources.Files;
 namespace TicTacTubeCore.Processors.Media
 {
 	/// <summary>
-	/// A source renamer that is optimized for renaming media files based on extracted media info.
+	///     A source renamer that is optimized for renaming media files based on extracted media info.
 	/// </summary>
 	public class MediaRenamer<T> : SourceRenamer where T : IMediaInfo
 	{
 		/// <summary>
-		/// The media info extractor that is used to correctly extract the media info.
+		///     The media info extractor that is used to correctly extract the media info.
 		/// </summary>
 		protected readonly IMediaInfoExtractor<T> MediaInfoExtractor;
+
 		/// <summary>
-		/// The name generator that generates the names for a given <see cref="IMediaInfo"/>.
+		///     The name generator that generates the names for a given <see cref="IMediaInfo" />.
 		/// </summary>
 		protected readonly IMediaNameGenerator<T> NameGenerator;
 
 		/// <summary>
-		/// Create a new media renamer that uses a <see cref="IMediaNameGenerator{T}"/> to generate a filename (without extension)
-		/// based on the media info extracted by the <see cref="IMediaInfoExtractor{T}"/>.
+		///     Create a new media renamer that uses a <see cref="IMediaNameGenerator{T}" /> to generate a filename (without
+		///     extension)
+		///     based on the media info extracted by the <see cref="IMediaInfoExtractor{T}" />.
 		/// </summary>
 		/// <param name="nameGenerator">The name generator that generates the new file names.</param>
 		/// <param name="extractor">The extractor that extracts a media info from the file source.</param>
@@ -32,12 +34,15 @@ namespace TicTacTubeCore.Processors.Media
 		}
 
 		/// <summary>
-		/// Create a new media renamer that uses a <see cref="IMediaNameGenerator{T}"/> to generate a filename (without extension)
-		/// based on the media info extracted by the <see cref="IMediaInfoExtractor{T}"/>.
-		/// 
-		/// A <see cref="PatternMediaNameGenerator{T}"/> is used as <see cref="IMediaNameGenerator{T}"/>.
+		///     Create a new media renamer that uses a <see cref="IMediaNameGenerator{T}" /> to generate a filename (without
+		///     extension)
+		///     based on the media info extracted by the <see cref="IMediaInfoExtractor{T}" />.
+		///     A <see cref="PatternMediaNameGenerator{T}" /> is used as <see cref="IMediaNameGenerator{T}" />.
 		/// </summary>
-		/// <param name="pattern">The pattern that is used to generate filenames. See <see cref="PatternMediaNameGenerator{T}"/> for more information..</param>
+		/// <param name="pattern">
+		///     The pattern that is used to generate filenames. See <see cref="PatternMediaNameGenerator{T}" />
+		///     for more information..
+		/// </param>
 		/// <param name="extractor">The extractor that extracts a media info from the file source.</param>
 		public MediaRenamer(string pattern, IMediaInfoExtractor<T> extractor) : this(
 			new PatternMediaNameGenerator<T>(pattern), extractor)
@@ -45,11 +50,12 @@ namespace TicTacTubeCore.Processors.Media
 		}
 
 		/// <summary>
-		/// This method will be assigned as name producer to the renamer. 
-		/// Per default, it simple uses the media info extractor and name generator.
+		///     This method will be assigned as name producer to the renamer.
+		///     Per default, it simple uses the media info extractor and name generator.
 		/// </summary>
 		/// <param name="source">The file source that will be parsed.</param>
 		/// <returns>The new filename for the file source (with the file extension).</returns>
-		protected virtual string ProduceName(IFileSource source) => NameGenerator.Parse(MediaInfoExtractor.Extract(source)) + source.FileExtension;
+		protected virtual string ProduceName(IFileSource source) => NameGenerator.Parse(MediaInfoExtractor.Extract(source)) +
+																	source.FileExtension;
 	}
 }

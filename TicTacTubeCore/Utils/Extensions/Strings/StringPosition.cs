@@ -3,21 +3,22 @@
 namespace TicTacTubeCore.Utils.Extensions.Strings
 {
 	/// <summary>
-	/// A simple struct that contains a regex split information.
+	///     A simple struct that contains a regex split information.
 	/// </summary>
 	public struct StringPosition : IComparable<StringPosition>
 	{
 		/// <summary>
-		/// The start index where the match occured.
+		///     The start index where the match occured.
 		/// </summary>
 		public int StartIndex;
+
 		/// <summary>
-		/// The length of the matched string.
+		///     The length of the matched string.
 		/// </summary>
 		public int MatchLength;
 
 		/// <summary>
-		/// Create a new split information with a given <paramref name="startIndex"/> and <paramref name="matchLength"/>.
+		///     Create a new split information with a given <paramref name="startIndex" /> and <paramref name="matchLength" />.
 		/// </summary>
 		/// <param name="startIndex">The start index where the match occured.</param>
 		/// <param name="matchLength">The length of the matched string.</param>

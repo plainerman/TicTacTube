@@ -8,49 +8,52 @@ using TicTacTubeCore.Utils.Extensions.Strings;
 namespace TicTacTubeCore.Processors.Media.Songs
 {
 	/// <summary>
-	/// A simple song info extractor that tries as hard as it can.
+	///     A simple song info extractor that tries as hard as it can.
 	/// </summary>
 	public class SongInfoExtractor : IMediaInfoExtractor<SongInfo>
 	{
 		/// <summary>
-		/// The regex that matches featuring in song titles.
+		///     The regex that matches featuring in song titles.
 		/// </summary>
 		protected const string FeaturingRegex = @"\s?f(ea)?t\.?\s";
 
 		/// <summary>
-		/// Common delimiters for song titles (seperate songname from main artist)
-		/// </summary>
-		protected string[] Delimiters = { @"\s-\s", @"\|" };
-		/// <summary>
-		/// The preprocessors that will be executed and delete certain parts.
-		/// </summary>
-		protected string[] Preprocessors = { @"\[.*?\]", @"(?i)\([^)]*video\)" };
-
-		/// <summary>
-		/// All sequences that define a list of sequences. Also add those to the <see cref="Postprocessors"/>.
-		/// </summary>
-		protected string[] FeaturingStart = { FeaturingRegex };
-		/// <summary>
-		/// All delimiters that indicate another artist following.
-		/// </summary>
-		protected string[] ArtistSeperator = { @"\svs.?\s", @"\s&\s", @",\s", @"\swith\s" };
-		/// <summary>
-		/// All delimiters that mark the end of a chain of artists.
-		/// </summary>
-		protected string[] FeaturingEnd = { @"\)", FeaturingRegex };
-
-		/// <summary>
-		/// The postprocessors that will be executed and deltete certain parts.
-		/// </summary>
-		protected string[] Postprocessors = { FeaturingRegex, @"\(\s*\)" };
-
-		/// <summary>
-		/// The text that will be appended, if <see cref="UseTitleAsAlbum"/> is active.
+		///     The text that will be appended, if <see cref="UseTitleAsAlbum" /> is active.
 		/// </summary>
 		public const string Single = " (Single)";
 
 		/// <summary>
-		/// Determine whether the title should be used as album, if no album could be found.
+		///     All delimiters that indicate another artist following.
+		/// </summary>
+		protected string[] ArtistSeperator = { @"\svs.?\s", @"\s&\s", @",\s", @"\swith\s" };
+
+		/// <summary>
+		///     Common delimiters for song titles (seperate songname from main artist)
+		/// </summary>
+		protected string[] Delimiters = { @"\s-\s", @"\|" };
+
+		/// <summary>
+		///     All delimiters that mark the end of a chain of artists.
+		/// </summary>
+		protected string[] FeaturingEnd = { @"\)", FeaturingRegex };
+
+		/// <summary>
+		///     All sequences that define a list of sequences. Also add those to the <see cref="Postprocessors" />.
+		/// </summary>
+		protected string[] FeaturingStart = { FeaturingRegex };
+
+		/// <summary>
+		///     The postprocessors that will be executed and deltete certain parts.
+		/// </summary>
+		protected string[] Postprocessors = { FeaturingRegex, @"\(\s*\)" };
+
+		/// <summary>
+		///     The preprocessors that will be executed and delete certain parts.
+		/// </summary>
+		protected string[] Preprocessors = { @"\[.*?\]", @"(?i)\([^)]*video\)" };
+
+		/// <summary>
+		///     Determine whether the title should be used as album, if no album could be found.
 		/// </summary>
 		public bool UseTitleAsAlbum { get; set; } = true;
 
@@ -67,14 +70,16 @@ namespace TicTacTubeCore.Processors.Media.Songs
 		}
 
 		/// <summary>
-		/// This method extracts songinfo from a given string (<paramref name="songTitle"/>).
-		/// Other features like bitrate won't be extracted here.
-		/// 
-		/// It works with formatting like:
-		/// Laura Brehm - Breathe (Last Heroes &amp; Crystal Skies Remix) (Lyric Video)
+		///     This method extracts songinfo from a given string (<paramref name="songTitle" />).
+		///     Other features like bitrate won't be extracted here.
+		///     It works with formatting like:
+		///     Laura Brehm - Breathe (Last Heroes &amp; Crystal Skies Remix) (Lyric Video)
 		/// </summary>
-		/// <param name="songTitle">The string that should be as verbose as possible for the program to correctly identify the song.</param>
-		/// <returns>A <see cref="SongInfo"/> containing the title and artists.</returns>
+		/// <param name="songTitle">
+		///     The string that should be as verbose as possible for the program to correctly identify the
+		///     song.
+		/// </param>
+		/// <returns>A <see cref="SongInfo" /> containing the title and artists.</returns>
 		public virtual SongInfo ExtractFromString(string songTitle)
 		{
 			var songInfo = new SongInfo();
@@ -134,13 +139,21 @@ namespace TicTacTubeCore.Processors.Media.Songs
 		}
 
 		/// <summary>
-		/// This method searches for artists in a given string and automatically removes the found artist from the given <paramref name="input"/>.
-		/// 
-		/// This method is intended to be used twice, once with the artist part of a song name, and once with the actual song name.
-		/// In the song name it has to be searched for identifiers like feat. to start finding artists (set <paramref name="artistsOnly"/> to <c>false</c>).
+		///     This method searches for artists in a given string and automatically removes the found artist from the given
+		///     <paramref name="input" />.
+		///     This method is intended to be used twice, once with the artist part of a song name, and once with the actual song
+		///     name.
+		///     In the song name it has to be searched for identifiers like feat. to start finding artists (set
+		///     <paramref name="artistsOnly" /> to <c>false</c>).
 		/// </summary>
-		/// <param name="input">One of the two song identifier halfs. This string will not contain the artists after this operation.</param>
-		/// <param name="artistsOnly">Determines, whether to look for an <see cref="FeaturingStart"/> to search for artists. If <c>true</c>, it will not search for <see cref="FeaturingStart"/>.</param>
+		/// <param name="input">
+		///     One of the two song identifier halfs. This string will not contain the artists after this
+		///     operation.
+		/// </param>
+		/// <param name="artistsOnly">
+		///     Determines, whether to look for an <see cref="FeaturingStart" /> to search for artists. If
+		///     <c>true</c>, it will not search for <see cref="FeaturingStart" />.
+		/// </param>
 		/// <returns>A collection of all found artists.</returns>
 		protected virtual IEnumerable<string> SearchForArtists(ref string input, bool artistsOnly)
 		{
@@ -157,11 +170,17 @@ namespace TicTacTubeCore.Processors.Media.Songs
 		}
 
 		/// <summary>
-		/// This method searches for multiple start indexes of featuring lists. So, essentially, all feat. ... .
-		/// These are then returned and the input correctly adapted (to not contain the artists). 
+		///     This method searches for multiple start indexes of featuring lists. So, essentially, all feat. ... .
+		///     These are then returned and the input correctly adapted (to not contain the artists).
 		/// </summary>
-		/// <param name="input">One of the two song identifier halfs. This string will not contain the artists after this operation.</param>
-		/// <param name="artistsOnly">Determines, whether to look for an <see cref="FeaturingStart"/> to search for artists. If <c>true</c>, it will not search for <see cref="FeaturingStart"/>.</param>
+		/// <param name="input">
+		///     One of the two song identifier halfs. This string will not contain the artists after this
+		///     operation.
+		/// </param>
+		/// <param name="artistsOnly">
+		///     Determines, whether to look for an <see cref="FeaturingStart" /> to search for artists. If
+		///     <c>true</c>, it will not search for <see cref="FeaturingStart" />.
+		/// </param>
 		/// <returns>A collection of all found featuring parts (e.g. Marshmello, Porter Robinson).</returns>
 		protected virtual IEnumerable<string> FindFeaturingParts(ref string input, bool artistsOnly)
 		{
@@ -184,12 +203,13 @@ namespace TicTacTubeCore.Processors.Media.Songs
 		}
 
 		/// <summary>
-		/// This method gets the split indexes (indexes where featurings could start or could end), and will then create the actual featuring parts.
-		/// This method is intended to be used by <see cref="FindFeaturingParts"/> that has already searched the parts.
-		/// 
-		/// The featuring parts are stripped away from the input in this method.
+		///     This method gets the split indexes (indexes where featurings could start or could end), and will then create the
+		///     actual featuring parts.
+		///     This method is intended to be used by <see cref="FindFeaturingParts" /> that has already searched the parts.
+		///     The featuring parts are stripped away from the input in this method.
 		/// </summary>
-		private IEnumerable<string> SplitFeaturing(ref string input, IEnumerable<int> splitStartIndexes, IReadOnlyCollection<int> splitEndIndexes)
+		private IEnumerable<string> SplitFeaturing(ref string input, IEnumerable<int> splitStartIndexes,
+			IReadOnlyCollection<int> splitEndIndexes)
 		{
 			var splits = new List<StringPosition>();
 
@@ -197,7 +217,7 @@ namespace TicTacTubeCore.Processors.Media.Songs
 			foreach (int splitStart in splitStartIndexes)
 			{
 				// find the closest matching end indexs (e.g. closes closing bracket)
-				int? end = FindClosest(splitStart, splitEndIndexes);
+				var end = FindClosest(splitStart, splitEndIndexes);
 				int splitEnd;
 				bool toBreak = false;
 				if (end.HasValue)
@@ -240,10 +260,12 @@ namespace TicTacTubeCore.Processors.Media.Songs
 		}
 
 		/// <summary>
-		/// This method calls <see cref="StoreMatchIndexes"/> multiple times with a list of regexes and then sorts the indexes.
-		/// This allows to find multiple split indexes that are sorted after their index.
+		///     This method calls <see cref="StoreMatchIndexes" /> multiple times with a list of regexes and then sorts the
+		///     indexes.
+		///     This allows to find multiple split indexes that are sorted after their index.
 		/// </summary>
-		private static void StoreAllMatchIndexes(string input, IEnumerable<string> regexes, List<int> indexes, bool addMatchOffset)
+		private static void StoreAllMatchIndexes(string input, IEnumerable<string> regexes, List<int> indexes,
+			bool addMatchOffset)
 		{
 			foreach (string regex in regexes)
 			{
@@ -254,8 +276,9 @@ namespace TicTacTubeCore.Processors.Media.Songs
 		}
 
 		/// <summary>
-		/// This method stores all matches of a regex into the given collection <paramref name="indexes"/>. 
-		/// If <paramref name="addMatchOffset"/> is <c>true</c>, it skips the matched regex (e.g. feat. ab will start at index of ab).
+		///     This method stores all matches of a regex into the given collection <paramref name="indexes" />.
+		///     If <paramref name="addMatchOffset" /> is <c>true</c>, it skips the matched regex (e.g. feat. ab will start at index
+		///     of ab).
 		/// </summary>
 		private static void StoreMatchIndexes(string input, string regex, ICollection<int> indexes, bool addMatchOffset)
 		{
