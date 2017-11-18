@@ -35,7 +35,6 @@ namespace TicTacTubeCore.Utils.Extensions.Strings
 			return text.Substring(start, Math.Min(text.Length, end) - start);
 		}
 
-		//TODO: test
 		/// <summary>
 		/// This method splits a given string on multiple string positions, where the individual string positions are removed.
 		/// </summary>
@@ -62,10 +61,10 @@ namespace TicTacTubeCore.Utils.Extensions.Strings
 
 				ret[i] = text.SubstringByIndex(start, end);
 			}
+
 			return ret;
 		}
 
-		//TODO: test
 		/// <summary>
 		/// This method allows to remove multiple sets of strings, and automatically updates the following split values to the new ones. (new indexes after some parts are removed)
 		/// If the split ranges overlap, <b>undefined behavior</b> will occur.
@@ -73,7 +72,7 @@ namespace TicTacTubeCore.Utils.Extensions.Strings
 		/// <param name="text">The string this operation is based on.</param>
 		/// <param name="splits">Multiple splits that define the positions that will be removed.</param>
 		/// <returns></returns>
-		public static string Remove(this string text, IReadOnlyList<StringPosition> splits)
+		public static string Remove(this string text, IEnumerable<StringPosition> splits)
 		{
 			var localSplit = new List<StringPosition>(splits);
 			localSplit.Sort();

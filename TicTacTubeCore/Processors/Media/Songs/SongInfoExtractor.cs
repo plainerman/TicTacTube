@@ -59,7 +59,7 @@ namespace TicTacTubeCore.Processors.Media.Songs
 		{
 			string fileName = song.FileName;
 
-			var songInfo = ExtractFromFileName(fileName);
+			var songInfo = ExtractFromString(fileName);
 
 			//TODO: get from file (bitrate)
 
@@ -75,7 +75,7 @@ namespace TicTacTubeCore.Processors.Media.Songs
 		/// </summary>
 		/// <param name="songTitle">The string that should be as verbose as possible for the program to correctly identify the song.</param>
 		/// <returns>A <see cref="SongInfo"/> containing the title and artists.</returns>
-		public virtual SongInfo ExtractFromFileName(string songTitle)
+		public virtual SongInfo ExtractFromString(string songTitle)
 		{
 			var songInfo = new SongInfo();
 			// apply the preprocessors

@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TicTacTubeCore.Utils.Extensions.Strings;
 
-namespace TicTacTubeCoreTest.Utils
+namespace TicTacTubeCoreTest.Utils.Extensions.Strings
 {
 	[TestClass]
 	public class TestRegexUtils
