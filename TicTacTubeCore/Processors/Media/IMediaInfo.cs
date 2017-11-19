@@ -5,5 +5,11 @@
 	/// </summary>
 	public interface IMediaInfo
 	{
+		/// <summary>
+		/// Write the given media info as tags to the file. Previously stored information will be overriden.
+		/// If the format does not support tags, throw an exception. 
+		/// </summary>
+		/// <param name="path">The path to the file where the tags will be written to.</param>
+		void WriteToFile(string path);
 	}
 }

@@ -1,7 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.IO;
 using TicTacTubeCore.Processors.Media.Songs;
-using TicTacTubeCore.Sources.Files;
 
 namespace TicTacTubeCoreTest.Processors.Media.Songs
 {
@@ -29,7 +27,7 @@ namespace TicTacTubeCoreTest.Processors.Media.Songs
 			//var testFile = Path.Combine(Path.GetDirectoryName(tmpFile), input);
 			//File.Move(tmpFile, testFile);
 
-			var extracted = new SongInfoExtractor().Extract(new FileSource(Path.Combine(Path.GetTempPath(), input + ".mp3")));
+			var extracted = new SongInfoExtractor().ExtractFromString(input);
 			Assert.AreEqual(title, extracted.Title);
 
 			Assert.AreEqual(artists.Length, extracted.Artists.Length);
