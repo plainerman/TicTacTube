@@ -62,11 +62,18 @@ namespace TicTacTubeCore.Processors.Media.Songs
 		{
 			string fileName = song.FileName;
 
+			var songInfoFromFile = SongInfo.ReadFromFile(song.FileInfo.FullName);
 			var songInfo = ExtractFromString(fileName);
 
-			//TODO: get from file (bitrate)
+			songInfoFromFile.Title = songInfo.Title;
+			songInfoFromFile.Artists = songInfo.Artists;
 
-			return songInfo;
+			if (UseTitleAsAlbum && string.IsNullOrEmpty(songInfoFromFile.Album))
+			{
+				songInfoFromFile.Album = songInfoFromFile.Title + Single;
+			}
+
+			return songInfoFromFile;
 		}
 
 		/// <summary>
@@ -124,11 +131,6 @@ namespace TicTacTubeCore.Processors.Media.Songs
 				// apply the post processors
 				songInfo.Title = Postprocessors
 					.Aggregate(split[1], (current, postprocessor) => Regex.Replace(current, postprocessor, "")).Trim();
-
-				if (UseTitleAsAlbum && songInfo.Album == null)
-				{
-					songInfo.Album = songInfo.Title + Single;
-				}
 			}
 			else
 			{
