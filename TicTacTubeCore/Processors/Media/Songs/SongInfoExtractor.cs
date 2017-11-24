@@ -15,7 +15,7 @@ namespace TicTacTubeCore.Processors.Media.Songs
 		/// <summary>
 		///     The regex that matches featuring in song titles.
 		/// </summary>
-		protected const string FeaturingRegex = @"\s?f(ea)?t\.?\s";
+		protected const string FeaturingRegex = @"\s?f(ea)?t(\.?\s|\.)";
 
 		/// <summary>
 		///     The text that will be appended, if <see cref="UseTitleAsAlbum" /> is active.
@@ -25,7 +25,7 @@ namespace TicTacTubeCore.Processors.Media.Songs
 		/// <summary>
 		///     All delimiters that indicate another artist following.
 		/// </summary>
-		protected string[] ArtistSeperator = { @"\svs.?\s", @"\s&\s", @",\s", @"\swith\s" };
+		protected string[] ArtistSeperator = { @"\svs.?\s", @"\s&\s", @",\s", @"\swith\s", @"\sx\s" };
 
 		/// <summary>
 		///     Common delimiters for song titles (seperate songname from main artist)
@@ -35,7 +35,7 @@ namespace TicTacTubeCore.Processors.Media.Songs
 		/// <summary>
 		///     All delimiters that mark the end of a chain of artists.
 		/// </summary>
-		protected string[] FeaturingEnd = { @"\)", FeaturingRegex };
+		protected string[] FeaturingEnd = { @"\)", @"\]", FeaturingRegex };
 
 		/// <summary>
 		///     All sequences that define a list of sequences. Also add those to the <see cref="Postprocessors" />.
@@ -45,12 +45,12 @@ namespace TicTacTubeCore.Processors.Media.Songs
 		/// <summary>
 		///     The postprocessors that will be executed and deltete certain parts.
 		/// </summary>
-		protected string[] Postprocessors = { FeaturingRegex, @"\(\s*\)" };
+		protected string[] Postprocessors = { FeaturingRegex, @"\(\s*\)", @"\[.*?\]" };
 
 		/// <summary>
 		///     The preprocessors that will be executed and delete certain parts.
 		/// </summary>
-		protected string[] Preprocessors = { @"\[.*?\]", @"(?i)\([^)]*video\)" };
+		protected string[] Preprocessors = { @"(?i)\s*\([^)]*(audio|video)\)", "(?i)(\"|“)audio(\"|”)", @"(?i)\s*\([^)]*explicit\)" };
 
 		/// <summary>
 		///     Determine whether the title should be used as album, if no album could be found.
