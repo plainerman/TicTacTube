@@ -17,9 +17,17 @@ namespace TicTacTubeCoreTest.Processors.Media.Songs
 		[DataRow("Snugs - Radio Silence (feat HAILZ) [Lyric Video]", "Radio Silence", new[] { "Snugs", "HAILZ" })]
 		[DataRow("Snugs & HAILZ - Radio Silence [Lyric Video]", "Radio Silence", new[] { "Snugs", "HAILZ" })]
 		[DataRow("Snugs vs. HAILZ - Radio Silence [Lyric Video]", "Radio Silence", new[] { "Snugs", "HAILZ" })]
+		[DataRow("Snugs ft.Edge1 ftEdge2 - Radio Silence [Lyric Video]", "Radio Silence", new[] { "Snugs", "Edge1 ftEdge2" })]
 		[DataRow("Alan Walker - All Falls Down (feat. Noah Cyrus with Digital Farm Animals)", "All Falls Down", new[] { "Alan Walker", "Noah Cyrus", "Digital Farm Animals" })]
 		[DataRow("Avicii - Lonely Together ft. Rita Ora", "Lonely Together", new[] { "Avicii", "Rita Ora" })]
-		public void TestSongInfoExtraction(string input, string title, string[] artists)
+		[DataRow("Slander - Superhuman [feat. Eric Leva] [Monstercat Release]", "Superhuman", new[] { "Slander", "Eric Leva" })]
+		[DataRow("Avicii - Without You “Audio” ft. Sandro Cavazza", "Without You", new[] { "Avicii", "Sandro Cavazza" })]
+		[DataRow("David Guetta & Showtek - Bad ft.Vassy (Lyrics Video)", "Bad", new[] { "David Guetta", "Showtek", "Vassy" })]
+		[DataRow("David Guetta - She Wolf (Falling To Pieces) ft. Sia (Official Video)", "She Wolf (Falling To Pieces)", new[] { "David Guetta", "Sia" })]
+		[DataRow("David Guetta - Lovers On The Sun (Official Video) ft Sam Martin", "Lovers On The Sun", new[] { "David Guetta", "Sam Martin" })]
+		[DataRow("David Guetta - Where Them Girls At ft. Nicki Minaj, Flo Rida (Official Video)", "Where Them Girls At", new[] { "David Guetta", "Nicki Minaj", "Flo Rida" })]
+		[DataRow("Rihanna - Work (Explicit) ft. Drake", "Work", new[] { "Rihanna", "Drake" })]
+		public void TestSongInfoExtractionByName(string input, string title, string[] artists)
 		{
 			//TODO: readd / think about other concept, once the file has to exist in order to be analyzed
 			//because bitrate
