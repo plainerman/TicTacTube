@@ -25,7 +25,7 @@ namespace TicTacTubeCore.Processors.Media.Songs
 		/// <summary>
 		///     All delimiters that indicate another artist following.
 		/// </summary>
-		protected string[] ArtistSeperator = { @"\s(&|\+|with|vs.?)\s", @",\s", @"(?i)\sx\s" };
+		protected string[] ArtistSeperator = { @"(?i)\s(&|\+|x|with|vs.?)\s", @",\s" };
 
 		/// <summary>
 		///     Common delimiters for song titles (seperate songname from main artist)
