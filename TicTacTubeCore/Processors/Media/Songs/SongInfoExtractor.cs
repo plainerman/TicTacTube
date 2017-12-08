@@ -30,7 +30,7 @@ namespace TicTacTubeCore.Processors.Media.Songs
 		/// <summary>
 		///     Common delimiters for song titles (seperate songname from main artist)
 		/// </summary>
-		protected string[] Delimiters = { @"\s-\s", @"\|" };
+		protected string[] Delimiters = { @"\s-\s", @"\s–\s", @"\s—\s", @"\|" };
 
 		/// <summary>
 		///     All delimiters that mark the end of a chain of artists.
