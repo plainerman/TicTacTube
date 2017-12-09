@@ -1,4 +1,5 @@
-﻿using TagLib;
+﻿using System.Threading.Tasks;
+using TagLib;
 
 namespace TicTacTubeCore.Processors.Media.Songs
 {
@@ -69,8 +70,8 @@ namespace TicTacTubeCore.Processors.Media.Songs
 		/// <summary>
 		///     Read the songinfo from a given file.
 		/// </summary>
-		/// <param name="path"></param>
-		/// <returns></returns>
+		/// <param name="path">The path from which the information will be read.</param>
+		/// <returns>The extracted songinfo from the file.</returns>
 		public static SongInfo ReadFromFile(string path)
 		{
 			var songInfo = new SongInfo();
@@ -89,5 +90,12 @@ namespace TicTacTubeCore.Processors.Media.Songs
 
 			return songInfo;
 		}
+
+		/// <summary>
+		///     Read the songinfo from a given file asynchronously.
+		/// </summary>
+		/// <param name="path">The path from which the information will be read.</param>
+		/// <returns>The extracted songinfo from the file.</returns>
+		public static async Task<SongInfo> ReadFromFileAsyncTask(string path) => await Task.Run(() => ReadFromFile(path));
 	}
 }

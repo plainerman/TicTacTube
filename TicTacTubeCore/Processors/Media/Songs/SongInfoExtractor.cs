@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using TicTacTubeCore.Sources.Files;
 using TicTacTubeCore.Utils.Extensions.Strings;
 
@@ -25,27 +26,27 @@ namespace TicTacTubeCore.Processors.Media.Songs
 		/// <summary>
 		///     All delimiters that indicate another artist following.
 		/// </summary>
-		protected string[] ArtistSeperator = {@"(?i)\s(&|\+|x|with|vs.?)\s", @",\s"};
+		protected string[] ArtistSeperator = { @"(?i)\s(&|\+|x|with|vs.?)\s", @",\s" };
 
 		/// <summary>
 		///     Common delimiters for song titles (seperate songname from main artist)
 		/// </summary>
-		protected string[] Delimiters = {@"\s-\s", @"\s–\s", @"\s—\s", @"\|"};
+		protected string[] Delimiters = { @"\s-\s", @"\s–\s", @"\s—\s", @"\|" };
 
 		/// <summary>
 		///     All delimiters that mark the end of a chain of artists.
 		/// </summary>
-		protected string[] FeaturingEnd = {@"\)", @"\]", FeaturingRegex};
+		protected string[] FeaturingEnd = { @"\)", @"\]", FeaturingRegex };
 
 		/// <summary>
 		///     All sequences that define a list of sequences. Also add those to the <see cref="Postprocessors" />.
 		/// </summary>
-		protected string[] FeaturingStart = {FeaturingRegex};
+		protected string[] FeaturingStart = { FeaturingRegex };
 
 		/// <summary>
 		///     The postprocessors that will be executed and deltete certain parts.
 		/// </summary>
-		protected string[] Postprocessors = {FeaturingRegex, @"\(\s*\)", @"\[.*?\]"};
+		protected string[] Postprocessors = { FeaturingRegex, @"\(\s*\)", @"\[.*?\]" };
 
 		/// <summary>
 		///     The preprocessors that will be executed and delete certain parts.
@@ -59,12 +60,12 @@ namespace TicTacTubeCore.Processors.Media.Songs
 		public bool UseTitleAsAlbum { get; set; } = true;
 
 		/// <inheritdoc />
-		public SongInfo Extract(IFileSource song)
+		public async Task<SongInfo> ExtractAsyncTask(IFileSource song)
 		{
 			string fileName = song.FileName;
 
-			var songInfoFromFile = SongInfo.ReadFromFile(song.FileInfo.FullName);
-			var songInfo = ExtractFromString(fileName);
+			var songInfoFromFile = await SongInfo.ReadFromFileAsyncTask(song.FileInfo.FullName);
+			var songInfo = await ExtractFromStringAsyncTask(fileName);
 
 			songInfoFromFile.Title = songInfo.Title;
 			songInfoFromFile.Artists = songInfo.Artists;
@@ -86,7 +87,20 @@ namespace TicTacTubeCore.Processors.Media.Songs
 		///     song.
 		/// </param>
 		/// <returns>A <see cref="SongInfo" /> containing the title and artists.</returns>
-		public virtual SongInfo ExtractFromString(string songTitle)
+		public virtual async Task<SongInfo> ExtractFromStringAsyncTask(string songTitle) => await Task.Run(() => Extract(songTitle));
+
+		/// <summary>
+		///     This method extracts songinfo from a given string (<paramref name="songTitle" />).
+		///     Other features like bitrate won't be extracted here.
+		///     It works with formatting like:
+		///     Laura Brehm - Breathe (Last Heroes &amp; Crystal Skies Remix) (Lyric Video)
+		/// </summary>
+		/// <param name="songTitle">
+		///     The string that should be as verbose as possible for the program to correctly identify the
+		///     song.
+		/// </param>
+		/// <returns>A <see cref="SongInfo" /> containing the title and artists.</returns>
+		public virtual SongInfo Extract(string songTitle)
 		{
 			var songInfo = new SongInfo();
 			// apply the preprocessors

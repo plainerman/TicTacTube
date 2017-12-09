@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using Genius;
 using Genius.Models;
 using Newtonsoft.Json.Linq;
@@ -34,38 +35,35 @@ namespace TicTacTubeCore.Processors.Media.Songs
 			GeniusClient = new GeniusClient(geniusApiKey);
 		}
 
-		public SongInfo Extract(IFileSource source) => Extract(SongInfo.ReadFromFile(source.FileInfo.FullName));
+		public async Task<SongInfo> ExtractAsyncTask(IFileSource source) => await ExtractAsyncTask(SongInfo.ReadFromFile(source.FileInfo.FullName));
 
-		public SongInfo Extract(SongInfo currentInfo)
+		public async Task<SongInfo> ExtractAsyncTask(SongInfo currentInfo)
 		{
-			string searchTerm = currentInfo.Title;
-			if (currentInfo.Artists.Length > 0)
-				searchTerm = currentInfo.Artists[0] + searchTerm;
-
-			var resultTask = GeniusClient.SearchClient.Search(TextFormat.Dom, searchTerm);
-
-			resultTask.Wait();
-
-			var result = resultTask.Result;
-
-			if (result.Response.Count > 0)
+			return await Task.Run(async () =>
 			{
-				// TODO: dont get the first one, get the first one with the type song
-				var bestHit = (JObject) result.Response[0].Result;
+				string searchTerm = currentInfo.Title;
 
-				long songId = bestHit.GetValue("id").Value<long>();
+				if (currentInfo.Artists.Length > 0)
+					searchTerm = currentInfo.Artists[0] + searchTerm;
 
-				var songTask = GeniusClient.SongsClient.GetSong(TextFormat.Html, songId.ToString());
-				songTask.Wait();
-				currentInfo = SetSong(currentInfo, songTask.Result.Response);
+				var result = (await GeniusClient.SearchClient.Search(TextFormat.Dom, searchTerm)).Response;
 
-				//Console.WriteLine(bestHit);
-			}
+				if (result.Count > 0)
+				{
+					// TODO: dont get the first one, get the first one with the type song
+					var bestHit = (JObject)result[0].Result;
 
-			return currentInfo;
+					long songId = bestHit.GetValue("id").Value<long>();
+
+					var song = await GeniusClient.SongsClient.GetSong(TextFormat.Html, songId.ToString());
+					currentInfo = await SetSong(currentInfo, song.Response);
+				}
+
+				return currentInfo;
+			});
 		}
 
-		protected virtual SongInfo SetSong(SongInfo info, Song song)
+		protected virtual async Task<SongInfo> SetSong(SongInfo info, Song song)
 		{
 			string coverArtDestination = Path.GetTempFileName();
 
@@ -75,13 +73,13 @@ namespace TicTacTubeCore.Processors.Media.Songs
 			if (!string.IsNullOrWhiteSpace(song.ReleaseDate))
 			{
 				var releaseDate = DateTime.ParseExact(song.ReleaseDate, "yyyy-MM-dd", CultureInfo.InvariantCulture);
-				info.Year = (uint) releaseDate.Year;
+				info.Year = (uint)releaseDate.Year;
 			}
 
 			if (song.Album != null)
 			{
 				info.Album = song.Album?.Name;
-				info.AlbumArtists = new[] {song.Album.Artist.Name};
+				info.AlbumArtists = new[] { song.Album.Artist.Name };
 			}
 
 			var artists = new List<string>();
@@ -110,10 +108,10 @@ namespace TicTacTubeCore.Processors.Media.Songs
 			info.Artists = artists.ToArray();
 
 			// Set the cover art and delete the file afterwards
-			downloadCoverArt.Wait();
+			await downloadCoverArt;
 
 			// TODO: keep old images?
-			info.Pictures = new IPicture[] {new Picture(coverArtDestination)};
+			info.Pictures = new IPicture[] { new Picture(coverArtDestination) };
 			File.Delete(coverArtDestination);
 			webClient.Dispose();
 

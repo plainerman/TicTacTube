@@ -36,7 +36,7 @@ namespace TicTacTubeCoreTest.Processors.Media.Songs
 			//var testFile = Path.Combine(Path.GetDirectoryName(tmpFile), input);
 			//File.Move(tmpFile, testFile);
 
-			var extracted = new SongInfoExtractor().ExtractFromString(input);
+			var extracted = new SongInfoExtractor().ExtractFromStringAsyncTask(input).GetAwaiter().GetResult();
 			Assert.AreEqual(title, extracted.Title);
 
 			Assert.AreEqual(artists.Length, extracted.Artists.Length);
