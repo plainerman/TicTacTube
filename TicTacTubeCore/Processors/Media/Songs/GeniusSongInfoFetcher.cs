@@ -36,8 +36,11 @@ namespace TicTacTubeCore.Processors.Media.Songs
 
 		public SongInfo Extract(IFileSource source)
 		{
-			var currentInfo = SongInfo.ReadFromFile(source.FileInfo.FullName);
+			return Extract(SongInfo.ReadFromFile(source.FileInfo.FullName));
+		}
 
+		public SongInfo Extract(SongInfo currentInfo)
+		{
 			string searchTerm = currentInfo.Title;
 			if (currentInfo.Artists.Length > 0)
 			{
@@ -64,8 +67,6 @@ namespace TicTacTubeCore.Processors.Media.Songs
 				//Console.WriteLine(bestHit);
 			}
 
-			//TODO: remove writing
-			currentInfo.WriteToFile(source.FileInfo.FullName);
 			return currentInfo;
 		}
 
