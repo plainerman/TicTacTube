@@ -38,7 +38,7 @@ namespace TicTacTubeCoreTest.Processors.Filesystem
 			destinatioPath = Path.Combine(destinatioPath, ".nestedSubFolder");
 			string destinationFile = Path.Combine(destinatioPath, "yepCustomEval");
 
-			scheduler.Builder.Append(new SourceMover(f => Path.Combine(destinatioPath, destinationFile)));
+			scheduler.Builder.Append(new SourceMover(Path.Combine(destinatioPath, destinationFile)));
 
 			TestFileMovement(destinationFile, scheduler, source, sourceSize, destinatioPath);
 		}
