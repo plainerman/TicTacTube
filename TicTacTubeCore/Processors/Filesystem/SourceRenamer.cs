@@ -11,6 +11,11 @@ namespace TicTacTubeCore.Processors.Filesystem
 	public class SourceRenamer : BaseDataProcessor
 	{
 		/// <summary>
+		/// Whether an existing file will be overriden or not. 
+		/// </summary>
+		protected readonly bool Override;
+
+		/// <summary>
 		///     A function that is capable of producing a new file name (with file extension) for a given file source. May not be
 		///     <c>null</c>.
 		/// </summary>
@@ -25,7 +30,8 @@ namespace TicTacTubeCore.Processors.Filesystem
 		///     if required).
 		///     May not be <c>null</c>.
 		/// </param>
-		public SourceRenamer(Func<IFileSource, string> nameProducer) : this()
+		/// <param name="override"><c>True</c>, if an existing destination should be overriden.</param>
+		public SourceRenamer(Func<IFileSource, string> nameProducer, bool @override = true) : this(@override)
 		{
 			NameProducer = nameProducer ?? throw new ArgumentNullException(nameof(nameProducer));
 		}
@@ -34,8 +40,10 @@ namespace TicTacTubeCore.Processors.Filesystem
 		///     Create a new source renamer, that renames files with a given renamer. A <see cref="NameProducer" /> has to be
 		///     manually defined.
 		/// </summary>
-		protected SourceRenamer()
+		/// <param name="override"><c>True</c>, if an existing destination should be overriden.</param>
+		protected SourceRenamer(bool @override = true)
 		{
+			Override = @override;
 		}
 
 		/// <inheritdoc />
@@ -53,6 +61,11 @@ namespace TicTacTubeCore.Processors.Filesystem
 				{
 					Directory.CreateDirectory(newFolderFullPath);
 				}
+			}
+
+			if (Override && File.Exists(fullPath))
+			{
+				File.Delete(fullPath);
 			}
 
 			fileSoure.FileInfo.MoveTo(fullPath);

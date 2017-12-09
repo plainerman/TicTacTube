@@ -9,17 +9,29 @@ namespace TicTacTubeCore.Processors.Filesystem
 	/// </summary>
 	public class SourceMover : BaseDataProcessor
 	{
-		private readonly string _destinationPath;
-		private readonly bool _keepName;
+		/// <summary>
+		/// The destination path or folder.
+		/// </summary>
+		protected readonly string DestinationPath;
+		/// <summary>
+		/// <c>True</c>, if an existing destination should be overriden.
+		/// </summary>
+		protected readonly bool Override;
+		/// <summary>
+		/// Whether the name should be kept (<see cref="DestinationPath"/> is a folder) or one is specified (<see cref="DestinationPath"/> is a file).
+		/// </summary>
+		protected readonly bool KeepName;
 
 		/// <summary>
 		///     Create a source mover that moves a source to a complete path (also rename the file).
 		/// </summary>
 		/// <param name="destinationPath">The complete new path (inclusive file name).</param>
-		public SourceMover(string destinationPath)
+		/// <param name="override"><c>True</c>, if an existing destination should be overriden.</param>
+		public SourceMover(string destinationPath, bool @override = true)
 		{
-			_destinationPath = destinationPath;
-			_keepName = false;
+			DestinationPath = destinationPath;
+			Override = @override;
+			KeepName = false;
 		}
 
 		/// <summary>
@@ -27,21 +39,28 @@ namespace TicTacTubeCore.Processors.Filesystem
 		/// </summary>
 		/// <param name="destinationFolder">The folder where the source will be moved to.</param>
 		/// <param name="keepName">Just a field to indicate a different constructor.</param>
-		public SourceMover(string destinationFolder, bool keepName)
+		/// <param name="override"><c>True</c>, if an existing destination should be overriden.</param>
+		public SourceMover(string destinationFolder, bool keepName, bool @override = true)
 		{
-			_destinationPath = destinationFolder;
-			_keepName = true;
+			DestinationPath = destinationFolder;
+			Override = @override;
+			KeepName = true;
 		}
 
 		/// <inheritdoc />
 		public override IFileSource Execute(IFileSource fileSoure)
 		{
-			string dest = _keepName ? Path.Combine(_destinationPath, fileSoure.FileInfo.Name) : _destinationPath;
+			string dest = KeepName ? Path.Combine(DestinationPath, fileSoure.FileInfo.Name) : DestinationPath;
 
 			string directory = Path.GetDirectoryName(dest);
 			if (!Directory.Exists(directory))
 			{
 				Directory.CreateDirectory(directory);
+			}
+
+			if (Override && File.Exists(dest))
+			{
+				File.Delete(dest);
 			}
 
 			fileSoure.FileInfo.MoveTo(dest);
