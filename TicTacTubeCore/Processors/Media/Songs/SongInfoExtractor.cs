@@ -70,8 +70,8 @@ namespace TicTacTubeCore.Processors.Media.Songs
 			songInfoFromFile.Title = songInfo.Title;
 			songInfoFromFile.Artists = songInfo.Artists;
 
-			if (UseTitleAsAlbum && string.IsNullOrEmpty(songInfoFromFile.Album))
-				songInfoFromFile.Album = songInfoFromFile.Title + Single;
+			if (string.IsNullOrEmpty(songInfoFromFile.Album))
+				songInfoFromFile.Album = songInfo.Album;
 
 			return songInfoFromFile;
 		}
@@ -87,7 +87,7 @@ namespace TicTacTubeCore.Processors.Media.Songs
 		///     song.
 		/// </param>
 		/// <returns>A <see cref="SongInfo" /> containing the title and artists.</returns>
-		public virtual async Task<SongInfo> ExtractFromStringAsyncTask(string songTitle) => await Task.Run(() => Extract(songTitle));
+		public virtual async Task<SongInfo> ExtractFromStringAsyncTask(string songTitle) => await Task.Run(() => ExtractFromString(songTitle));
 
 		/// <summary>
 		///     This method extracts songinfo from a given string (<paramref name="songTitle" />).
@@ -100,7 +100,7 @@ namespace TicTacTubeCore.Processors.Media.Songs
 		///     song.
 		/// </param>
 		/// <returns>A <see cref="SongInfo" /> containing the title and artists.</returns>
-		public virtual SongInfo Extract(string songTitle)
+		public virtual SongInfo ExtractFromString(string songTitle)
 		{
 			var songInfo = new SongInfo();
 			// apply the preprocessors
@@ -148,6 +148,11 @@ namespace TicTacTubeCore.Processors.Media.Songs
 			else
 			{
 				throw new FormatException($"'{songTitle}' could not be split. Manually add a split delimiter.");
+			}
+
+			if (UseTitleAsAlbum)
+			{
+				songInfo.Album = songInfo.Title + Single;
 			}
 
 			return songInfo;
