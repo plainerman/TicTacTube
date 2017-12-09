@@ -61,9 +61,11 @@ namespace TicTacTubeCore.Processors.Media
 
 				string currentAsString;
 				if (current is Array)
-					currentAsString = string.Join(", ", ((IEnumerable) current).Cast<object>().Select(o => o.ToString()));
+				{
+					currentAsString = string.Join(", ", ((IEnumerable)current).Cast<object>().Select(o => o.ToString()));
+				}
 				else
-					currentAsString = current.ToString();
+					currentAsString = current?.ToString();
 				//= current is Array ? string.Join(", ", current) : current.ToString();
 
 				name = name.Replace($"{OpenBracket}{i}{CloseBracket}", currentAsString);

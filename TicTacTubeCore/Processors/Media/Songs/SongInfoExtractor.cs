@@ -131,24 +131,25 @@ namespace TicTacTubeCore.Processors.Media.Songs
 					break;
 				}
 			}
-
-			// split was successful
+			var artists = new List<string>();
+			string titlePart;
 			if (split != null)
 			{
-				var artists = new List<string>();
 				artists.AddRange(SearchForArtists(ref split[0], true));
-				artists.AddRange(SearchForArtists(ref split[1], false));
-
-				songInfo.Artists = artists.ToArray();
-
-				// apply the post processors
-				songInfo.Title = Postprocessors
-					.Aggregate(split[1], (current, postprocessor) => Regex.Replace(current, postprocessor, "")).Trim();
+				titlePart = split[1];
 			}
 			else
 			{
-				throw new FormatException($"'{songTitle}' could not be split. Manually add a split delimiter.");
+				titlePart = songTitle;
 			}
+
+			artists.AddRange(SearchForArtists(ref titlePart, false));
+
+			songInfo.Artists = artists.ToArray();
+
+			// apply the post processors
+			songInfo.Title = Postprocessors
+				.Aggregate(titlePart, (current, postprocessor) => Regex.Replace(current, postprocessor, "")).Trim();
 
 			if (UseTitleAsAlbum)
 			{
