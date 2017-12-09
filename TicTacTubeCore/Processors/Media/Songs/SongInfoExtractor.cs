@@ -8,7 +8,7 @@ using TicTacTubeCore.Utils.Extensions.Strings;
 namespace TicTacTubeCore.Processors.Media.Songs
 {
 	/// <summary>
-	///     A simple song info extractor that tries as hard as it can.
+	///     A simple song info extractor that tries as hard as it can to parse from the filename.
 	/// </summary>
 	public class SongInfoExtractor : IMediaInfoExtractor<SongInfo>
 	{
