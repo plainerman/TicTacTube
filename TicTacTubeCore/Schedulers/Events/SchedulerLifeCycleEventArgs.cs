@@ -30,6 +30,20 @@ namespace TicTacTubeCore.Schedulers.Events
 	public class SchedulerLifeCycleEventArgs : SchedulerEventArgs
 	{
 		/// <summary>
+		///     Create given event args with the current running state and the event type.
+		/// </summary>
+		/// <param name="isRunning">The running state. Determines whether the scheduler is currently active or not.</param>
+		/// <param name="eventType">The current lifecycle type (i.e. method that caused the event).</param>
+		public SchedulerLifeCycleEventArgs(bool isRunning, SchedulerLifeCycleEventType eventType)
+		{
+			if (!Enum.IsDefined(typeof(SchedulerLifeCycleEventType), eventType))
+				throw new InvalidEnumArgumentException(nameof(eventType), (int) eventType, typeof(SchedulerLifeCycleEventType));
+
+			IsRunning = isRunning;
+			EventType = eventType;
+		}
+
+		/// <summary>
 		///     The running state.Determines whether the scheduler is currently active or not.
 		/// </summary>
 		public bool IsRunning { get; }
@@ -38,21 +52,5 @@ namespace TicTacTubeCore.Schedulers.Events
 		///     The current lifecycle type (i.e. method that caused the event).
 		/// </summary>
 		public SchedulerLifeCycleEventType EventType { get; }
-
-		/// <summary>
-		///     Create given event args with the current running state and the event type.
-		/// </summary>
-		/// <param name="isRunning">The running state. Determines whether the scheduler is currently active or not.</param>
-		/// <param name="eventType">The current lifecycle type (i.e. method that caused the event).</param>
-		public SchedulerLifeCycleEventArgs(bool isRunning, SchedulerLifeCycleEventType eventType)
-		{
-			if (!Enum.IsDefined(typeof(SchedulerLifeCycleEventType), eventType))
-			{
-				throw new InvalidEnumArgumentException(nameof(eventType), (int) eventType, typeof(SchedulerLifeCycleEventType));
-			}
-
-			IsRunning = isRunning;
-			EventType = eventType;
-		}
 	}
 }

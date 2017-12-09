@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using TicTacTubeCore.Processors.Definitions;
 using TicTacTubeCore.Sources.Files;
 

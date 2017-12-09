@@ -41,7 +41,7 @@ namespace TicTacTubeCore.Pipelines
 		public DataPipeline(IEnumerable<IDataProcessorOrBuilder> dataProcessorsOrBuilder)
 		{
 			DataProcessors = dataProcessorsOrBuilder?.Select(d => d.Build()).ToList() ??
-							throw new ArgumentNullException(nameof(dataProcessorsOrBuilder));
+			                 throw new ArgumentNullException(nameof(dataProcessorsOrBuilder));
 		}
 
 		/// <inheritdoc />
