@@ -12,10 +12,10 @@ namespace TicTacTubeCoreTest.Processors.Filesystem
 		[TestMethod]
 		public void TestMoveKeepFileName()
 		{
-			var scheduler = PrepareMove(out var source, out var sourceSize, out var destinatioPath);
+			var scheduler = PrepareMove(out var source, out long sourceSize, out string destinatioPath);
 			string destinationFile = Path.Combine(destinatioPath, source.FileInfo.Name);
 
-			scheduler.Builder.Append(new SourceMover(destinatioPath, true));
+			scheduler.Builder.Append(new SourceMover(destinatioPath, true, true));
 
 			TestFileMovement(destinationFile, scheduler, source, sourceSize, destinatioPath);
 		}
@@ -23,7 +23,7 @@ namespace TicTacTubeCoreTest.Processors.Filesystem
 		[TestMethod]
 		public void TestMove()
 		{
-			var scheduler = PrepareMove(out var source, out var sourceSize, out var destinatioPath);
+			var scheduler = PrepareMove(out var source, out long sourceSize, out string destinatioPath);
 			string destinationFile = Path.Combine(destinatioPath, "newFile");
 
 			scheduler.Builder.Append(new SourceMover(destinationFile));
@@ -38,7 +38,7 @@ namespace TicTacTubeCoreTest.Processors.Filesystem
 			destinatioPath = Path.Combine(destinatioPath, ".nestedSubFolder");
 			string destinationFile = Path.Combine(destinatioPath, "yepCustomEval");
 
-			scheduler.Builder.Append(new SourceMover(f => Path.Combine(destinatioPath, destinationFile)));
+			scheduler.Builder.Append(new SourceMover(Path.Combine(destinatioPath, destinationFile)));
 
 			TestFileMovement(destinationFile, scheduler, source, sourceSize, destinatioPath);
 		}
@@ -50,7 +50,7 @@ namespace TicTacTubeCoreTest.Processors.Filesystem
 
 			scheduler.Execute(source);
 
-			Assert.AreEqual(true, File.Exists(destinationFile));
+			Assert.IsTrue(File.Exists(destinationFile));
 			Assert.AreEqual(sourceSize, new FileInfo(destinationFile).Length);
 
 			Directory.Delete(destinatioPath, true);

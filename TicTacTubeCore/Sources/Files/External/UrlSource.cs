@@ -34,12 +34,13 @@ namespace TicTacTubeCore.Sources.Files.External
 		///     filename from the server.
 		///     If the file already exists, it will fetch a name with <see cref="BaseExternalFileSource.GetAllowedFileName" />.
 		/// </summary>
-		/// <param name="client">The client that is used to get the correct file. (<see cref="Url" /> is used).</param>
+		/// <param name="client">The client that is used to get the correct file. (<paramref name="url"/> is used).</param>
+		/// <param name="url">The url from which the filename will be fetched.</param>
 		/// <param name="destinationPath">The base path that will be prepended to the filename.</param>
 		/// <returns>The new path (destinationPath and the new filename).</returns>
-		protected virtual string GetDownloadedFilePath(WebClient client, string destinationPath)
+		protected virtual string GetDownloadedFilePath(WebClient client, string url, string destinationPath)
 		{
-			client.OpenRead(Url);
+			client.OpenRead(url);
 
 			var headerContentDisposition = client.ResponseHeaders["content-disposition"];
 			var filename = new ContentDisposition(headerContentDisposition).FileName;
@@ -55,7 +56,7 @@ namespace TicTacTubeCore.Sources.Files.External
 		{
 			using (var client = new WebClient())
 			{
-				FinishedPath = GetDownloadedFilePath(client, destinationPath);
+				FinishedPath = GetDownloadedFilePath(client, Url, destinationPath);
 
 				client.DownloadFile(Url, FinishedPath);
 			}
@@ -66,7 +67,7 @@ namespace TicTacTubeCore.Sources.Files.External
 		{
 			using (var client = new WebClient())
 			{
-				FinishedPath = GetDownloadedFilePath(client, destinationPath);
+				FinishedPath = GetDownloadedFilePath(client, Url, destinationPath);
 
 				CurrentDownloadTask = client.DownloadFileTaskAsync(Url, FinishedPath);
 			}
