@@ -45,7 +45,7 @@ namespace TicTacTubeCore.Sources.Files.External
 				CurrentDownloadTask.Wait();
 
 				// If there was an error with the task
-				if (!CurrentDownloadTask.IsCompletedSuccessfully)
+				if (CurrentDownloadTask.IsFaulted)
 				{
 					Exception e = CurrentDownloadTask.Exception;
 					CurrentDownloadTask = null;
