@@ -25,32 +25,33 @@ namespace TicTacTubeCore.Processors.Media.Songs
 		/// <summary>
 		///     All delimiters that indicate another artist following.
 		/// </summary>
-		protected string[] ArtistSeperator = { @"(?i)\s(&|\+|x|with|vs.?)\s", @",\s" };
+		protected string[] ArtistSeperator = {@"(?i)\s(&|\+|x|with|vs.?)\s", @",\s"};
 
 		/// <summary>
 		///     Common delimiters for song titles (seperate songname from main artist)
 		/// </summary>
-		protected string[] Delimiters = { @"\s-\s", @"\s–\s", @"\s—\s", @"\|" };
+		protected string[] Delimiters = {@"\s-\s", @"\s–\s", @"\s—\s", @"\|"};
 
 		/// <summary>
 		///     All delimiters that mark the end of a chain of artists.
 		/// </summary>
-		protected string[] FeaturingEnd = { @"\)", @"\]", FeaturingRegex };
+		protected string[] FeaturingEnd = {@"\)", @"\]", FeaturingRegex};
 
 		/// <summary>
 		///     All sequences that define a list of sequences. Also add those to the <see cref="Postprocessors" />.
 		/// </summary>
-		protected string[] FeaturingStart = { FeaturingRegex };
+		protected string[] FeaturingStart = {FeaturingRegex};
 
 		/// <summary>
 		///     The postprocessors that will be executed and deltete certain parts.
 		/// </summary>
-		protected string[] Postprocessors = { FeaturingRegex, @"\(\s*\)", @"\[.*?\]" };
+		protected string[] Postprocessors = {FeaturingRegex, @"\(\s*\)", @"\[.*?\]"};
 
 		/// <summary>
 		///     The preprocessors that will be executed and delete certain parts.
 		/// </summary>
-		protected string[] Preprocessors = { @"(?i)\s*\([^)]*(audio|video)\)", "(?i)(\"|“)audio(\"|”)", @"(?i)\s*\([^)]*explicit\)" };
+		protected string[] Preprocessors =
+			{@"(?i)\s*\([^)]*(audio|video)\)", "(?i)(\"|“)audio(\"|”)", @"(?i)\s*\([^)]*explicit\)"};
 
 		/// <summary>
 		///     Determine whether the title should be used as album, if no album could be found.
@@ -69,9 +70,7 @@ namespace TicTacTubeCore.Processors.Media.Songs
 			songInfoFromFile.Artists = songInfo.Artists;
 
 			if (UseTitleAsAlbum && string.IsNullOrEmpty(songInfoFromFile.Album))
-			{
 				songInfoFromFile.Album = songInfoFromFile.Title + Single;
-			}
 
 			return songInfoFromFile;
 		}
@@ -191,9 +190,7 @@ namespace TicTacTubeCore.Processors.Media.Songs
 			var splitEndIndexes = new List<int>();
 
 			if (artistsOnly)
-			{
 				splitStartIndexes.Add(0);
-			}
 
 			// test all start strings (starting a new artist) and store the indexes.
 			StoreAllMatchIndexes(input, FeaturingStart, splitStartIndexes, true);
@@ -237,9 +234,7 @@ namespace TicTacTubeCore.Processors.Media.Songs
 				splits.Add(new StringPosition(splitStart, splitEnd - splitStart));
 
 				if (toBreak)
-				{
 					break;
-				}
 			}
 
 			input = input.Remove(splits);
@@ -252,9 +247,7 @@ namespace TicTacTubeCore.Processors.Media.Songs
 				foreach (int i in toSearch)
 				{
 					if (i > search)
-					{
 						return i;
-					}
 				}
 
 				return null;

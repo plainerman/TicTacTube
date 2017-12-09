@@ -114,7 +114,7 @@ namespace TicTacTubeCore.Sources.Files
 			}
 			else
 			{
-				var path = _externalSource.FetchFile(_filePath);
+				string path = _externalSource.FetchFile(_filePath);
 
 				AssignFilePath(path);
 

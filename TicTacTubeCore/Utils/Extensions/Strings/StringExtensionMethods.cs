@@ -20,9 +20,7 @@ namespace TicTacTubeCore.Utils.Extensions.Strings
 		{
 			int pos = text.IndexOf(search, startIndex, StringComparison.Ordinal);
 			if (pos < 0)
-			{
 				return text;
-			}
 
 			return text.Substring(0, pos) + replace + text.Substring(pos + search.Length);
 		}
@@ -57,9 +55,7 @@ namespace TicTacTubeCore.Utils.Extensions.Strings
 					start = prevSplit.StartIndex + prevSplit.MatchLength;
 				}
 				if (i < splits.Count)
-				{
 					end = splits[i].StartIndex;
-				}
 
 				ret[i] = text.SubstringByIndex(start, end);
 			}

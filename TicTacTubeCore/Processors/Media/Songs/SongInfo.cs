@@ -43,7 +43,7 @@ namespace TicTacTubeCore.Processors.Media.Songs
 		public int Bitrate;
 
 		/// <summary>
-		/// The pictures that belong to the song (e.g. cover art).
+		///     The pictures that belong to the song (e.g. cover art).
 		/// </summary>
 		public IPicture[] Pictures;
 
@@ -67,7 +67,7 @@ namespace TicTacTubeCore.Processors.Media.Songs
 		}
 
 		/// <summary>
-		/// Read the songinfo from a given file.
+		///     Read the songinfo from a given file.
 		/// </summary>
 		/// <param name="path"></param>
 		/// <returns></returns>

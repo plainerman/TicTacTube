@@ -100,15 +100,15 @@ namespace TicTacTubeCore.Sources.Files.External
 			if (string.IsNullOrWhiteSpace(desiredFileName))
 				desiredFileName = "download.dat";
 
-			var path = Path.Combine(destinationPath, desiredFileName);
+			string path = Path.Combine(destinationPath, desiredFileName);
 
 			if (!File.Exists(path))
 				return desiredFileName;
 
-			var index = 1;
+			int index = 1;
 			while (true)
 			{
-				var currentDesiredFilename =
+				string currentDesiredFilename =
 					$"{Path.GetFileNameWithoutExtension(desiredFileName)}_{index}{Path.GetExtension(desiredFileName)}";
 				path = Path.Combine(destinationPath, currentDesiredFilename);
 

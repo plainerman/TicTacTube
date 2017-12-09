@@ -62,13 +62,9 @@ namespace TicTacTubeCore.Utils.Extensions.Strings
 			out IList<StringPosition> foundSplits)
 		{
 			if (patterns.Length != options.Length)
-			{
 				throw new ArgumentException("Not the correct amount of options supplied.", nameof(options));
-			}
 			if (patterns.Length != matchTimeouts.Length)
-			{
 				throw new ArgumentException("Not the correct amount of matchTimeouts supplied.", nameof(matchTimeouts));
-			}
 
 			var splits = new List<StringPosition>();
 

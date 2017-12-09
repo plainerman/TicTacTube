@@ -27,7 +27,8 @@ namespace TicTacTubeCore.Processors.Media
 		/// <param name="nameGenerator">The name generator that generates the new file names.</param>
 		/// <param name="extractor">The extractor that extracts a media info from the file source.</param>
 		/// <param name="override"><c>True</c>, if an existing destination should be overriden.</param>
-		public MediaRenamer(IMediaNameGenerator<T> nameGenerator, IMediaInfoExtractor<T> extractor, bool @override = true) : base(@override)
+		public MediaRenamer(IMediaNameGenerator<T> nameGenerator, IMediaInfoExtractor<T> extractor, bool @override = true) :
+			base(@override)
 		{
 			NameGenerator = nameGenerator ?? throw new ArgumentNullException(nameof(nameGenerator));
 			MediaInfoExtractor = extractor ?? throw new ArgumentNullException(nameof(extractor));
@@ -58,6 +59,6 @@ namespace TicTacTubeCore.Processors.Media
 		/// <param name="source">The file source that will be parsed.</param>
 		/// <returns>The new filename for the file source (with the file extension).</returns>
 		protected virtual string ProduceName(IFileSource source) => NameGenerator.Parse(MediaInfoExtractor.Extract(source)) +
-																	source.FileExtension;
+		                                                            source.FileExtension;
 	}
 }

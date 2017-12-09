@@ -4,7 +4,6 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Threading.Tasks;
 using Genius;
 using Genius.Models;
 using Newtonsoft.Json.Linq;
@@ -19,33 +18,29 @@ namespace TicTacTubeCore.Processors.Media.Songs
 	/// </summary>
 	public class GeniusSongInfoFetcher : IMediaInfoExtractor<SongInfo>
 	{
-		protected readonly bool OverrideData;
-
 		/// <summary>
-		/// The genius client that is used to perform queris on Genius.com.
+		///     The genius client that is used to perform queris on Genius.com.
 		/// </summary>
 		protected readonly GeniusClient GeniusClient;
 
+		protected readonly bool OverrideData;
+
 		public GeniusSongInfoFetcher(string geniusApiKey, bool overrideData)
 		{
-			if (string.IsNullOrWhiteSpace(geniusApiKey)) throw new ArgumentException("Value cannot be null or whitespace.", nameof(geniusApiKey));
+			if (string.IsNullOrWhiteSpace(geniusApiKey))
+				throw new ArgumentException("Value cannot be null or whitespace.", nameof(geniusApiKey));
 			OverrideData = overrideData;
 
 			GeniusClient = new GeniusClient(geniusApiKey);
 		}
 
-		public SongInfo Extract(IFileSource source)
-		{
-			return Extract(SongInfo.ReadFromFile(source.FileInfo.FullName));
-		}
+		public SongInfo Extract(IFileSource source) => Extract(SongInfo.ReadFromFile(source.FileInfo.FullName));
 
 		public SongInfo Extract(SongInfo currentInfo)
 		{
 			string searchTerm = currentInfo.Title;
 			if (currentInfo.Artists.Length > 0)
-			{
 				searchTerm = currentInfo.Artists[0] + searchTerm;
-			}
 
 			var resultTask = GeniusClient.SearchClient.Search(TextFormat.Dom, searchTerm);
 
@@ -56,7 +51,7 @@ namespace TicTacTubeCore.Processors.Media.Songs
 			if (result.Response.Count > 0)
 			{
 				// TODO: dont get the first one, get the first one with the type song
-				var bestHit = (JObject)result.Response[0].Result;
+				var bestHit = (JObject) result.Response[0].Result;
 
 				long songId = bestHit.GetValue("id").Value<long>();
 
@@ -80,13 +75,13 @@ namespace TicTacTubeCore.Processors.Media.Songs
 			if (!string.IsNullOrWhiteSpace(song.ReleaseDate))
 			{
 				var releaseDate = DateTime.ParseExact(song.ReleaseDate, "yyyy-MM-dd", CultureInfo.InvariantCulture);
-				info.Year = (uint)releaseDate.Year;
+				info.Year = (uint) releaseDate.Year;
 			}
 
 			if (song.Album != null)
 			{
 				info.Album = song.Album?.Name;
-				info.AlbumArtists = new[] { song.Album.Artist.Name };
+				info.AlbumArtists = new[] {song.Album.Artist.Name};
 			}
 
 			var artists = new List<string>();
@@ -103,16 +98,12 @@ namespace TicTacTubeCore.Processors.Media.Songs
 				artists.AddRange(info.Artists);
 
 				if (artists.Count <= 0)
-				{
 					artists.Add(song.PrimaryArtist.Name);
-				}
 
 				foreach (var artist in song.FeaturedArtists)
 				{
 					if (!artists.Contains(artist.Name))
-					{
 						artists.Add(artist.Name);
-					}
 				}
 			}
 
@@ -122,7 +113,7 @@ namespace TicTacTubeCore.Processors.Media.Songs
 			downloadCoverArt.Wait();
 
 			// TODO: keep old images?
-			info.Pictures = new IPicture[] { new Picture(coverArtDestination) };
+			info.Pictures = new IPicture[] {new Picture(coverArtDestination)};
 			File.Delete(coverArtDestination);
 			webClient.Dispose();
 
