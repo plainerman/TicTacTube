@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -52,7 +51,7 @@ namespace TicTacTubeCore.Processors.Media.Songs
 		///     The preprocessors that will be executed and delete certain parts.
 		/// </summary>
 		protected string[] Preprocessors =
-			{@"(?i)\s*\([^)]*(audio|video)\)", "(?i)(\"|“)audio(\"|”)", @"(?i)\s*\([^)]*explicit\)"};
+			{ @"(?i)\s*\([^)]*(audio|video)\)", "(?i)(\"|“)audio(\"|”)", @"(?i)\s*\([^)]*explicit\)" };
 
 		/// <summary>
 		///     Determine whether the title should be used as album, if no album could be found.
@@ -87,7 +86,8 @@ namespace TicTacTubeCore.Processors.Media.Songs
 		///     song.
 		/// </param>
 		/// <returns>A <see cref="SongInfo" /> containing the title and artists.</returns>
-		public virtual async Task<SongInfo> ExtractFromStringAsyncTask(string songTitle) => await Task.Run(() => ExtractFromString(songTitle));
+		public virtual async Task<SongInfo> ExtractFromStringAsyncTask(string songTitle) =>
+			await Task.Run(() => ExtractFromString(songTitle));
 
 		/// <summary>
 		///     This method extracts songinfo from a given string (<paramref name="songTitle" />).
@@ -152,9 +152,7 @@ namespace TicTacTubeCore.Processors.Media.Songs
 				.Aggregate(titlePart, (current, postprocessor) => Regex.Replace(current, postprocessor, "")).Trim();
 
 			if (UseTitleAsAlbum)
-			{
 				songInfo.Album = songInfo.Title + Single;
-			}
 
 			return songInfo;
 		}

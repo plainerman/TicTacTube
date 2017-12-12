@@ -15,7 +15,8 @@ using File = System.IO.File;
 namespace TicTacTubeCore.Processors.Media.Songs
 {
 	/// <summary>
-	///     A song info extractor that queries the already stored info.
+	///     A song info extractor that queries the already stored info to https://genius.com and downloads additional data
+	///     (e.g. album cover).
 	/// </summary>
 	public class GeniusSongInfoFetcher : IMediaInfoExtractor<SongInfo>
 	{
@@ -24,8 +25,27 @@ namespace TicTacTubeCore.Processors.Media.Songs
 		/// </summary>
 		protected readonly GeniusClient GeniusClient;
 
-		protected readonly bool OverrideData;
+		/// <summary>
+		///     Determine whether the data should be overriden (i.e. taken from genius - may result in completely wrong matched
+		///     songs)
+		///     or expanded (may result in partially wrong data - title and artists won't be modified).
+		/// </summary>
+		public readonly bool OverrideData;
 
+		/// <summary>
+		///     Create a new genius fetcher that requires a <paramref name="geniusApiKey" /> to query on https://genius.com.
+		///     Further, <paramref name="overrideData" /> can be specified.
+		///     It can expand / modify the data information from a song.
+		/// </summary>
+		/// <param name="geniusApiKey">
+		///     The API-key that will be used for the queries (i.e. to create the
+		///     <see cref="GeniusClient" />).
+		/// </param>
+		/// <param name="overrideData">
+		///     Determine whether the data should be overriden (i.e. taken from genius - may result in completely wrong matched
+		///     songs)
+		///     or expanded (may result in partially wrong data - title and artists won't be modified).
+		/// </param>
 		public GeniusSongInfoFetcher(string geniusApiKey, bool overrideData)
 		{
 			if (string.IsNullOrWhiteSpace(geniusApiKey))
@@ -35,9 +55,20 @@ namespace TicTacTubeCore.Processors.Media.Songs
 			GeniusClient = new GeniusClient(geniusApiKey);
 		}
 
-		public async Task<SongInfo> ExtractAsyncTask(IFileSource source) => await ExtractAsyncTask(SongInfo.ReadFromFile(source.FileInfo.FullName));
+		/// <inheritdoc />
+		public virtual async Task<SongInfo> ExtractAsyncTask(IFileSource source) =>
+			await ExtractAsyncTask(SongInfo.ReadFromFile(source.FileInfo.FullName));
 
-		public async Task<SongInfo> ExtractAsyncTask(SongInfo currentInfo)
+		/// <summary>
+		///     Comnpare the given songinfo (<paramref name="currentInfo" />) with the genius database and extend it. It may not be
+		///     modified (e.g. if no match could be found).
+		/// </summary>
+		/// <param name="currentInfo">
+		///     The info that will be used as baseline. <see cref="SongInfo.Title" /> and
+		///     <see cref="SongInfo.Artists" /> will be used for the query.
+		/// </param>
+		/// <returns>A new songinfo containing relevant info from https://genius.com.</returns>
+		public virtual async Task<SongInfo> ExtractAsyncTask(SongInfo currentInfo)
 		{
 			return await Task.Run(async () =>
 			{
@@ -48,12 +79,11 @@ namespace TicTacTubeCore.Processors.Media.Songs
 
 				var result = (await GeniusClient.SearchClient.Search(TextFormat.Dom, searchTerm)).Response;
 
-				if (result.Count > 0)
-				{
-					// TODO: dont get the first one, get the first one with the type song
-					var bestHit = (JObject)result[0].Result;
+				var correctHit = (from hit in result where hit.Type.Equals("song") select (JObject) hit.Result).FirstOrDefault();
 
-					long songId = bestHit.GetValue("id").Value<long>();
+				if (correctHit != null)
+				{
+					long songId = correctHit.GetValue("id").Value<long>();
 
 					var song = await GeniusClient.SongsClient.GetSong(TextFormat.Html, songId.ToString());
 					currentInfo = await SetSong(currentInfo, song.Response);
@@ -63,6 +93,12 @@ namespace TicTacTubeCore.Processors.Media.Songs
 			});
 		}
 
+		/// <summary>
+		///     This method actually stores the info from a given song into a given songinfo.
+		/// </summary>
+		/// <param name="info">The info that will be used as a baseline. (A new one will be returned).</param>
+		/// <param name="song">The song that will be used to add information to <paramref name="info" />.</param>
+		/// <returns>A new songinfo containing relevant info from the <paramref name="song" />.</returns>
 		protected virtual async Task<SongInfo> SetSong(SongInfo info, Song song)
 		{
 			string coverArtDestination = Path.GetTempFileName();
@@ -73,7 +109,7 @@ namespace TicTacTubeCore.Processors.Media.Songs
 			if (!string.IsNullOrWhiteSpace(song.ReleaseDate))
 			{
 				var releaseDate = DateTime.ParseExact(song.ReleaseDate, "yyyy-MM-dd", CultureInfo.InvariantCulture);
-				info.Year = (uint)releaseDate.Year;
+				info.Year = (uint) releaseDate.Year;
 			}
 
 			if (song.Album != null)

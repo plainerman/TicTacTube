@@ -58,7 +58,8 @@ namespace TicTacTubeCore.Utils.Extensions.Strings
 		/// <param name="matchTimeouts">The timeouts for the individual patterns.</param>
 		/// <param name="foundSplits">The splits that have been found and can be used to identify the split positions.</param>
 		/// <returns>An array of the split <paramref name="input" />.</returns>
-		public static string[] SplitMulti(string input, string[] patterns, RegexOptions[] options, TimeSpan[] matchTimeouts,
+		public static string[] SplitMulti(string input, string[] patterns, RegexOptions[] options,
+			TimeSpan[] matchTimeouts,
 			out IList<StringPosition> foundSplits)
 		{
 			if (patterns.Length != options.Length)

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 using TicTacTubeCore.Processors.Filesystem;
 using TicTacTubeCore.Sources.Files;
 
@@ -59,9 +58,7 @@ namespace TicTacTubeCore.Processors.Media
 		/// </summary>
 		/// <param name="source">The file source that will be parsed.</param>
 		/// <returns>The new filename for the file source (with the file extension).</returns>
-		protected virtual string ProduceName(IFileSource source)
-		{
-			return NameGenerator.Parse(MediaInfoExtractor.ExtractAsyncTask(source).GetAwaiter().GetResult()) + source.FileExtension;
-		}
+		protected virtual string ProduceName(IFileSource source) =>
+			NameGenerator.Parse(MediaInfoExtractor.ExtractAsyncTask(source).GetAwaiter().GetResult()) + source.FileExtension;
 	}
 }
