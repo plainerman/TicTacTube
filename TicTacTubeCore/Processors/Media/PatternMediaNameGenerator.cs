@@ -61,13 +61,9 @@ namespace TicTacTubeCore.Processors.Media
 
 				string currentAsString;
 				if (current is Array)
-				{
 					currentAsString = string.Join(", ", ((IEnumerable) current).Cast<object>().Select(o => o.ToString()));
-				}
 				else
-				{
-					currentAsString = current.ToString();
-				}
+					currentAsString = current?.ToString();
 				//= current is Array ? string.Join(", ", current) : current.ToString();
 
 				name = name.Replace($"{OpenBracket}{i}{CloseBracket}", currentAsString);
@@ -88,13 +84,9 @@ namespace TicTacTubeCore.Processors.Media
 			int closeCount = pattern.Count(f => f == CloseBracket);
 
 			if (openCount > closeCount)
-			{
 				throw new FormatException($"Bad formatting - {OpenBracket} missing.");
-			}
 			if (openCount < closeCount)
-			{
 				throw new FormatException($"Bad formatting - {CloseBracket} missing.");
-			}
 
 			var matches = CurlyBracketsMatcher.Matches(pattern);
 			var variableNames = new List<string>();
@@ -114,9 +106,7 @@ namespace TicTacTubeCore.Processors.Media
 				{
 					variableNames.Add(currentVar);
 					if (typeof(T).GetField(currentVar, BindingFlags.Public | BindingFlags.Instance) == null)
-					{
 						throw new FormatException($"Unknown parameter \"{currentVar}\"");
-					}
 				}
 
 				string replace = currentVarIndex.ToString();

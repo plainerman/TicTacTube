@@ -27,6 +27,7 @@ namespace TicTacTubeCoreTest.Processors.Media
 
 		[DataTestMethod]
 		[DataRow("{Album} - {Title}", Album + " - " + Title)]
+		[DataRow("{Album} - {Title} - {AlbumArtists}", Album + " - " + Title + " - ")]
 		[DataRow("{Album} - {Title} {Title}", Album + " - " + Title + " " + Title)]
 		[DataRow("{Album}({Year}) - {Title}", Album + "(" + YearAsString + ") - " + Title)]
 		[DataRow("{Album}({Year}) - {Title} - {Artists}", Album + "(" + YearAsString + ") - " + Title + " - " + ArtistA + ", " + ArtistB)]

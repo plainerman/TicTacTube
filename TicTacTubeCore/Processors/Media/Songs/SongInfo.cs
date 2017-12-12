@@ -1,4 +1,5 @@
-﻿using TagLib;
+﻿using System.Threading.Tasks;
+using TagLib;
 
 namespace TicTacTubeCore.Processors.Media.Songs
 {
@@ -23,9 +24,14 @@ namespace TicTacTubeCore.Processors.Media.Songs
 		public string Album;
 
 		/// <summary>
-		///     The genres of the song.
+		///     The album artists from the album;
 		/// </summary>
-		public string[] Genres;
+		public string[] AlbumArtists;
+
+		///// <summary>
+		/////     The genres of the song.
+		///// </summary>
+		//public string[] Genres;
 
 		/// <summary>
 		///     The year this song was released.
@@ -38,11 +44,10 @@ namespace TicTacTubeCore.Processors.Media.Songs
 		public int Bitrate;
 
 		/// <summary>
-		/// The pictures that belong to the song (e.g. cover art).
+		///     The pictures that belong to the song (e.g. cover art).
 		/// </summary>
 		public IPicture[] Pictures;
 
-		//TODO: cover art
 		//TODO:lyrics?
 		/// <inheritdoc />
 		public void WriteToFile(string path)
@@ -52,7 +57,7 @@ namespace TicTacTubeCore.Processors.Media.Songs
 				f.Tag.Title = Title;
 				f.Tag.Performers = Artists;
 				f.Tag.Album = Album;
-				f.Tag.Genres = Genres;
+				f.Tag.AlbumArtists = AlbumArtists;
 				f.Tag.Year = Year;
 				f.Tag.Pictures = Pictures;
 
@@ -63,10 +68,10 @@ namespace TicTacTubeCore.Processors.Media.Songs
 		}
 
 		/// <summary>
-		/// Read the songinfo from a given file.
+		///     Read the songinfo from a given file.
 		/// </summary>
-		/// <param name="path"></param>
-		/// <returns></returns>
+		/// <param name="path">The path from which the information will be read.</param>
+		/// <returns>The extracted songinfo from the file.</returns>
 		public static SongInfo ReadFromFile(string path)
 		{
 			var songInfo = new SongInfo();
@@ -76,7 +81,8 @@ namespace TicTacTubeCore.Processors.Media.Songs
 				songInfo.Title = f.Tag.Title;
 				songInfo.Artists = f.Tag.Performers;
 				songInfo.Album = f.Tag.Album;
-				songInfo.Genres = f.Tag.Genres;
+				songInfo.AlbumArtists = f.Tag.AlbumArtists;
+				//songInfo.Genres = f.Tag.Genres;
 				songInfo.Year = f.Tag.Year;
 				songInfo.Bitrate = f.Properties.AudioBitrate;
 				songInfo.Pictures = f.Tag.Pictures;
@@ -84,5 +90,12 @@ namespace TicTacTubeCore.Processors.Media.Songs
 
 			return songInfo;
 		}
+
+		/// <summary>
+		///     Read the songinfo from a given file asynchronously.
+		/// </summary>
+		/// <param name="path">The path from which the information will be read.</param>
+		/// <returns>The extracted songinfo from the file.</returns>
+		public static async Task<SongInfo> ReadFromFileAsyncTask(string path) => await Task.Run(() => ReadFromFile(path));
 	}
 }

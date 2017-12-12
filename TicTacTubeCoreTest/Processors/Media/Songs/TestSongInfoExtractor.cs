@@ -28,6 +28,7 @@ namespace TicTacTubeCoreTest.Processors.Media.Songs
 		[DataRow("David Guetta - Where Them Girls At ft. Nicki Minaj, Flo Rida (Official Video)", "Where Them Girls At", new[] { "David Guetta", "Nicki Minaj", "Flo Rida" })]
 		[DataRow("Rihanna - Work (Explicit) ft. Drake", "Work", new[] { "Rihanna", "Drake" })]
 		[DataRow("Basenji — Mistakes feat. Tkay Maidza", "Mistakes", new[] { "Basenji", "Tkay Maidza" })]
+		[DataRow("Mistakes feat. Basenji & Tkay Maidza", "Mistakes", new[] { "Basenji", "Tkay Maidza" })]
 		public void TestSongInfoExtractionByName(string input, string title, string[] artists)
 		{
 			//TODO: readd / think about other concept, once the file has to exist in order to be analyzed
@@ -36,7 +37,7 @@ namespace TicTacTubeCoreTest.Processors.Media.Songs
 			//var testFile = Path.Combine(Path.GetDirectoryName(tmpFile), input);
 			//File.Move(tmpFile, testFile);
 
-			var extracted = new SongInfoExtractor().ExtractFromString(input);
+			var extracted = new SongInfoExtractor().ExtractFromStringAsyncTask(input).GetAwaiter().GetResult();
 			Assert.AreEqual(title, extracted.Title);
 
 			Assert.AreEqual(artists.Length, extracted.Artists.Length);

@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using TicTacTubeCore.Sources.Files;
 using TicTacTubeCore.Utils.Extensions.Strings;
 
 namespace TicTacTubeCore.Processors.Media.Songs
 {
 	/// <summary>
-	///     A simple song info extractor that tries as hard as it can.
+	///     A simple song info extractor that tries as hard as it can to parse from the filename.
 	/// </summary>
 	public class SongInfoExtractor : IMediaInfoExtractor<SongInfo>
 	{
@@ -50,7 +50,8 @@ namespace TicTacTubeCore.Processors.Media.Songs
 		/// <summary>
 		///     The preprocessors that will be executed and delete certain parts.
 		/// </summary>
-		protected string[] Preprocessors = { @"(?i)\s*\([^)]*(audio|video)\)", "(?i)(\"|“)audio(\"|”)", @"(?i)\s*\([^)]*explicit\)" };
+		protected string[] Preprocessors =
+			{ @"(?i)\s*\([^)]*(audio|video)\)", "(?i)(\"|“)audio(\"|”)", @"(?i)\s*\([^)]*explicit\)" };
 
 		/// <summary>
 		///     Determine whether the title should be used as album, if no album could be found.
@@ -58,23 +59,35 @@ namespace TicTacTubeCore.Processors.Media.Songs
 		public bool UseTitleAsAlbum { get; set; } = true;
 
 		/// <inheritdoc />
-		public SongInfo Extract(IFileSource song)
+		public async Task<SongInfo> ExtractAsyncTask(IFileSource song)
 		{
 			string fileName = song.FileName;
 
-			var songInfoFromFile = SongInfo.ReadFromFile(song.FileInfo.FullName);
-			var songInfo = ExtractFromString(fileName);
+			var songInfoFromFile = await SongInfo.ReadFromFileAsyncTask(song.FileInfo.FullName);
+			var songInfo = await ExtractFromStringAsyncTask(fileName);
 
 			songInfoFromFile.Title = songInfo.Title;
 			songInfoFromFile.Artists = songInfo.Artists;
 
-			if (UseTitleAsAlbum && string.IsNullOrEmpty(songInfoFromFile.Album))
-			{
-				songInfoFromFile.Album = songInfoFromFile.Title + Single;
-			}
+			if (string.IsNullOrEmpty(songInfoFromFile.Album))
+				songInfoFromFile.Album = songInfo.Album;
 
 			return songInfoFromFile;
 		}
+
+		/// <summary>
+		///     This method extracts songinfo from a given string (<paramref name="songTitle" />).
+		///     Other features like bitrate won't be extracted here.
+		///     It works with formatting like:
+		///     Laura Brehm - Breathe (Last Heroes &amp; Crystal Skies Remix) (Lyric Video)
+		/// </summary>
+		/// <param name="songTitle">
+		///     The string that should be as verbose as possible for the program to correctly identify the
+		///     song.
+		/// </param>
+		/// <returns>A <see cref="SongInfo" /> containing the title and artists.</returns>
+		public virtual async Task<SongInfo> ExtractFromStringAsyncTask(string songTitle) =>
+			await Task.Run(() => ExtractFromString(songTitle));
 
 		/// <summary>
 		///     This method extracts songinfo from a given string (<paramref name="songTitle" />).
@@ -118,24 +131,28 @@ namespace TicTacTubeCore.Processors.Media.Songs
 					break;
 				}
 			}
-
-			// split was successful
+			var artists = new List<string>();
+			string titlePart;
 			if (split != null)
 			{
-				var artists = new List<string>();
 				artists.AddRange(SearchForArtists(ref split[0], true));
-				artists.AddRange(SearchForArtists(ref split[1], false));
-
-				songInfo.Artists = artists.ToArray();
-
-				// apply the post processors
-				songInfo.Title = Postprocessors
-					.Aggregate(split[1], (current, postprocessor) => Regex.Replace(current, postprocessor, "")).Trim();
+				titlePart = split[1];
 			}
 			else
 			{
-				throw new FormatException($"'{songTitle}' could not be split. Manually add a split delimiter.");
+				titlePart = songTitle;
 			}
+
+			artists.AddRange(SearchForArtists(ref titlePart, false));
+
+			songInfo.Artists = artists.ToArray();
+
+			// apply the post processors
+			songInfo.Title = Postprocessors
+				.Aggregate(titlePart, (current, postprocessor) => Regex.Replace(current, postprocessor, "")).Trim();
+
+			if (UseTitleAsAlbum)
+				songInfo.Album = songInfo.Title + Single;
 
 			return songInfo;
 		}
@@ -191,9 +208,7 @@ namespace TicTacTubeCore.Processors.Media.Songs
 			var splitEndIndexes = new List<int>();
 
 			if (artistsOnly)
-			{
 				splitStartIndexes.Add(0);
-			}
 
 			// test all start strings (starting a new artist) and store the indexes.
 			StoreAllMatchIndexes(input, FeaturingStart, splitStartIndexes, true);
@@ -237,9 +252,7 @@ namespace TicTacTubeCore.Processors.Media.Songs
 				splits.Add(new StringPosition(splitStart, splitEnd - splitStart));
 
 				if (toBreak)
-				{
 					break;
-				}
 			}
 
 			input = input.Remove(splits);
@@ -252,9 +265,7 @@ namespace TicTacTubeCore.Processors.Media.Songs
 				foreach (int i in toSearch)
 				{
 					if (i > search)
-					{
 						return i;
-					}
 				}
 
 				return null;
