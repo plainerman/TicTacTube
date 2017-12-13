@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
 	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageId>TicTacTube</PackageId>
+    <PackageId>TTT.TicTacTube</PackageId>
     <Authors>Michael Plainer</Authors>
     <Company>Michael Plainer</Company>
     <Product>TicTacTube</Product>
