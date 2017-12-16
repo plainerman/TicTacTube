@@ -75,7 +75,7 @@ namespace TicTacTubeCore.Processors.Media.Songs
 				string searchTerm = currentInfo.Title;
 
 				if (currentInfo.Artists.Length > 0)
-					searchTerm = currentInfo.Artists[0] + searchTerm;
+					searchTerm = $"{currentInfo.Artists[0]} {searchTerm}";
 
 				var result = (await GeniusClient.SearchClient.Search(TextFormat.Dom, searchTerm)).Response;
 
