@@ -12,10 +12,11 @@ namespace TicTacTubeCore.Processors.Media.Songs
 	/// </summary>
 	public class SongInfoExtractor : IMediaInfoExtractor<SongInfo>
 	{
+		private const string FeaturingRegexWithoutSpace = @"f(ea)?t(\.?\s|\.)";
 		/// <summary>
 		///     The regex that matches featuring in song titles.
 		/// </summary>
-		protected const string FeaturingRegex = @"\s?f(ea)?t(\.?\s|\.)";
+		protected const string FeaturingRegex = @"\s?" + FeaturingRegexWithoutSpace;
 
 		/// <summary>
 		///     The text that will be appended, if <see cref="UseTitleAsAlbum" /> is active.
@@ -35,22 +36,24 @@ namespace TicTacTubeCore.Processors.Media.Songs
 		/// <summary>
 		///     All delimiters that mark the end of a chain of artists.
 		/// </summary>
-		protected string[] FeaturingEnd = { @"\)", @"\]", FeaturingRegex };
+		protected string[] FeaturingEnd = { @"(\(|\)|\[|\])", FeaturingRegex };
 
 		/// <summary>
-		///     All sequences that define a list of sequences. Also add those to the <see cref="Postprocessors" />.
+		///     All sequences that define a list of sequences. Also add those to the <see cref="PostProcessors" />.
 		/// </summary>
 		protected string[] FeaturingStart = { FeaturingRegex };
 
 		/// <summary>
 		///     The postprocessors that will be executed and deltete certain parts.
 		/// </summary>
-		protected string[] Postprocessors = { FeaturingRegex, @"\(\s*\)", @"\[.*?\]" };
+		protected string[] PostProcessors = { FeaturingRegexWithoutSpace, @"\(\s*\)" };
+
+		protected IStringProcessor[] PostStringProcessors = { new SquareBracketsStringProcessor() };
 
 		/// <summary>
 		///     The preprocessors that will be executed and delete certain parts.
 		/// </summary>
-		protected string[] Preprocessors =
+		protected string[] PreProcessors =
 			{ @"(?i)\s*\([^)]*(audio|video)\)", "(?i)(\"|“)audio(\"|”)", @"(?i)\s*\([^)]*explicit\)" };
 
 		/// <summary>
@@ -104,7 +107,7 @@ namespace TicTacTubeCore.Processors.Media.Songs
 		{
 			var songInfo = new SongInfo();
 			// apply the preprocessors
-			songTitle = Preprocessors.Aggregate(songTitle, (current, preprocessor) => Regex.Replace(current, preprocessor, ""));
+			songTitle = PreProcessors.Aggregate(songTitle, (current, preprocessor) => Regex.Replace(current, preprocessor, ""));
 
 			string[] split = null;
 
@@ -146,10 +149,21 @@ namespace TicTacTubeCore.Processors.Media.Songs
 			artists.AddRange(SearchForArtists(ref titlePart, false));
 
 			songInfo.Artists = artists.ToArray();
+			for (int i = 0; i < artists.Count; i++)
+			{
+				songInfo.Artists[i] = songInfo.Artists[i].Trim();
+			}
 
 			// apply the post processors
-			songInfo.Title = Postprocessors
-				.Aggregate(titlePart, (current, postprocessor) => Regex.Replace(current, postprocessor, "")).Trim();
+			songInfo.Title = PostProcessors
+				.Aggregate(titlePart, (current, postprocessor) => Regex.Replace(current, postprocessor, ""));
+
+			songInfo.Title = PostStringProcessors
+				.Aggregate(songInfo.Title, (current, postprocessor) => postprocessor.Process(current));
+
+			songInfo.Title = songInfo.Title.Trim();
+			// remove multiple spaces
+			songInfo.Title = Regex.Replace(songInfo.Title, @"\s+", " ");
 
 			if (UseTitleAsAlbum)
 				songInfo.Album = songInfo.Title + Single;

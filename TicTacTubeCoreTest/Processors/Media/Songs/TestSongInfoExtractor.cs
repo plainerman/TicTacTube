@@ -20,7 +20,7 @@ namespace TicTacTubeCoreTest.Processors.Media.Songs
 		[DataRow("Snugs ft.Edge1 ftEdge2 - Radio Silence [Lyric Video]", "Radio Silence", new[] { "Snugs", "Edge1 ftEdge2" })]
 		[DataRow("Alan Walker - All Falls Down (feat. Noah Cyrus with Digital Farm Animals)", "All Falls Down", new[] { "Alan Walker", "Noah Cyrus", "Digital Farm Animals" })]
 		[DataRow("Avicii - Lonely Together ft. Rita Ora", "Lonely Together", new[] { "Avicii", "Rita Ora" })]
-		[DataRow("Slander - Superhuman [feat. Eric Leva] [Monstercat Release]", "Superhuman", new[] { "Slander", "Eric Leva" })]
+		[DataRow("Slander - Superhuman [feat. Eric Leva] [Monstercat Release]", "Superhuman [Monstercat Release]", new[] { "Slander", "Eric Leva" })]
 		[DataRow("Avicii - Without You “Audio” ft. Sandro Cavazza", "Without You", new[] { "Avicii", "Sandro Cavazza" })]
 		[DataRow("David Guetta & Showtek - Bad ft.Vassy (Lyrics Video)", "Bad", new[] { "David Guetta", "Showtek", "Vassy" })]
 		[DataRow("David Guetta - She Wolf (Falling To Pieces) ft. Sia (Official Video)", "She Wolf (Falling To Pieces)", new[] { "David Guetta", "Sia" })]
@@ -29,6 +29,9 @@ namespace TicTacTubeCoreTest.Processors.Media.Songs
 		[DataRow("Rihanna - Work (Explicit) ft. Drake", "Work", new[] { "Rihanna", "Drake" })]
 		[DataRow("Basenji — Mistakes feat. Tkay Maidza", "Mistakes", new[] { "Basenji", "Tkay Maidza" })]
 		[DataRow("Mistakes feat. Basenji & Tkay Maidza", "Mistakes", new[] { "Basenji", "Tkay Maidza" })]
+		[DataRow("Mistakes feat. Basenji & Tkay Maidza [Test MashUp]", "Mistakes [Test MashUp]", new[] { "Basenji", "Tkay Maidza" })]
+		[DataRow("Said The Sky ft. Missio - Nostalgia [Arrient Remix]", "Nostalgia [Arrient Remix]", new[] { "Said The Sky", "Missio" })]
+		[DataRow("Said The Sky ft. Missio - Nostalgia [Test MashUp]", "Nostalgia [Test MashUp]", new[] { "Said The Sky", "Missio" })]
 		public void TestSongInfoExtractionByName(string input, string title, string[] artists)
 		{
 			//TODO: readd / think about other concept, once the file has to exist in order to be analyzed

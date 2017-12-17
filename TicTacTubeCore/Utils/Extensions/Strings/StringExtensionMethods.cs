@@ -70,7 +70,7 @@ namespace TicTacTubeCore.Utils.Extensions.Strings
 		/// </summary>
 		/// <param name="text">The string this operation is based on.</param>
 		/// <param name="splits">Multiple splits that define the positions that will be removed.</param>
-		/// <returns></returns>
+		/// <returns>A string with the values removed.</returns>
 		public static string Remove(this string text, IEnumerable<StringPosition> splits)
 		{
 			var localSplit = new List<StringPosition>(splits);
@@ -88,6 +88,18 @@ namespace TicTacTubeCore.Utils.Extensions.Strings
 			}
 
 			return text;
+		}
+
+		/// <summary>
+		/// Determine whether a given string contains <paramref name="toCheck"/>.
+		/// </summary>
+		/// <param name="text">The string this operation is based on.</param>
+		/// <param name="toCheck">The string that will be tested if it is contained.</param>
+		/// <param name="comp">The string comparison options.</param>
+		/// <returns><c>True</c>, if the <paramref name="text"/> contains <paramref name="toCheck"/>.</returns>
+		public static bool Contains(this string text, string toCheck, StringComparison comp)
+		{
+			return text.IndexOf(toCheck, comp) >= 0;
 		}
 	}
 }
