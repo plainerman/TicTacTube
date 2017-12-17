@@ -26,31 +26,35 @@ namespace TicTacTubeCore.Processors.Media.Songs
 		protected readonly GeniusClient GeniusClient;
 
 		/// <summary>
-		///     Determine whether the data should be overriden (i.e. taken from genius - may result in completely wrong matched
-		///     songs)
-		///     or expanded (may result in partially wrong data - title and artists won't be modified).
+		///     Determine whether the title should be overriden (i.e. taken from genius - may result in completely wrong matched
+		///     songs) or expanded, fixed, or modified.
 		/// </summary>
-		public readonly bool OverrideData;
+		public bool OverrideTitle { get; set; } = false;
+
+		/// <summary>
+		///     Determine whether the artists should be overriden (i.e. taken from genius - may result in completely wrong matched
+		///     songs) or expanded / modified.
+		/// </summary>
+		public bool OverrideArtists { get; set; }
 
 		/// <summary>
 		///     Create a new genius fetcher that requires a <paramref name="geniusApiKey" /> to query on https://genius.com.
-		///     Further, <paramref name="overrideData" /> can be specified.
-		///     It can expand / modify the data information from a song.
+		///     Further, <paramref name="overrideArtists" /> can be specified.
+		///     It can expand / modify the artist information from a song.
 		/// </summary>
 		/// <param name="geniusApiKey">
 		///     The API-key that will be used for the queries (i.e. to create the
 		///     <see cref="GeniusClient" />).
 		/// </param>
-		/// <param name="overrideData">
-		///     Determine whether the data should be overriden (i.e. taken from genius - may result in completely wrong matched
-		///     songs)
-		///     or expanded (may result in partially wrong data - title and artists won't be modified).
+		/// <param name="overrideArtists">
+		///     Determine whether the artists should be overriden (i.e. taken from genius - may result in completely wrong matched
+		///     songs) or expanded / modified.
 		/// </param>
-		public GeniusSongInfoFetcher(string geniusApiKey, bool overrideData)
+		public GeniusSongInfoFetcher(string geniusApiKey, bool overrideArtists = true)
 		{
 			if (string.IsNullOrWhiteSpace(geniusApiKey))
 				throw new ArgumentException("Value cannot be null or whitespace.", nameof(geniusApiKey));
-			OverrideData = overrideData;
+			OverrideArtists = overrideArtists;
 
 			GeniusClient = new GeniusClient(geniusApiKey);
 		}
@@ -79,7 +83,7 @@ namespace TicTacTubeCore.Processors.Media.Songs
 
 				var result = (await GeniusClient.SearchClient.Search(TextFormat.Dom, searchTerm)).Response;
 
-				var correctHit = (from hit in result where hit.Type.Equals("song") select (JObject) hit.Result).FirstOrDefault();
+				var correctHit = (from hit in result where hit.Type.Equals("song") select (JObject)hit.Result).FirstOrDefault();
 
 				if (correctHit != null)
 				{
@@ -109,7 +113,7 @@ namespace TicTacTubeCore.Processors.Media.Songs
 			if (!string.IsNullOrWhiteSpace(song.ReleaseDate))
 			{
 				var releaseDate = DateTime.ParseExact(song.ReleaseDate, "yyyy-MM-dd", CultureInfo.InvariantCulture);
-				info.Year = (uint) releaseDate.Year;
+				info.Year = (uint)releaseDate.Year;
 			}
 
 			if (song.Album != null)
@@ -120,10 +124,13 @@ namespace TicTacTubeCore.Processors.Media.Songs
 
 			var artists = new List<string>();
 
-			if (OverrideData)
+			if (OverrideTitle)
 			{
 				info.Title = song.Title;
+			}
 
+			if (OverrideArtists)
+			{
 				artists.Add(song.PrimaryArtist.Name);
 				artists.AddRange(song.FeaturedArtists.Select(artist => artist.Name));
 			}
