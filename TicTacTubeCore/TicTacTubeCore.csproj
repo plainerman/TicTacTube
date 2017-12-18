@@ -12,11 +12,11 @@
     <Copyright>MIT</Copyright>
     <RepositoryUrl>https://github.com/plainerman/TicTacTube</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
-    <Version>0.2.0</Version>
+    <Version>0.2.1</Version>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <SignAssembly>false</SignAssembly>
-    <AssemblyVersion>0.2.0.0</AssemblyVersion>
-    <FileVersion>0.2.0.0</FileVersion>
+    <AssemblyVersion>0.2.1.0</AssemblyVersion>
+    <FileVersion>0.2.1.0</FileVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DocumentationFile>bin\Release\netstandard2.0\TicTacTubeCore.xml</DocumentationFile>

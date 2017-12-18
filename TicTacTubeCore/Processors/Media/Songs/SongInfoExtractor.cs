@@ -48,6 +48,9 @@ namespace TicTacTubeCore.Processors.Media.Songs
 		/// </summary>
 		protected string[] PostProcessors = { FeaturingRegexWithoutSpace, @"\(\s*\)" };
 
+		/// <summary>
+		///     The postprocessors that will be executed and deltete certain parts.
+		/// </summary>
 		protected IStringProcessor[] PostStringProcessors = { new SquareBracketsStringProcessor() };
 
 		/// <summary>
