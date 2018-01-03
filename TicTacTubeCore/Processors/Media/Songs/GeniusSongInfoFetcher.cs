@@ -114,7 +114,7 @@ namespace TicTacTubeCore.Processors.Media.Songs
 			// The pictures that should be fetched (if available)
 			var desiredPictures = new List<GeniusPicture>
 			{
-				new GeniusPicture(song.HeaderImageUrl, PictureType.FrontCover),
+				new GeniusPicture(song.SongArtImageUrl, PictureType.FrontCover),
 			};
 
 			if (DownloadArtistImage)
