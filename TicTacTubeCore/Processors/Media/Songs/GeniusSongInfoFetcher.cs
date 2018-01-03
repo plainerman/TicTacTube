@@ -9,6 +9,7 @@ using Genius;
 using Genius.Models;
 using Newtonsoft.Json.Linq;
 using TagLib;
+using TagLib.Id3v2;
 using TicTacTubeCore.Sources.Files;
 using File = System.IO.File;
 
@@ -36,6 +37,11 @@ namespace TicTacTubeCore.Processors.Media.Songs
 		///     songs) or expanded / modified.
 		/// </summary>
 		public bool OverrideArtists { get; set; }
+
+		/// <summary>
+		/// Whether to download the artist image or not. Setting it to <c>true</c> may cause problems when displaying the audio cover art.
+		/// </summary>
+		public bool DownloadArtistImage { get; set; } = false;
 
 		/// <summary>
 		///     Create a new genius fetcher that requires a <paramref name="geniusApiKey" /> to query on https://genius.com.
@@ -105,10 +111,22 @@ namespace TicTacTubeCore.Processors.Media.Songs
 		/// <returns>A new songinfo containing relevant info from the <paramref name="song" />.</returns>
 		protected virtual async Task<SongInfo> SetSong(SongInfo info, Song song)
 		{
-			string coverArtDestination = Path.GetTempFileName();
+			// The pictures that should be fetched (if available)
+			var desiredPictures = new List<GeniusPicture>
+			{
+				new GeniusPicture(song.HeaderImageUrl, PictureType.FrontCover),
+			};
 
-			var webClient = new WebClient();
-			var downloadCoverArt = webClient.DownloadFileTaskAsync(song.HeaderImageUrl, coverArtDestination);
+			if (DownloadArtistImage)
+			{
+				desiredPictures.Add(new GeniusPicture(song.PrimaryArtist.ImageUrl, PictureType.Artist));
+			}
+
+			desiredPictures = desiredPictures.Where(p => !string.IsNullOrWhiteSpace(p.Url)).ToList();
+
+			// The tasks for the pictures to fetch
+			// ReSharper disable once AccessToDisposedClosure
+			var desiredPicturesTask = desiredPictures.Select(p => p.DownloadAsync()).ToList();
 
 			if (!string.IsNullOrWhiteSpace(song.ReleaseDate))
 			{
@@ -150,15 +168,99 @@ namespace TicTacTubeCore.Processors.Media.Songs
 
 			info.Artists = artists.ToArray();
 
-			// Set the cover art and delete the file afterwards
-			await downloadCoverArt;
+			foreach (var task in desiredPicturesTask)
+			{
+				await task;
+			}
 
-			// TODO: keep old images?
-			info.Pictures = new IPicture[] { new Picture(coverArtDestination) };
-			File.Delete(coverArtDestination);
-			webClient.Dispose();
+			for (int i = 0; i < desiredPictures.Count; i++)
+			{
+				if (desiredPicturesTask[i].IsFaulted)
+				{
+					desiredPictures.RemoveAt(i--);
+				}
+			}
+
+			// TODO: keep old images that have already been stored?
+			info.Pictures = desiredPictures.Select(p => p.CreatePictureFrame()).ToArray();
 
 			return info;
+		}
+
+		/// <summary>
+		/// A genius picture that is used to easily download it
+		/// </summary>
+		protected struct GeniusPicture : IDisposable
+		{
+			/// <summary>
+			/// The url of the image
+			/// </summary>
+			public string Url;
+			/// <summary>
+			/// A temporary path for the file, it will automatically be created.
+			/// </summary>
+			public string Path;
+
+			/// <summary>
+			/// The type of the picture, that will be set.
+			/// </summary>
+			public PictureType Type;
+
+			private WebClient _client;
+
+			/// <summary>
+			/// Create a new picture from an url.
+			/// </summary>
+			/// <param name="url">The url that is used to identify the picture. This url can be empty.</param>
+			/// <param name="type">The type of the picture, that will be set.</param>
+			public GeniusPicture(string url, PictureType type)
+			{
+				Url = url;
+				Path = System.IO.Path.GetTempFileName();
+				Type = type;
+				_client = null;
+			}
+
+			/// <summary>
+			/// Get a task that is downloading the picture. If the <see cref="Url"/> is empty, <c>null</c> will be returned.
+			/// </summary>
+			/// <returns>The task / progress of the downloading process.</returns>
+			public Task DownloadAsync()
+			{
+				if (_client != null)
+				{
+					throw new InvalidOperationException("Concurrent operations are not supported.");
+				}
+				_client = new WebClient();
+
+				return string.IsNullOrWhiteSpace(Url) ? null : _client.DownloadFileTaskAsync(Url, Path);
+			}
+
+			/// <summary>
+			/// Create a picture frame from the given iamge. Also dispose the tempfile of not otherwise sepcified.
+			/// </summary>
+			/// <param name="dispose">Whether to dispose the file after creating the picture.</param>
+			/// <returns>A newly created picture frame that supports iTunes and other bitchy music players.</returns>
+			public IPicture CreatePictureFrame(bool dispose = true)
+			{
+				var frame = new AttachedPictureFrame(new Picture(Path)) { TextEncoding = StringType.Latin1, Type = Type };
+
+				if (dispose) Dispose();
+
+				return frame;
+			}
+
+			/// <summary>
+			/// Delete the downloaded image.
+			/// </summary>
+			public void Dispose()
+			{
+				if (!string.IsNullOrWhiteSpace(Url))
+				{
+					File.Delete(Path);
+				}
+				_client?.Dispose();
+			}
 		}
 	}
 }
