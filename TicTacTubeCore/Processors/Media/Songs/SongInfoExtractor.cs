@@ -31,7 +31,7 @@ namespace TicTacTubeCore.Processors.Media.Songs
 		/// <summary>
 		///     Common delimiters for song titles (seperate songname from main artist)
 		/// </summary>
-		protected string[] Delimiters = { @"\s-\s", @"\s–\s", @"\s—\s", @"\|" };
+		protected string[] Delimiters = { @"\s-\s", @"\s–\s", @"\s—\s", @"\|", @"~" };
 
 		/// <summary>
 		///     All delimiters that mark the end of a chain of artists.
@@ -57,7 +57,7 @@ namespace TicTacTubeCore.Processors.Media.Songs
 		///     The preprocessors that will be executed and delete certain parts.
 		/// </summary>
 		protected string[] PreProcessors =
-			{ @"(?i)\s*\([^)]*(audio|video)\)", "(?i)(\"|“)audio(\"|”)", @"(?i)\s*\([^)]*explicit\)" };
+			{ @"(?i)\s*\([^)]*(audio|video)\)", "(?i)(\"|“)audio(\"|”)", @"(?i)\s*\([^)]*explicit\)", @"(?i)\s*\([^)]*visualiser\)" };
 
 		/// <summary>
 		///     Determine whether the title should be used as album, if no album could be found.
