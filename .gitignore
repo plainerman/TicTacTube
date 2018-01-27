@@ -262,3 +262,6 @@ __pycache__/
 
 # Tokens
 *.token
+
+#Secrets
+*.secret
