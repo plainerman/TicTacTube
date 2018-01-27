@@ -93,7 +93,7 @@ namespace TicTacTubeCore.Schedulers
 		{
 			if (!IsRunning) throw new SchedulerStateException("The scheduler is not running.");
 
-			Log.Info($"Scheduler has been triggered, executing {InternalPipelines.Count} pipelineOrBuilder(s) for {fileSource.FullFileName}.");
+			Log.Info($"Scheduler has been triggered, executing {InternalPipelines.Count} pipelineOrBuilder(s) for {fileSource?.FullFileName}.");
 			InternalPipelines.ForEach(p => p.Build().Execute(fileSource));
 			ExecuteEvent(SchedulerLifeCycleEventType.Execute);
 		}

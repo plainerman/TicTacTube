@@ -32,6 +32,7 @@ namespace TicTacTubeCoreTest.Processors.Filesystem
 			Assert.IsFalse(File.Exists(destinatioPath));
 
 			scheduler.Builder.Append(new SourceRenamer(f => destinatioPath));
+			scheduler.Scheduler.Start();
 
 			scheduler.Execute(source);
 

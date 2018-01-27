@@ -16,7 +16,6 @@ namespace TicTacTubeCoreTest.Processors.Filesystem
 			string destinationFile = Path.Combine(destinatioPath, source.FileInfo.Name);
 
 			scheduler.Builder.Append(new SourceMover(destinatioPath, true, true));
-
 			TestFileMovement(destinationFile, scheduler, source, sourceSize, destinatioPath);
 		}
 
@@ -46,6 +45,7 @@ namespace TicTacTubeCoreTest.Processors.Filesystem
 		private static void TestFileMovement(string destinationFile, SimpleTestScheduler scheduler, IFileSource source,
 			long sourceSize, string destinatioPath)
 		{
+			scheduler.Scheduler.Start();
 			Assert.AreEqual(false, File.Exists(destinationFile));
 
 			scheduler.Execute(source);

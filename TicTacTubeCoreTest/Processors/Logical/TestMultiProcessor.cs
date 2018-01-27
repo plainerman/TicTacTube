@@ -25,6 +25,7 @@ namespace TicTacTubeCoreTest.Processors.Logical
 			CheckExecutionCount(0, processors);
 
 			scheduler.Builder.Append(new MultiProcessor(processors));
+			scheduler.Scheduler.Start();
 
 			scheduler.Execute(new MockFileSource());
 

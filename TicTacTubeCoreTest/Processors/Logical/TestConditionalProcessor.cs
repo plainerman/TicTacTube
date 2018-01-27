@@ -1,7 +1,6 @@
 using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TicTacTubeCore.Processors.Logical;
-using TicTacTubeCore.Schedulers.Events;
 using TicTacTubeCore.Sources.Files;
 using TicTacTubeCoreTest.Sources.Files;
 
@@ -13,15 +12,15 @@ namespace TicTacTubeCoreTest.Processors.Logical
 		[TestMethod]
 		public void TestExecuteA()
 		{
-			TestEval(source => true);
-			TestEval(source => false);
+			TestEval(source => true, false, 1);
+			TestEval(source => false, false, 0);
 		}
 
 		[TestMethod]
 		public void TestExecuteB()
 		{
-			TestEval(source => true, true);
-			TestEval(source => false, true);
+			TestEval(source => true, true, 0);
+			TestEval(source => false, true, 1);
 		}
 
 		[TestMethod]
@@ -35,25 +34,21 @@ namespace TicTacTubeCoreTest.Processors.Logical
 				new ConditionalProcessor(source => true, null));
 		}
 
-		private static void TestEval(Func<IFileSource, bool> evalFunc, bool useSourceB = false)
+		private static void TestEval(Func<IFileSource, bool> evalFunc, bool useSourceB, int desiredExecutionCount)
 		{
 			var scheduler = new SimpleTestScheduler();
-			int execCount = 0;
 
-			scheduler.Scheduler.LifeCycleEvent += Executed;
+			var dataProcessor = new MockDataProcessor();
 
 			scheduler.Builder.Append(useSourceB
-				? new ConditionalProcessor(evalFunc, null, new MockDataProcessor())
-				: new ConditionalProcessor(evalFunc, new MockDataProcessor(), null));
+				? new ConditionalProcessor(evalFunc, null, dataProcessor)
+				: new ConditionalProcessor(evalFunc, dataProcessor, null));
+
+			scheduler.Scheduler.Start();
 
 			scheduler.Execute(new MockFileSource());
 
-			Assert.AreEqual(1, execCount);
-
-			void Executed(object sender, SchedulerLifeCycleEventArgs schedulerLifeCycleEventArgs)
-			{
-				execCount++;
-			}
+			Assert.AreEqual(desiredExecutionCount, dataProcessor.ExecutionCount);
 		}
 	}
 }
