@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using log4net;
 using TicTacTubeCore.Pipelines;
 using TicTacTubeCore.Schedulers.Events;
+using TicTacTubeCore.Schedulers.Exceptions;
 using TicTacTubeCore.Sources.Files;
 
 namespace TicTacTubeCore.Schedulers
@@ -51,6 +52,7 @@ namespace TicTacTubeCore.Schedulers
 		{
 			ExecuteStart();
 			IsRunning = true;
+			OnStarted();
 			ExecuteEvent(SchedulerLifeCycleEventType.Start);
 		}
 
@@ -59,8 +61,19 @@ namespace TicTacTubeCore.Schedulers
 		{
 			ExecuteStop();
 			IsRunning = false;
+			OnStopped();
 			ExecuteEvent(SchedulerLifeCycleEventType.Stop);
 		}
+
+		/// <summary>
+		/// This method will be called after <see cref="ExecuteStart"/>, once <see cref="IsRunning"/> is <c>true</c>. (<see cref="LifeCycleEvent"/> not yet executed).
+		/// </summary>
+		protected virtual void OnStarted() { }
+
+		/// <summary>
+		/// This method will be called after <see cref="ExecuteStop"/>, once <see cref="IsRunning"/> is <c>false</c>. (<see cref="LifeCycleEvent"/> not yet executed).
+		/// </summary>
+		protected virtual void OnStopped() { }
 
 		/// <summary>
 		///     This method is called before setting the global running state to <c>true</c>.
@@ -78,7 +91,9 @@ namespace TicTacTubeCore.Schedulers
 		/// <param name="fileSource">The filesource with which the execute will be triggered.</param>
 		protected virtual void Execute(IFileSource fileSource)
 		{
-			Log.Info($"Scheduler has been triggered, executing {InternalPipelines.Count} pipelineOrBuilder(s).");
+			if (!IsRunning) throw new SchedulerStateException("The scheduler is not running.");
+
+			Log.Info($"Scheduler has been triggered, executing {InternalPipelines.Count} pipelineOrBuilder(s) for {fileSource.FullFileName}.");
 			InternalPipelines.ForEach(p => p.Build().Execute(fileSource));
 			ExecuteEvent(SchedulerLifeCycleEventType.Execute);
 		}

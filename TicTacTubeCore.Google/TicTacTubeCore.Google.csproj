@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <PackageId>TTT.TicTacTube.Google</PackageId>
+    <Version>0.1.0</Version>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <Authors>Michael Plainer</Authors>
+    <Company>Michael Plainer</Company>
+    <Product>TicTacTube</Product>
+    <Description>Addon for TicTacTube to include some support for google products.</Description>
+    <Copyright>MIT</Copyright>
+    <PackageLicenseUrl>https://choosealicense.com/licenses/mit/</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/plainerman/TicTacTube</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/plainerman/TicTacTube</RepositoryUrl>
+    <RepositoryType>Git</RepositoryType>
+    <PackageTags>C# data processing pipeline google youtube api</PackageTags>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>bin\Release\netstandard2.0\TicTacTubeCore.Google.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>bin\Debug\netstandard2.0\TicTacTubeCore.Google.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Google.Apis.YouTube.v3" Version="1.32.0.1079" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TicTacTubeCore\TicTacTubeCore.csproj" />
+  </ItemGroup>
+
+</Project>

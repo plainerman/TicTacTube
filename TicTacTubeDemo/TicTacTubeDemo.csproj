@@ -7,7 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\TicTacTubeCore.Google\TicTacTubeCore.Google.csproj" />
     <ProjectReference Include="..\TicTacTubeCore\TicTacTubeCore.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="youtube_client.json.secret">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
