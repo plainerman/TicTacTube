@@ -1,13 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27130.2003
+VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TicTacTubeCore", "TicTacTubeCore\TicTacTubeCore.csproj", "{BB5B48E9-CAE9-4DEC-B32A-B1C19B7DCD6C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TicTacTubeCoreTest", "TicTacTubeCoreTest\TicTacTubeCoreTest.csproj", "{A92C66F1-1039-4017-8403-6B5E063E58F5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TicTacTubeDemo", "TicTacTubeDemo\TicTacTubeDemo.csproj", "{12CDF96B-D6F2-4114-BB8D-5019B38B1A6E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TicTacTubeCore.Telegram", "TicTacTubeCore.Telegram\TicTacTubeCore.Telegram.csproj", "{C0785776-9087-4385-86FD-ADC6C35FD6A8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{12CDF96B-D6F2-4114-BB8D-5019B38B1A6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{12CDF96B-D6F2-4114-BB8D-5019B38B1A6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{12CDF96B-D6F2-4114-BB8D-5019B38B1A6E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C0785776-9087-4385-86FD-ADC6C35FD6A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C0785776-9087-4385-86FD-ADC6C35FD6A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C0785776-9087-4385-86FD-ADC6C35FD6A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C0785776-9087-4385-86FD-ADC6C35FD6A8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
