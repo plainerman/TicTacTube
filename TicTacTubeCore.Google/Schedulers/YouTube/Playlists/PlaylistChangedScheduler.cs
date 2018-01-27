@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
@@ -49,7 +50,8 @@ namespace TicTacTubeCore.Google.Schedulers.YouTube.Playlists
 			if (result.Count > 0)
 			{
 				ProcessedItems.AddRange(result.Select(r => r.Id));
-				sources = result.Select(r => new )
+				throw new NotImplementedException();
+				//sources = result.Select(r => new )
 			}
 
 			return result.Count > 0;
