@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Threading;
 using log4net;
 using TicTacTubeCore.Pipelines;
 using TicTacTubeCore.Schedulers.Events;
@@ -19,6 +20,11 @@ namespace TicTacTubeCore.Schedulers
 		///     Multiple pipelines that are executed on a certion condition / event.
 		/// </summary>
 		protected readonly List<IDataPipelineOrBuilder> InternalPipelines;
+
+		/// <summary>
+		///		This reset event will wait until stop has been called — so join works by waiting for a stop from another thread.
+		/// </summary>
+		protected ManualResetEvent ManualJoinReset;
 
 		/// <summary>
 		///     The default constructor.
@@ -52,6 +58,8 @@ namespace TicTacTubeCore.Schedulers
 			ExecuteStart();
 			IsRunning = true;
 			ExecuteEvent(SchedulerLifeCycleEventType.Start);
+			ManualJoinReset?.Dispose();
+			ManualJoinReset = new ManualResetEvent(false);
 		}
 
 		/// <inheritdoc />
@@ -60,6 +68,12 @@ namespace TicTacTubeCore.Schedulers
 			ExecuteStop();
 			IsRunning = false;
 			ExecuteEvent(SchedulerLifeCycleEventType.Stop);
+			ManualJoinReset.Set();
+		}
+
+		public virtual void Join()
+		{
+			ManualJoinReset.WaitOne();
 		}
 
 		/// <summary>

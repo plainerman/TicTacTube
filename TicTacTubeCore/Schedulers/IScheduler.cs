@@ -43,5 +43,10 @@ namespace TicTacTubeCore.Schedulers
 		///     Force the scheduler to stop updating.
 		/// </summary>
 		void Stop();
+
+		/// <summary>
+		///		Wait for the scheduler to stop the thread. (This may never end).
+		/// </summary>
+		void Join();
 	}
 }
