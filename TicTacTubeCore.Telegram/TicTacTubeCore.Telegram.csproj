@@ -5,7 +5,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageId>TTT.TicTacTube.Telegram</PackageId>
-    <Version>0.0.1</Version>
+    <Version>0.1.0</Version>
     <Authors>Michael Plainer</Authors>
     <Company>Michael Plainer</Company>
     <Product>TicTacTube.Telegram</Product>
@@ -16,6 +16,8 @@
     <RepositoryUrl>https://github.com/plainerman/TicTacTube</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageTags>C# data processing pipeline telegram bot</PackageTags>
+    <AssemblyVersion>0.1.0.0</AssemblyVersion>
+    <FileVersion>0.1.0.0</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
