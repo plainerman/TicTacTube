@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Net;
+using log4net;
 using Telegram.Bot;
 using Telegram.Bot.Args;
+using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using TicTacTubeCore.Schedulers;
 
@@ -14,6 +16,8 @@ namespace TicTacTubeCore.Telegram.Schedulers
 	/// </summary>
 	public abstract class TelegramBotBaseScheduler : BaseScheduler
 	{
+		private static readonly ILog Log = LogManager.GetLogger(typeof(TelegramBotBaseScheduler));
+
 		/// <summary>
 		/// The client that is used to make interactions with the telegram api.
 		/// </summary>
@@ -40,6 +44,11 @@ namespace TicTacTubeCore.Telegram.Schedulers
 		protected ISet<int> Users;
 
 		/// <summary>
+		/// Whether to allow bots or not.
+		/// </summary>
+		public bool AllowBots { get; set; } = false;
+
+		/// <summary>
 		/// Create a new uninitialised telegram scheduler — the <see cref="BotClient"/> has to be manually set before calling <see cref="ExecuteStart"/>.
 		/// </summary>
 		private TelegramBotBaseScheduler()
@@ -62,6 +71,11 @@ namespace TicTacTubeCore.Telegram.Schedulers
 
 			BotClient = proxy == null ? new TelegramBotClient(apiToken) : new TelegramBotClient(apiToken, proxy);
 			UserList = userList;
+
+			if (UserList != UserList.None)
+			{
+				Log.Info($"User list specified to {userList.ToString()}");
+			}
 		}
 
 		/// <inheritdoc />
@@ -69,6 +83,8 @@ namespace TicTacTubeCore.Telegram.Schedulers
 		{
 			BotClient.StartReceiving();
 			BotClient.OnMessage += OnMessageReceived;
+
+			Log.Info("Telegram bot is now running...");
 		}
 
 		/// <summary>
@@ -79,6 +95,16 @@ namespace TicTacTubeCore.Telegram.Schedulers
 		/// <param name="messageEventArgs">The messageeventarg that contain all information from the new message.</param>
 		protected virtual void OnMessageReceived(object sender, MessageEventArgs messageEventArgs)
 		{
+			if (!AllowBots && messageEventArgs.Message.From.IsBot)
+			{
+				Log.Warn($"Unauthorized bot tried to access: {messageEventArgs.Message.From.Id}, {messageEventArgs.Message.From.Username}, {messageEventArgs.Message.From.FirstName}, {messageEventArgs.Message.From.LastName}, language={messageEventArgs.Message.From.LanguageCode}, isBot={messageEventArgs.Message.From.IsBot}\n{messageEventArgs.Message.Type}: {messageEventArgs.Message.Text}");
+
+				if (UserNotAllowedText != null)
+				{
+					SendTextMessage(messageEventArgs.Message, UserNotAllowedText);
+				}
+			}
+
 			if (UserList != UserList.None)
 			{
 				if (UserList == UserList.Blacklist && Users.Contains(messageEventArgs.Message.From.Id) ||
@@ -86,18 +112,21 @@ namespace TicTacTubeCore.Telegram.Schedulers
 				{
 					if (UserNotAllowedText != null)
 					{
-						SendTextMessage(messageEventArgs, UserNotAllowedText);
+						SendTextMessage(messageEventArgs.Message, UserNotAllowedText);
 					}
+
+					Log.Warn($"Unauthorized user tried to access: {messageEventArgs.Message.From.Id}, {messageEventArgs.Message.From.Username}, {messageEventArgs.Message.From.FirstName}, {messageEventArgs.Message.From.LastName}, language={messageEventArgs.Message.From.LanguageCode}, isBot={messageEventArgs.Message.From.IsBot}\n{messageEventArgs.Message.Type}: {messageEventArgs.Message.Text}");
+
 					return;
 				}
 			}
 			if (IsMessageTypeSupported(messageEventArgs.Message.Type))
 			{
-				ProcessMessage(sender, messageEventArgs);
+				ProcessMessage(messageEventArgs.Message);
 			}
 			else
 			{
-				OnUnknownMessageTypeReceived(sender, messageEventArgs);
+				OnUnknownMessageTypeReceived(messageEventArgs.Message);
 			}
 		}
 
@@ -111,19 +140,18 @@ namespace TicTacTubeCore.Telegram.Schedulers
 		/// <summary>
 		/// Once a supported message is received, this method is called.
 		/// </summary>
-		/// <param name="sender">The sender of the event.</param>
-		/// <param name="messageEventArgs">The messageeventarg that contain all information from the new message.</param>
-		protected virtual void ProcessMessage(object sender, MessageEventArgs messageEventArgs)
+		/// <param name="message">The message that contains all information from the new message.</param>
+		protected virtual void ProcessMessage(Message message)
 		{
-			if (messageEventArgs.Message.Type == MessageType.TextMessage)
+			if (message.Type == MessageType.TextMessage)
 			{
-				if (messageEventArgs.Message.Text.StartsWith("/"))
+				if (message.Text.StartsWith("/"))
 				{
-					ProcessTextCommands(messageEventArgs);
+					ProcessTextCommands(message);
 				}
 				else
 				{
-					ProcessTextMessage(messageEventArgs);
+					ProcessTextMessage(message);
 				}
 			}
 		}
@@ -131,39 +159,41 @@ namespace TicTacTubeCore.Telegram.Schedulers
 		/// <summary>
 		/// If a newly received text message, is a normal message (i.e. no command) this method will process it.
 		/// </summary>
-		/// <param name="messageEventArgs">The messageeventarg that contain all information from the new message.</param>
-		protected abstract void ProcessTextMessage(MessageEventArgs messageEventArgs);
+		/// <param name="message">The message that contains all information from the new message.</param>
+		protected abstract void ProcessTextMessage(Message message);
 
 		/// <summary>
 		/// If a newly received text message is a command (starts with a '/') this message processes the command.
 		/// </summary>
-		/// <param name="messageEventArgs">The messageeventarg that contain all information from the new message.</param>
-		protected virtual void ProcessTextCommands(MessageEventArgs messageEventArgs)
+		/// <param name="message">The message that contain all information from the new message.</param>
+		protected virtual void ProcessTextCommands(Message message)
 		{
-			if (messageEventArgs.Message.Text.StartsWith("/start"))
+			if (message.Text.StartsWith("/start"))
 			{
-				SendTextMessage(messageEventArgs, WelcomeText);
+				SendTextMessage(message, WelcomeText);
+				Log.Info($"New user! {message.From.Id}, {message.From.Username}, {message.From.FirstName}, {message.From.LastName}, language={message.From.LanguageCode}, isBot={message.From.IsBot}");
 			}
-			else if (messageEventArgs.Message.Text.StartsWith("/ping"))
+			else if (message.Text.StartsWith("/ping"))
 			{
-				SendTextMessage(messageEventArgs, "pong");
+				SendTextMessage(message, "pong");
 			}
-			else if (messageEventArgs.Message.Text.StartsWith("/say"))
+			else if (message.Text.StartsWith("/say"))
 			{
-				SendTextMessage(messageEventArgs,
-					messageEventArgs.Message.Text.Length < "/say ".Length
+				SendTextMessage(message,
+					message.Text.Length < "/say ".Length
 						? "What should I say?"
-						: messageEventArgs.Message.Text.Substring("/say ".Length));
+						: message.Text.Substring("/say ".Length));
 			}
-			else if (messageEventArgs.Message.Text.StartsWith("/id"))
+			else if (message.Text.StartsWith("/id"))
 			{
-				SendTextMessage(messageEventArgs, $"Your user id is: {messageEventArgs.Message.From.Id}");
+				SendTextMessage(message, $"Your user id is: {message.From.Id}");
 			}
 			else
 			{
-				if (!ProcessCustomCommands(messageEventArgs))
+				if (!ProcessCustomCommands(message))
 				{
-					SendTextMessage(messageEventArgs, "I'm sorry, but I don't understand this command.");
+					SendTextMessage(message, "I'm sorry, but I don't understand this command.");
+					Log.Info($"An unknown command has been received {message.Text}.");
 				}
 			}
 		}
@@ -171,9 +201,9 @@ namespace TicTacTubeCore.Telegram.Schedulers
 		/// <summary>
 		/// This method can be used to expand the available commands. Return <c>true</c> if the command could be processed, <c>false</c> otherwise.
 		/// </summary>
-		/// <param name="messageEventArgs">The messageeventarg that contain all information from the new message.</param>
-		/// <returns>Return <c>true</c> if the command could be processed, <c>false</c> otherwise.</returns>
-		protected virtual bool ProcessCustomCommands(MessageEventArgs messageEventArgs) => false;
+		/// <param name="message">The messageeventarg that contains all information from the new message.</param>
+		/// <returns><c>True</c> if the command could be processed, <c>false</c> otherwise.</returns>
+		protected virtual bool ProcessCustomCommands(Message message) => false;
 
 		/// <summary>
 		/// This method can be used to easily send a text message to a chat id.
@@ -188,21 +218,21 @@ namespace TicTacTubeCore.Telegram.Schedulers
 		/// <summary>
 		/// This method can be used to easily send a text message to a chat id.
 		/// </summary>
-		/// <param name="messageEventArgs">The message event args that are used to extract the chat id the message is sent to.</param>
-		/// <param name="message">The message that will be sent.</param>
-		protected virtual void SendTextMessage(MessageEventArgs messageEventArgs, string message)
+		/// <param name="message">The message that is used to extract the chat id the <paramref name="messageText"/> is sent to.</param>
+		/// <param name="messageText">The message that will be sent.</param>
+		protected virtual void SendTextMessage(Message message, string messageText)
 		{
-			SendTextMessage(messageEventArgs.Message.Chat.Id, message);
+			SendTextMessage(message.Chat.Id, messageText);
 		}
 
 		/// <summary>
 		/// Once an unsupported message is received, this method is called.
 		/// </summary>
-		/// <param name="sender">The sender of the event.</param>
-		/// <param name="messageEventArgs">The messageeventarg that contain all information from the new message.</param>
-		protected virtual void OnUnknownMessageTypeReceived(object sender, MessageEventArgs messageEventArgs)
+		/// <param name="message">The message that contains all information from the new message.</param>
+		protected virtual void OnUnknownMessageTypeReceived(Message message)
 		{
-			SendTextMessage(messageEventArgs, "I'm sorry, but I don't support this message type.");
+			SendTextMessage(message, "I'm sorry, but I don't support this message type.");
+			Log.Debug($"An unknown message type has been received {message.Type}.");
 		}
 
 		/// <inheritdoc />
@@ -210,6 +240,8 @@ namespace TicTacTubeCore.Telegram.Schedulers
 		{
 			BotClient.StopReceiving();
 			BotClient.OnMessage -= OnMessageReceived;
+
+			Log.Warn("Telegram bot has been stopped...");
 		}
 
 		/// <summary>
