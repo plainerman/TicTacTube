@@ -73,6 +73,7 @@ namespace TicTacTubeCore.Schedulers
 			}
 		}
 
+		/// <inheritdoc />
 		public void Dispose()
 		{
 			Dispose(true);

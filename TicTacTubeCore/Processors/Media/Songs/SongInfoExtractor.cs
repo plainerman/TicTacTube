@@ -57,7 +57,7 @@ namespace TicTacTubeCore.Processors.Media.Songs
 		///     The preprocessors that will be executed and delete certain parts.
 		/// </summary>
 		protected string[] PreProcessors =
-			{ @"(?i)\s*\([^)]*(audio|video)\)", "(?i)(\"|“)audio(\"|”)", @"(?i)\s*\([^)]*explicit\)", @"(?i)\s*\([^)]*visualiser\)" };
+			{ @"(?i)\s*\([^)]*(audio|video)\)", "(?i)(\"|“)audio(\"|”)", @"(?i)\s*\([^)]*explicit\)", @"(?i)\s*\([^)]*visualiser\)", @"(?i)\|\s*\(?[^)]*(audio|video)\)?"};
 
 		/// <summary>
 		///     Determine whether the title should be used as album, if no album could be found.
