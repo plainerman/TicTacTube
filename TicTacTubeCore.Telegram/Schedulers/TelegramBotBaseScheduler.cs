@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Net;
 using Telegram.Bot;
 using Telegram.Bot.Args;
@@ -23,23 +25,43 @@ namespace TicTacTubeCore.Telegram.Schedulers
 		protected string WelcomeText = "Hello there! A warm welcome! What can I do you ask? Well — I do what I am programmed to do.";
 
 		/// <summary>
+		/// The message that will be sent, if a user is not allowed. If <c>null</c>, no message will be sent.
+		/// </summary>
+		protected string UserNotAllowedText = null;
+
+		/// <summary>
+		/// The user handling. If <see ref="UserList.None"/>, all users are allowd. With black / whitelist users can be selecteively allowed / forbidden. 
+		/// </summary>
+		public UserList UserList { get; protected set; }
+
+		/// <summary>
+		/// The users that are either allows or not allowed. 
+		/// </summary>
+		protected ISet<int> Users;
+
+		/// <summary>
 		/// Create a new uninitialised telegram scheduler — the <see cref="BotClient"/> has to be manually set before calling <see cref="ExecuteStart"/>.
 		/// </summary>
-		protected TelegramBotBaseScheduler()
+		private TelegramBotBaseScheduler()
 		{
+			Users = new HashSet<int>();
 		}
 
 		/// <summary>
 		/// The constructor for a new telegram scheduler. The API token can be received by chatting with @botfather. 
 		/// </summary>
 		/// <param name="apiToken">The api token that uniquely identifies a bot. May not be <c>null</c>.</param>
+		/// <param name="userList">The user handling. If <see ref="UserList.None"/>, all users are allowd. With black / whitelist users can be selecteively allowed / forbidden. </param>
 		/// <param name="proxy">The proxy that is used, if set. If <c>null</c>, no proxy will be used.</param>
-		protected TelegramBotBaseScheduler(string apiToken, IWebProxy proxy = null) : this()
+		protected TelegramBotBaseScheduler(string apiToken, UserList userList = UserList.None, IWebProxy proxy = null) : this()
 		{
 			if (string.IsNullOrWhiteSpace(apiToken))
 				throw new ArgumentException("Value cannot be null or whitespace.", nameof(apiToken));
+			if (!Enum.IsDefined(typeof(UserList), userList))
+				throw new InvalidEnumArgumentException(nameof(userList), (int)userList, typeof(UserList));
 
 			BotClient = proxy == null ? new TelegramBotClient(apiToken) : new TelegramBotClient(apiToken, proxy);
+			UserList = userList;
 		}
 
 		/// <inheritdoc />
@@ -57,6 +79,18 @@ namespace TicTacTubeCore.Telegram.Schedulers
 		/// <param name="messageEventArgs">The messageeventarg that contain all information from the new message.</param>
 		protected virtual void OnMessageReceived(object sender, MessageEventArgs messageEventArgs)
 		{
+			if (UserList != UserList.None)
+			{
+				if (UserList == UserList.Blacklist && Users.Contains(messageEventArgs.Message.From.Id) ||
+					UserList == UserList.Whitelist && !Users.Contains(messageEventArgs.Message.From.Id))
+				{
+					if (UserNotAllowedText != null)
+					{
+						SendTextMessage(messageEventArgs, UserNotAllowedText);
+					}
+					return;
+				}
+			}
 			if (IsMessageTypeSupported(messageEventArgs.Message.Type))
 			{
 				ProcessMessage(sender, messageEventArgs);
@@ -87,8 +121,18 @@ namespace TicTacTubeCore.Telegram.Schedulers
 				{
 					ProcessTextCommands(messageEventArgs);
 				}
+				else
+				{
+					ProcessTextMessage(messageEventArgs);
+				}
 			}
 		}
+
+		/// <summary>
+		/// If a newly received text message, is a normal message (i.e. no command) this method will process it.
+		/// </summary>
+		/// <param name="messageEventArgs">The messageeventarg that contain all information from the new message.</param>
+		protected abstract void ProcessTextMessage(MessageEventArgs messageEventArgs);
 
 		/// <summary>
 		/// If a newly received text message is a command (starts with a '/') this message processes the command.
@@ -96,19 +140,40 @@ namespace TicTacTubeCore.Telegram.Schedulers
 		/// <param name="messageEventArgs">The messageeventarg that contain all information from the new message.</param>
 		protected virtual void ProcessTextCommands(MessageEventArgs messageEventArgs)
 		{
-			switch (messageEventArgs.Message.Text)
+			if (messageEventArgs.Message.Text.StartsWith("/start"))
 			{
-				case "/start":
-					SendTextMessage(messageEventArgs, WelcomeText);
-					break;
-				case "/ping":
-					SendTextMessage(messageEventArgs, "pong");
-					break;
-				default:
+				SendTextMessage(messageEventArgs, WelcomeText);
+			}
+			else if (messageEventArgs.Message.Text.StartsWith("/ping"))
+			{
+				SendTextMessage(messageEventArgs, "pong");
+			}
+			else if (messageEventArgs.Message.Text.StartsWith("/say"))
+			{
+				SendTextMessage(messageEventArgs,
+					messageEventArgs.Message.Text.Length < "/say ".Length
+						? "What should I say?"
+						: messageEventArgs.Message.Text.Substring("/say ".Length));
+			}
+			else if (messageEventArgs.Message.Text.StartsWith("/id"))
+			{
+				SendTextMessage(messageEventArgs, $"Your user id is: {messageEventArgs.Message.From.Id}");
+			}
+			else
+			{
+				if (!ProcessCustomCommands(messageEventArgs))
+				{
 					SendTextMessage(messageEventArgs, "I'm sorry, but I don't understand this command.");
-					break;
+				}
 			}
 		}
+
+		/// <summary>
+		/// This method can be used to expand the available commands. Return <c>true</c> if the command could be processed, <c>false</c> otherwise.
+		/// </summary>
+		/// <param name="messageEventArgs">The messageeventarg that contain all information from the new message.</param>
+		/// <returns>Return <c>true</c> if the command could be processed, <c>false</c> otherwise.</returns>
+		protected virtual bool ProcessCustomCommands(MessageEventArgs messageEventArgs) => false;
 
 		/// <summary>
 		/// This method can be used to easily send a text message to a chat id.
@@ -145,6 +210,35 @@ namespace TicTacTubeCore.Telegram.Schedulers
 		{
 			BotClient.StopReceiving();
 			BotClient.OnMessage -= OnMessageReceived;
+		}
+
+		/// <summary>
+		/// Add a user to the user list. This list is used to decide whether an user is allowed or not (see <see cref="UserList"/>).
+		/// See <see ref="Message.From.Id"/>.
+		/// </summary>
+		/// <param name="userId">The user id.</param>
+		public void AddUser(int userId)
+		{
+			Users.Add(userId);
+		}
+
+		/// <summary>
+		/// Remove a user from the user list. This list is used to decide whether an user is allowed or not (see <see cref="UserList"/>).
+		/// </summary>
+		/// <param name="userId">The user id.</param>
+		public void RemoveUser(int userId)
+		{
+			Users.Remove(userId);
+		}
+
+		/// <summary>
+		/// Check whether a user is contained in the list. This list is used to decide whether an user is allowed or not (see <see cref="UserList"/>).
+		/// </summary>
+		/// <param name="userId">The user id.</param>
+		/// <returns><c>True</c>, if the user is contained — <c>false</c> otherwise.</returns>
+		public bool ContainsUser(int userId)
+		{
+			return Users.Contains(userId);
 		}
 	}
 }
