@@ -71,6 +71,7 @@ namespace TicTacTubeCore.Schedulers
 			ManualJoinReset.Set();
 		}
 
+		/// <inheritdoc />
 		public virtual void Join()
 		{
 			ManualJoinReset.WaitOne();
