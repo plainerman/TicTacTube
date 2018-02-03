@@ -1,8 +1,8 @@
-﻿using log4net;
-using log4net.Config;
-using System;
+﻿using System;
 using System.IO;
 using System.Reflection;
+using log4net;
+using log4net.Config;
 using TicTacTubeCore.Pipelines;
 using TicTacTubeCore.Processors.Filesystem;
 using TicTacTubeCore.Processors.Media;
@@ -24,7 +24,9 @@ namespace TicTacTubeDemo
 
 			new MediaRenamer<SongInfo>("This is my pattern {Title} {Artists} {Title}", new SongInfoExtractor());
 
-			string[] testVals = { "WE ARE FURY - Waiting (feat. Olivia Lunny)",
+			string[] testVals =
+			{
+				"WE ARE FURY - Waiting (feat. Olivia Lunny)",
 				"Laura Brehm - Breathe (Last Heroes & Crystal Skies Remix) (Lyric Video)",
 				"Laura Brehm - Breathe (Last Heroes & Crystal Skies Remix) (Lyric Video)",
 				"Rita Ora - Your Song(Official Lyric Video)",
@@ -34,11 +36,11 @@ namespace TicTacTubeDemo
 				"Selena Gomez, Marshmello - Wolves"
 			};
 
-		 	/*var extractor = new SongInfoExtractor();
-			foreach (var testVal in testVals)
-			{
-				extractor.ExtractFromFileName(testVal);
-			}*/
+			/*var extractor = new SongInfoExtractor();
+		 foreach (var testVal in testVals)
+		 {
+			 extractor.ExtractFromFileName(testVal);
+		 }*/
 
 
 			//var source = new FileSource(@"C:\Marshmello - You And Me (Official Music Video).mp3");

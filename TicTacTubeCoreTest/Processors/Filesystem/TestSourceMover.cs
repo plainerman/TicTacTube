@@ -34,7 +34,7 @@ namespace TicTacTubeCoreTest.Processors.Filesystem
 		[TestMethod]
 		public void TestMoveWithPathFunction()
 		{
-			var scheduler = PrepareMove(out var source, out var sourceSize, out var destinatioPath);
+			var scheduler = PrepareMove(out var source, out long sourceSize, out string destinatioPath);
 			destinatioPath = Path.Combine(destinatioPath, ".nestedSubFolder");
 			string destinationFile = Path.Combine(destinatioPath, "yepCustomEval");
 

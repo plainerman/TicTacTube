@@ -10,7 +10,7 @@ namespace TicTacTubeCoreTest.Schedulers
 		public void TestLifeCycleEvents()
 		{
 			var scheduler = new BaseSchedulerImpl();
-			var desiredRunning = true;
+			bool desiredRunning = true;
 			var desiredType = SchedulerLifeCycleEventType.Start;
 
 			scheduler.LifeCycleEvent += (o, a) => TestArgs(a);

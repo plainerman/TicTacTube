@@ -28,51 +28,6 @@ namespace TicTacTubeCore.Sources.Files.External
 			LazyLoading = lazyLoading;
 		}
 
-		/// <inheritdoc />
-		public bool LazyLoading { get; }
-
-		/// <summary>
-		///     Download the given external source.
-		/// </summary>
-		/// <param name="destinationPath">The folder where the file will be downloaded and stored.</param>
-		/// <returns>The path of the newly downloaded file.</returns>
-		public string FetchFile(string destinationPath)
-		{
-			// If the download has already started.
-			if (CurrentDownloadTask != null)
-			{
-				// Wait for the download to finish
-				CurrentDownloadTask.Wait();
-
-				// If there was an error with the task
-				if (CurrentDownloadTask.IsFaulted)
-				{
-					Exception e = CurrentDownloadTask.Exception;
-					CurrentDownloadTask = null;
-
-					throw e;
-				}
-
-				CurrentDownloadTask = null;
-
-				return FinishedPath;
-			}
-
-			Download(destinationPath);
-
-			return FinishedPath;
-		}
-
-		/// <inheritdoc />
-		/// <summary>
-		///     Download the given external source.
-		/// </summary>
-		/// <param name="destinationPath">The folder where the file will be downloaded and stored.</param>
-		public void FetchFileAsync(string destinationPath)
-		{
-			DownloadAsync(destinationPath);
-		}
-
 		/// <summary>
 		///     Actually download a given file synchronously. If correctly assigned, this method does autoamtically work with
 		///     previously fetched asynchronous sources.
@@ -117,6 +72,51 @@ namespace TicTacTubeCore.Sources.Files.External
 
 				index++;
 			}
+		}
+
+		/// <inheritdoc />
+		public bool LazyLoading { get; }
+
+		/// <summary>
+		///     Download the given external source.
+		/// </summary>
+		/// <param name="destinationPath">The folder where the file will be downloaded and stored.</param>
+		/// <returns>The path of the newly downloaded file.</returns>
+		public string FetchFile(string destinationPath)
+		{
+			// If the download has already started.
+			if (CurrentDownloadTask != null)
+			{
+				// Wait for the download to finish
+				CurrentDownloadTask.Wait();
+
+				// If there was an error with the task
+				if (CurrentDownloadTask.IsFaulted)
+				{
+					Exception e = CurrentDownloadTask.Exception;
+					CurrentDownloadTask = null;
+
+					throw e;
+				}
+
+				CurrentDownloadTask = null;
+
+				return FinishedPath;
+			}
+
+			Download(destinationPath);
+
+			return FinishedPath;
+		}
+
+		/// <inheritdoc />
+		/// <summary>
+		///     Download the given external source.
+		/// </summary>
+		/// <param name="destinationPath">The folder where the file will be downloaded and stored.</param>
+		public void FetchFileAsync(string destinationPath)
+		{
+			DownloadAsync(destinationPath);
 		}
 	}
 }

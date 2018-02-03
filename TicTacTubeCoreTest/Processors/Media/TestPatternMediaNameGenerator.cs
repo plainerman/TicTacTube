@@ -1,5 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
+﻿using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TicTacTubeCore.Processors.Media;
 using TicTacTubeCore.Processors.Media.Songs;
 
@@ -30,7 +30,8 @@ namespace TicTacTubeCoreTest.Processors.Media
 		[DataRow("{Album} - {Title} - {AlbumArtists}", Album + " - " + Title + " - ")]
 		[DataRow("{Album} - {Title} {Title}", Album + " - " + Title + " " + Title)]
 		[DataRow("{Album}({Year}) - {Title}", Album + "(" + YearAsString + ") - " + Title)]
-		[DataRow("{Album}({Year}) - {Title} - {Artists}", Album + "(" + YearAsString + ") - " + Title + " - " + ArtistA + ", " + ArtistB)]
+		[DataRow("{Album}({Year}) - {Title} - {Artists}",
+			Album + "(" + YearAsString + ") - " + Title + " - " + ArtistA + ", " + ArtistB)]
 		public void TestPatternParse(string pattern, string expected)
 		{
 			Assert.AreEqual(expected, new PatternMediaNameGenerator<SongInfo>(pattern).Parse(_info));

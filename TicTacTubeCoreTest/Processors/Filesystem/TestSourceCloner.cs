@@ -12,7 +12,7 @@ namespace TicTacTubeCoreTest.Processors.Filesystem
 		[TestMethod]
 		public void TestSourceClone()
 		{
-			var scheduler = InitVars(out IFileSource source, out string newFolderPath, out string newFilePath);
+			var scheduler = InitVars(out var source, out string newFolderPath, out string newFilePath);
 
 			scheduler.Builder.Append(new SourceCloner(newFilePath, false));
 
@@ -26,7 +26,7 @@ namespace TicTacTubeCoreTest.Processors.Filesystem
 		[TestMethod]
 		public void TestSourceCloneWorkOnClone()
 		{
-			var scheduler = InitVars(out IFileSource source, out string newFolderPath, out string newFilePath);
+			var scheduler = InitVars(out var source, out string newFolderPath, out string newFilePath);
 
 			scheduler.Builder.Append(new SourceCloner(newFilePath, true));
 
@@ -40,7 +40,7 @@ namespace TicTacTubeCoreTest.Processors.Filesystem
 		[TestMethod]
 		public void TestSourceCloneKeepName()
 		{
-			var scheduler = InitVars(out IFileSource source, out string newFolderPath);
+			var scheduler = InitVars(out var source, out string newFolderPath);
 			string newFilePath = Path.Combine(newFolderPath, source.FileInfo.Name);
 
 			scheduler.Builder.Append(new SourceCloner(newFolderPath, false, true));
@@ -55,7 +55,7 @@ namespace TicTacTubeCoreTest.Processors.Filesystem
 		[TestMethod]
 		public void TestSourceCloneWorkOnCloneKeepName()
 		{
-			var scheduler = InitVars(out IFileSource source, out string newFolderPath);
+			var scheduler = InitVars(out var source, out string newFolderPath);
 			string newFilePath = Path.Combine(newFolderPath, source.FileInfo.Name);
 
 			scheduler.Builder.Append(new SourceCloner(newFolderPath, true, true));

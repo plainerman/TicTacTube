@@ -16,6 +16,12 @@ namespace TicTacTubeCore.Processors.Filesystem
 		protected readonly bool Override;
 
 		/// <summary>
+		///     A function that is capable of producing a new file name (with file extension) for a given file source. May not be
+		///     <c>null</c>.
+		/// </summary>
+		public Func<IFileSource, string> NameProducer { get; protected set; }
+
+		/// <summary>
 		///     Create a new source renamer, that renames files with a given renamer.
 		/// </summary>
 		/// <param name="nameProducer">
@@ -39,12 +45,6 @@ namespace TicTacTubeCore.Processors.Filesystem
 		{
 			Override = @override;
 		}
-
-		/// <summary>
-		///     A function that is capable of producing a new file name (with file extension) for a given file source. May not be
-		///     <c>null</c>.
-		/// </summary>
-		public Func<IFileSource, string> NameProducer { get; protected set; }
 
 		/// <inheritdoc />
 		public override IFileSource Execute(IFileSource fileSoure)

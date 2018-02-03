@@ -50,28 +50,6 @@ namespace TicTacTubeCore.Processors.Media
 			Pattern = PreparePattern(pattern);
 		}
 
-		/// <inheritdoc />
-		public string Parse(T info)
-		{
-			string name = Pattern;
-
-			for (int i = 0; i < VariableNames.Length; i++)
-			{
-				var current = typeof(T).GetField(VariableNames[i], BindingFlags.Public | BindingFlags.Instance).GetValue(info);
-
-				string currentAsString;
-				if (current is Array)
-					currentAsString = string.Join(", ", ((IEnumerable) current).Cast<object>().Select(o => o.ToString()));
-				else
-					currentAsString = current?.ToString();
-				//= current is Array ? string.Join(", ", current) : current.ToString();
-
-				name = name.Replace($"{OpenBracket}{i}{CloseBracket}", currentAsString);
-			}
-
-			return name;
-		}
-
 		/// <summary>
 		///     Prepare a pattern with strings inside curly brackets, test the variable names, resolve them, and correctly set
 		///     variable names.
@@ -118,6 +96,27 @@ namespace TicTacTubeCore.Processors.Media
 			VariableNames = variableNames.ToArray();
 
 			return pattern;
+		}
+
+		/// <inheritdoc />
+		public string Parse(T info)
+		{
+			string name = Pattern;
+
+			for (int i = 0; i < VariableNames.Length; i++)
+			{
+				var current = typeof(T).GetField(VariableNames[i], BindingFlags.Public | BindingFlags.Instance).GetValue(info);
+
+				string currentAsString;
+				if (current is Array)
+					currentAsString = string.Join(", ", ((IEnumerable) current).Cast<object>().Select(o => o.ToString()));
+				else
+					currentAsString = current?.ToString();
+
+				name = name.Replace($"{OpenBracket}{i}{CloseBracket}", currentAsString);
+			}
+
+			return name;
 		}
 	}
 }
