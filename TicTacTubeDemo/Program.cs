@@ -39,7 +39,7 @@ namespace TicTacTubeDemo
 						Log.Info($"{message.From.Username} + {message.From.FirstName} requested {message.Text}");
 						var youtubeSource = new YoutubeDlSource(message.Text, Enums.AudioFormat.mp3, true);
 						IFileSource source = new FileSource(youtubeSource,
-							@"C:\Users\plain\Desktop\");
+							Path.Combine(Path.GetTempPath(), "TicTacTube"));
 
 						Execute(source);
 
