@@ -16,6 +16,8 @@ namespace TicTacTubeCoreTest.Processors.Media.Songs
 			"IDGAF (CryJaxx & Marin Hoxha Remix)", "Dua Lipa")]
 		[DataRow("Breathe", "Jax Jones~Ina Wroldsen", "Breathe", "Jax Jones~Ina Wroldsen", false, "Breathe",
 			"Jax Jones~Ina Wroldsen")]
+		[DataRow("Breathe", "Ina Wroldsen~Jax Jones", "Breathe", "Jax Jones~Ina Wroldsen~me", false, "Breathe",
+			"Jax Jones~Ina Wroldsen~me")]
 		[DataRow("Break Up Every Night (Dark Heart Remix)", "The Chainsmokers", "Break Up Every Night", "The Chainsmokers",
 			false, "Break Up Every Night (Dark Heart Remix)", "The Chainsmokers")]
 		[DataRow("Break Up Every Night (TYNAN Remix)", "The Chainsmokers", "Break Up Every Night", "The Chainsmokers", false,
