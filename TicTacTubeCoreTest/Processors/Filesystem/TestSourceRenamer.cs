@@ -11,7 +11,8 @@ namespace TicTacTubeCoreTest.Processors.Filesystem
 		[DataTestMethod]
 		[DataRow(null, @"newFile.dat", null, DisplayName = "no subfolder")]
 		[DataRow(@".subFolder-ticTac", @"newFile.dat2", null, DisplayName = "one subfolder")]
-		[DataRow(@".subFolder-ticTac", @"newFile.dat2", "yes/multiple/subfolders/also/work", DisplayName = "multiple subfolders")]
+		[DataRow(@".subFolder-ticTac", @"newFile.dat2", "yes/multiple/subfolders/also/work", DisplayName =
+			"multiple subfolders")]
 		public void TestRename(string directory, string newFileName, string additionalFolders)
 		{
 			var scheduler = new SimpleTestScheduler();
@@ -23,7 +24,8 @@ namespace TicTacTubeCoreTest.Processors.Filesystem
 
 			if (directory != null)
 			{
-				destinatioPath = Path.Combine(additionalFolders == null ? directory : Path.Combine(directory, additionalFolders), destinatioPath);
+				destinatioPath = Path.Combine(additionalFolders == null ? directory : Path.Combine(directory, additionalFolders),
+					destinatioPath);
 				rootFolderPath = Path.Combine(rootFolderPath, directory);
 			}
 
@@ -40,9 +42,7 @@ namespace TicTacTubeCoreTest.Processors.Filesystem
 
 			File.Delete(fullDestinationPath);
 			if (directory != null)
-			{
 				Directory.Delete(rootFolderPath, true);
-			}
 		}
 	}
 }

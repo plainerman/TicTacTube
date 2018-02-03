@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TicTacTubeCore.Processors.Definitions;
 using TicTacTubeCore.Processors.Logical;
 using TicTacTubeCoreTest.Sources.Files;
 
