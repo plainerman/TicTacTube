@@ -73,6 +73,9 @@ namespace TicTacTubeCore.Sources.Files.External
 			DownloadAsync(destinationPath);
 		}
 
+		/// <inheritdoc />
+		public abstract string ExternalSource { get; }
+
 		/// <summary>
 		///     Actually download a given file synchronously. If correctly assigned, this method does autoamtically work with
 		///     previously fetched asynchronous sources.

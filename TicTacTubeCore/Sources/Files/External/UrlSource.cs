@@ -52,6 +52,9 @@ namespace TicTacTubeCore.Sources.Files.External
 
 
 		/// <inheritdoc />
+		public override string ExternalSource => Url;
+
+		/// <inheritdoc />
 		protected override void Download(string destinationPath)
 		{
 			using (var client = new WebClient())

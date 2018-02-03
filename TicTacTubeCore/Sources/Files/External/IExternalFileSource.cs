@@ -24,5 +24,10 @@
 		/// </summary>
 		/// <param name="destinationPath">The folder where the file should be stored.</param>
 		void FetchFileAsync(string destinationPath);
+
+		/// <summary>
+		///		The external source that this source references to.
+		/// </summary>
+		string ExternalSource { get; }
 	}
 }

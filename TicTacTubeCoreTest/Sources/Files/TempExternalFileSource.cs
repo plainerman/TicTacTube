@@ -37,6 +37,8 @@ namespace TicTacTubeCoreTest.Sources.Files
 			}
 		}
 
+		public override string ExternalSource { get; } = "";
+
 		/// <inheritdoc />
 		protected override void Download(string destinationPath)
 		{
