@@ -27,7 +27,8 @@ namespace TicTacTubeCore.Processors.Media.Songs
 		protected readonly GeniusClient GeniusClient;
 
 		/// <summary>
-		/// Whether to download the artist image or not. Setting it to <c>true</c> may cause problems when displaying the audio cover art.
+		///     Whether to download the artist image or not. Setting it to <c>true</c> may cause problems when displaying the audio
+		///     cover art.
 		/// </summary>
 		public bool DownloadArtistImage { get; set; } = false;
 
@@ -47,23 +48,23 @@ namespace TicTacTubeCore.Processors.Media.Songs
 			GeniusClient = new GeniusClient(geniusApiKey);
 		}
 
-		/// <inheritdoc />
-		public virtual async Task<SongInfo> ExtractAsyncTask(IFileSource source) =>
-			await ExtractAsyncTask(SongInfo.ReadFromFile(source.FileInfo.FullName));
-
 		/// <summary>
-		///     Comnpare the given songinfo (<paramref name="currentInfo" />) with the genius database and create a new one. <c>null</c> may be returned (if no match could be found).
+		///     Comnpare the given songinfo (<paramref name="currentInfo" />) with the genius database and create a new one.
+		///     <c>null</c> may be returned (if no match could be found).
 		/// </summary>
 		/// <param name="currentInfo">
 		///     The info that will be used as baseline. <see cref="SongInfo.Title" /> and
 		///     <see cref="SongInfo.Artists" /> will be used for the query.
 		/// </param>
-		/// <returns>A new songinfo containing relevant info from https://genius.com. It may be completly wrong - analyze the songinfo before using it.</returns>
+		/// <returns>
+		///     A new songinfo containing relevant info from https://genius.com. It may be completly wrong - analyze the
+		///     songinfo before using it.
+		/// </returns>
 		public virtual async Task<SongInfo> ExtractAsyncTask(SongInfo currentInfo)
 		{
 			return await Task.Run(async () =>
 			{
-				SongInfo newInfo = new SongInfo();
+				var newInfo = new SongInfo();
 				string searchTerm = currentInfo.Title;
 
 				if (currentInfo.Artists.Length > 0)
@@ -77,7 +78,7 @@ namespace TicTacTubeCore.Processors.Media.Songs
 
 				var result = (await GeniusClient.SearchClient.Search(TextFormat.Dom, searchTerm)).Response;
 
-				var correctHit = (from hit in result where hit.Type.Equals("song") select (JObject)hit.Result).FirstOrDefault();
+				var correctHit = (from hit in result where hit.Type.Equals("song") select (JObject) hit.Result).FirstOrDefault();
 
 				if (correctHit != null)
 				{
@@ -102,13 +103,11 @@ namespace TicTacTubeCore.Processors.Media.Songs
 			// The pictures that should be fetched (if available)
 			var desiredPictures = new List<GeniusPicture>
 			{
-				new GeniusPicture(song.SongArtImageUrl, PictureType.FrontCover),
+				new GeniusPicture(song.SongArtImageUrl, PictureType.FrontCover)
 			};
 
 			if (DownloadArtistImage)
-			{
 				desiredPictures.Add(new GeniusPicture(song.PrimaryArtist.ImageUrl, PictureType.Artist));
-			}
 
 			desiredPictures = desiredPictures.Where(p => !string.IsNullOrWhiteSpace(p.Url)).ToList();
 
@@ -119,7 +118,7 @@ namespace TicTacTubeCore.Processors.Media.Songs
 			if (!string.IsNullOrWhiteSpace(song.ReleaseDate))
 			{
 				var releaseDate = DateTime.ParseExact(song.ReleaseDate, "yyyy-MM-dd", CultureInfo.InvariantCulture);
-				info.Year = (uint)releaseDate.Year;
+				info.Year = (uint) releaseDate.Year;
 			}
 
 			if (song.Album != null)
@@ -146,9 +145,7 @@ namespace TicTacTubeCore.Processors.Media.Songs
 			for (int i = 0; i < desiredPictures.Count; i++)
 			{
 				if (desiredPicturesTask[i].IsFaulted)
-				{
 					desiredPictures.RemoveAt(i--);
-				}
 			}
 
 			// TODO: keep old images that have already been stored?
@@ -157,29 +154,34 @@ namespace TicTacTubeCore.Processors.Media.Songs
 			return info;
 		}
 
+		/// <inheritdoc />
+		public virtual async Task<SongInfo> ExtractAsyncTask(IFileSource source) =>
+			await ExtractAsyncTask(SongInfo.ReadFromFile(source.FileInfo.FullName));
+
 		/// <summary>
-		/// A genius picture that is used to easily download it
+		///     A genius picture that is used to easily download it
 		/// </summary>
 		protected struct GeniusPicture : IDisposable
 		{
 			/// <summary>
-			/// The url of the image
+			///     The url of the image
 			/// </summary>
 			public string Url;
+
 			/// <summary>
-			/// A temporary path for the file, it will automatically be created.
+			///     A temporary path for the file, it will automatically be created.
 			/// </summary>
 			public string Path;
 
 			/// <summary>
-			/// The type of the picture, that will be set.
+			///     The type of the picture, that will be set.
 			/// </summary>
 			public PictureType Type;
 
 			private WebClient _client;
 
 			/// <summary>
-			/// Create a new picture from an url.
+			///     Create a new picture from an url.
 			/// </summary>
 			/// <param name="url">The url that is used to identify the picture. This url can be empty.</param>
 			/// <param name="type">The type of the picture, that will be set.</param>
@@ -192,22 +194,20 @@ namespace TicTacTubeCore.Processors.Media.Songs
 			}
 
 			/// <summary>
-			/// Get a task that is downloading the picture. If the <see cref="Url"/> is empty, <c>null</c> will be returned.
+			///     Get a task that is downloading the picture. If the <see cref="Url" /> is empty, <c>null</c> will be returned.
 			/// </summary>
 			/// <returns>The task / progress of the downloading process.</returns>
 			public Task DownloadAsync()
 			{
 				if (_client != null)
-				{
 					throw new InvalidOperationException("Concurrent operations are not supported.");
-				}
 				_client = new WebClient();
 
 				return string.IsNullOrWhiteSpace(Url) ? null : _client.DownloadFileTaskAsync(Url, Path);
 			}
 
 			/// <summary>
-			/// Create a picture frame from the given image. Also dispose the tempfile of not otherwise sepcified.
+			///     Create a picture frame from the given image. Also dispose the tempfile of not otherwise sepcified.
 			/// </summary>
 			/// <param name="dispose">Whether to dispose the file after creating the picture.</param>
 			/// <returns>A newly created picture frame that supports iTunes and other bitchy music players.</returns>
@@ -221,14 +221,12 @@ namespace TicTacTubeCore.Processors.Media.Songs
 			}
 
 			/// <summary>
-			/// Delete the downloaded image.
+			///     Delete the downloaded image.
 			/// </summary>
 			public void Dispose()
 			{
 				if (!string.IsNullOrWhiteSpace(Url))
-				{
 					File.Delete(Path);
-				}
 				_client?.Dispose();
 			}
 		}

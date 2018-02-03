@@ -4,7 +4,8 @@ using System.Text.RegularExpressions;
 namespace TicTacTubeCore.Processors.Media.Songs
 {
 	/// <summary>
-	/// An <see cref="IMediaInfoMerger{T}"/> that merges two <see cref="SongInfo"/>s based on their aritst and title similarity.
+	///     An <see cref="IMediaInfoMerger{T}" /> that merges two <see cref="SongInfo" />s based on their aritst and title
+	///     similarity.
 	/// </summary>
 	public class SongInfoMerger : BaseMediaInfoMerger<SongInfo>
 	{
@@ -37,13 +38,9 @@ namespace TicTacTubeCore.Processors.Media.Songs
 
 			// if we trust the artists, they are probably the same and may contain spelling errors - so we fix them
 			if (artistTrust > TrustThreshold)
-			{
 				info1.Artists = MergeData(info1.Artists, info2.Artists, trusted, greedy);
-			}
 			else
-			{
 				info1.Artists = MergeDataArray(info1.Artists, info2.Artists, trusted, greedy);
-			}
 
 			// since we normally only use a single image, we do not wanna compare.
 			info1.Pictures = MergeData(info1.Pictures, info2.Pictures, trusted, greedy);
@@ -53,26 +50,30 @@ namespace TicTacTubeCore.Processors.Media.Songs
 		}
 
 		/// <summary>
-		/// Calculate the trust score (see <see cref="TestMatch"/>) for three string pairs:
-		/// <list type="bullet">
-		///		<item>
-		///			<description>The title of <paramref name="info1"/> and <paramref name="info2"/>.</description>
-		///		</item>
-		///		<item>
-		///			<description>The artists of <paramref name="info1"/> and <paramref name="info2"/>.</description>
-		///		</item>
-		///		<item>
-		///			<description>The title and artists of <paramref name="info1"/> and <paramref name="info2"/> in order to detect swapped elements.</description>
-		///		</item>
-		/// </list>
-		/// The order of these infos does not matter.
+		///     Calculate the trust score (see <see cref="TestMatch" />) for three string pairs:
+		///     <list type="bullet">
+		///         <item>
+		///             <description>The title of <paramref name="info1" /> and <paramref name="info2" />.</description>
+		///         </item>
+		///         <item>
+		///             <description>The artists of <paramref name="info1" /> and <paramref name="info2" />.</description>
+		///         </item>
+		///         <item>
+		///             <description>
+		///                 The title and artists of <paramref name="info1" /> and <paramref name="info2" /> in order to
+		///                 detect swapped elements.
+		///             </description>
+		///         </item>
+		///     </list>
+		///     The order of these infos does not matter.
 		/// </summary>
 		/// <param name="info1">The first info.</param>
 		/// <param name="info2">The second info.</param>
 		/// <param name="artistTrust">The match score for the artists.</param>
 		/// <param name="titleTrust">The match score for the titles.</param>
 		/// <param name="combinedTrust">The match score for a concatination of artists and title.</param>
-		protected virtual void CalculateTrustScore(SongInfo info1, SongInfo info2, out float artistTrust, out float titleTrust, out float combinedTrust)
+		protected virtual void CalculateTrustScore(SongInfo info1, SongInfo info2, out float artistTrust,
+			out float titleTrust, out float combinedTrust)
 		{
 			titleTrust = TestMatch(info1.Title, info2.Title);
 
@@ -83,21 +84,27 @@ namespace TicTacTubeCore.Processors.Media.Songs
 			combinedTrust = TestMatch(info1.Title + " " + artist1, info2.Title + " " + artist2);
 		}
 
-		///  <summary>
-		///  This method is used the calculate the match of two given strings.
-		///  A value between [0;1] is returned — one is an absolute match and 0 no match.
-		///  The average between the following two values is returned:
-		/// 	<list type="number">
-		/// 		<item>
-		/// 			<description>All space seperated items will be tokenized. Then they will be compared how many of these completely match.</description>
-		/// 		</item>
-		/// 		<item>
-		/// 			<description>The length of the matched and unmatched tokens will be compared (i.e. the actual character length not the token count as in 1.). So longer tokens will be punished more severly.</description>
-		/// 		</item>
-		/// 	</list>
-		/// 	</summary>
-		///  <param name="strA">The first string.</param>
-		///  <param name="strB">The second string.</param>
+		/// <summary>
+		///     This method is used the calculate the match of two given strings.
+		///     A value between [0;1] is returned — one is an absolute match and 0 no match.
+		///     The average between the following two values is returned:
+		///     <list type="number">
+		///         <item>
+		///             <description>
+		///                 All space seperated items will be tokenized. Then they will be compared how many of these
+		///                 completely match.
+		///             </description>
+		///         </item>
+		///         <item>
+		///             <description>
+		///                 The length of the matched and unmatched tokens will be compared (i.e. the actual character
+		///                 length not the token count as in 1.). So longer tokens will be punished more severly.
+		///             </description>
+		///         </item>
+		///     </list>
+		/// </summary>
+		/// <param name="strA">The first string.</param>
+		/// <param name="strB">The second string.</param>
 		/// <param name="caseSensitve">Whether the comparison should be case sensitve or not.</param>
 		/// <returns>A value between [0;1] is returned — one is an absolute match and 0 no match.</returns>
 		protected virtual float TestMatch(string strA, string strB, bool caseSensitve = false)
@@ -124,8 +131,8 @@ namespace TicTacTubeCore.Processors.Media.Songs
 
 			int matchedLength = matchedTokens.Sum(s => s.Length);
 			int unmatchedLength = unmatchedTokens.Sum(s => s.Length);
-			float tokenMatch = (float)matchedTokens.Count / (matchedTokens.Count + unmatchedTokens.Count);
-			float lengthMatch = (float)matchedLength / (matchedLength + unmatchedLength);
+			float tokenMatch = (float) matchedTokens.Count / (matchedTokens.Count + unmatchedTokens.Count);
+			float lengthMatch = (float) matchedLength / (matchedLength + unmatchedLength);
 			return (tokenMatch + lengthMatch) / 2;
 		}
 	}
