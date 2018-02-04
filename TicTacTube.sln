@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TicTacTubeDemo", "TicTacTub
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TicTacTubeCore.Telegram", "TicTacTubeCore.Telegram\TicTacTubeCore.Telegram.csproj", "{C0785776-9087-4385-86FD-ADC6C35FD6A8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TicTacTubeCore.YoutubeDL", "TicTacTubeCore.YoutubeDL\TicTacTubeCore.YoutubeDL.csproj", "{C92FAE50-8F7A-4E07-9864-191E38D3F99B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TicTacTubeCore.YoutubeDL", "TicTacTubeCore.YoutubeDL\TicTacTubeCore.YoutubeDL.csproj", "{C92FAE50-8F7A-4E07-9864-191E38D3F99B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TicTacTubeCore.Soundcloud", "TicTacTubeCore.Soundcloud\TicTacTubeCore.Soundcloud.csproj", "{2C9F599B-87C8-46C0-AD04-D73BCA23417B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{C92FAE50-8F7A-4E07-9864-191E38D3F99B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C92FAE50-8F7A-4E07-9864-191E38D3F99B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C92FAE50-8F7A-4E07-9864-191E38D3F99B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2C9F599B-87C8-46C0-AD04-D73BCA23417B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C9F599B-87C8-46C0-AD04-D73BCA23417B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C9F599B-87C8-46C0-AD04-D73BCA23417B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C9F599B-87C8-46C0-AD04-D73BCA23417B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

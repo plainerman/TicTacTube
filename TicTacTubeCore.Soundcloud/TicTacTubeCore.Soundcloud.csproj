@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <PackageId>TTT.TicTacTube.Soundcloud</PackageId>
+    <Version>0.1.0</Version>
+    <Authors>Michael Plainer</Authors>
+    <Company>Michael Plainer</Company>
+    <Product>TicTacTube.Soundcloud</Product>
+    <Description>An extension for the easy to use data processing pipeline that allows the integration of soundcloud. Currently creating new Soundcloud API-keys is disabled, therefore this API uses web parsing which may be against soundcloud's terms of service.</Description>
+    <Copyright>MIT</Copyright>
+    <PackageLicenseUrl>https://choosealicense.com/licenses/mit/</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/plainerman/TicTacTube</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/plainerman/TicTacTube</RepositoryUrl>
+    <RepositoryType>Git</RepositoryType>
+    <PackageTags>C# data processing pipeline soundcloud</PackageTags>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>bin\Release\netstandard2.0\TicTacTubeCore.Soundcloud.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>bin\Debug\netstandard2.0\TicTacTubeCore.Soundcloud.xml</DocumentationFile>
+  </PropertyGroup>
+
+</Project>
