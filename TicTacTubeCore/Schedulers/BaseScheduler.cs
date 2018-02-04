@@ -22,7 +22,7 @@ namespace TicTacTubeCore.Schedulers
 		protected readonly List<IDataPipelineOrBuilder> InternalPipelines;
 
 		/// <summary>
-		///		This reset event will wait until stop has been called — so join works by waiting for a stop from another thread.
+		///     This reset event will wait until stop has been called — so join works by waiting for a stop from another thread.
 		/// </summary>
 		protected ManualResetEvent ManualJoinReset;
 
@@ -33,6 +33,36 @@ namespace TicTacTubeCore.Schedulers
 		{
 			InternalPipelines = new List<IDataPipelineOrBuilder>();
 			Pipelines = InternalPipelines.AsReadOnly();
+		}
+
+		/// <summary>
+		///     This method is called before setting the global running state to <c>true</c>.
+		/// </summary>
+		protected abstract void ExecuteStart();
+
+		/// <summary>
+		///     This method is called before setting the global running state to <c>false</c>.
+		/// </summary>
+		protected abstract void ExecuteStop();
+
+		/// <summary>
+		///     The method that will be called internally to execute the pipelineOrBuilder.
+		/// </summary>
+		/// <param name="fileSource">The filesource with which the execute will be triggered.</param>
+		protected virtual void Execute(IFileSource fileSource)
+		{
+			Log.Info($"Scheduler has been triggered, executing {InternalPipelines.Count} pipelineOrBuilder(s).");
+			InternalPipelines.ForEach(p => p.Build().Execute(fileSource));
+			ExecuteEvent(SchedulerLifeCycleEventType.Execute);
+		}
+
+		/// <summary>
+		///     Execute a lifecycle event with given parameters.
+		/// </summary>
+		/// <param name="eventType">The type of the event.</param>
+		protected virtual void ExecuteEvent(SchedulerLifeCycleEventType eventType)
+		{
+			LifeCycleEvent?.Invoke(this, new SchedulerLifeCycleEventArgs(IsRunning, eventType));
 		}
 
 		/// <inheritdoc />
@@ -75,36 +105,6 @@ namespace TicTacTubeCore.Schedulers
 		public virtual void Join()
 		{
 			ManualJoinReset.WaitOne();
-		}
-
-		/// <summary>
-		///     This method is called before setting the global running state to <c>true</c>.
-		/// </summary>
-		protected abstract void ExecuteStart();
-
-		/// <summary>
-		///     This method is called before setting the global running state to <c>false</c>.
-		/// </summary>
-		protected abstract void ExecuteStop();
-
-		/// <summary>
-		///     The method that will be called internally to execute the pipelineOrBuilder.
-		/// </summary>
-		/// <param name="fileSource">The filesource with which the execute will be triggered.</param>
-		protected virtual void Execute(IFileSource fileSource)
-		{
-			Log.Info($"Scheduler has been triggered, executing {InternalPipelines.Count} pipelineOrBuilder(s).");
-			InternalPipelines.ForEach(p => p.Build().Execute(fileSource));
-			ExecuteEvent(SchedulerLifeCycleEventType.Execute);
-		}
-
-		/// <summary>
-		///     Execute a lifecycle event with given parameters.
-		/// </summary>
-		/// <param name="eventType">The type of the event.</param>
-		protected virtual void ExecuteEvent(SchedulerLifeCycleEventType eventType)
-		{
-			LifeCycleEvent?.Invoke(this, new SchedulerLifeCycleEventArgs(IsRunning, eventType));
 		}
 	}
 }

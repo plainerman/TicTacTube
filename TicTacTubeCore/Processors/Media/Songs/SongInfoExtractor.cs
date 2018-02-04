@@ -13,6 +13,7 @@ namespace TicTacTubeCore.Processors.Media.Songs
 	public class SongInfoExtractor : IMediaInfoExtractor<SongInfo>
 	{
 		private const string FeaturingRegexWithoutSpace = @"f(ea)?t(\.?\s|\.)";
+
 		/// <summary>
 		///     The regex that matches featuring in song titles.
 		/// </summary>
@@ -63,23 +64,6 @@ namespace TicTacTubeCore.Processors.Media.Songs
 		///     Determine whether the title should be used as album, if no album could be found.
 		/// </summary>
 		public bool UseTitleAsAlbum { get; set; } = true;
-
-		/// <inheritdoc />
-		public async Task<SongInfo> ExtractAsyncTask(IFileSource song)
-		{
-			string fileName = song.FileName;
-
-			var songInfoFromFile = await SongInfo.ReadFromFileAsyncTask(song.FileInfo.FullName);
-			var songInfo = await ExtractFromStringAsyncTask(fileName);
-
-			songInfoFromFile.Title = songInfo.Title;
-			songInfoFromFile.Artists = songInfo.Artists;
-
-			if (string.IsNullOrEmpty(songInfoFromFile.Album))
-				songInfoFromFile.Album = songInfo.Album;
-
-			return songInfoFromFile;
-		}
 
 		/// <summary>
 		///     This method extracts songinfo from a given string (<paramref name="songTitle" />).
@@ -318,6 +302,23 @@ namespace TicTacTubeCore.Processors.Media.Songs
 			{
 				indexes.Add(addMatchOffset ? match.Index + match.Length : match.Index);
 			}
+		}
+
+		/// <inheritdoc />
+		public async Task<SongInfo> ExtractAsyncTask(IFileSource song)
+		{
+			string fileName = song.FileName;
+
+			var songInfoFromFile = await SongInfo.ReadFromFileAsyncTask(song.FileInfo.FullName);
+			var songInfo = await ExtractFromStringAsyncTask(fileName);
+
+			songInfoFromFile.Title = songInfo.Title;
+			songInfoFromFile.Artists = songInfo.Artists;
+
+			if (string.IsNullOrEmpty(songInfoFromFile.Album))
+				songInfoFromFile.Album = songInfo.Album;
+
+			return songInfoFromFile;
 		}
 	}
 }
