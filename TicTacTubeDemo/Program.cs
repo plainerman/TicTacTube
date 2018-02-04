@@ -1,11 +1,12 @@
 ﻿using System;
-using log4net;
-using log4net.Config;
 using System.IO;
 using System.Net;
 using System.Reflection;
 using System.Threading.Tasks;
+using log4net;
+using log4net.Config;
 using NYoutubeDL.Helpers;
+using TagLib;
 using Telegram.Bot.Types;
 using TicTacTubeCore.Pipelines;
 using TicTacTubeCore.Processors.Logical;
@@ -19,49 +20,6 @@ namespace TicTacTubeDemo
 {
 	public class Program
 	{
-		private class TelegramScheduler : TelegramBotBaseScheduler
-		{
-			private static readonly ILog Log = LogManager.GetLogger(typeof(TelegramScheduler));
-
-			public TelegramScheduler(string apiToken, UserList userList = UserList.None, IWebProxy proxy = null) : base(apiToken, userList, proxy)
-			{
-				WelcomeText = "Hey there! Just send me youtube links ... :)";
-			}
-
-			protected override void ProcessTextMessage(Message message)
-			{
-				Task.Run(() =>
-				{
-					try
-					{
-						SendTextMessage(message, "brb ...");
-
-						Log.Info($"{message.From.Username} + {message.From.FirstName} requested {message.Text}");
-						var youtubeSource = new YoutubeDlSource(message.Text, Enums.AudioFormat.mp3, true);
-						IFileSource source = new FileSource(youtubeSource,
-							Path.Combine(Path.GetTempPath(), "TicTacTube"));
-
-						Execute(source);
-
-						Log.Info($"{message.From.Username} + {message.From.FirstName} downloaded {source.FileName}");
-
-						var f = TagLib.File.Create(source.FileInfo.FullName, TagLib.ReadStyle.Average);
-
-						SendTextMessage(message, $"{source.FileName}\nTitle:\t{f.Tag.Title}\nArtists:\t{string.Join(", ", f.Tag.Performers)}");
-
-
-						BotClient.SendAudioAsync(message.Chat.Id,
-							new FileToSend(source.FileInfo.FullName, File.OpenRead(source.FileInfo.FullName)), f.Tag.Lyrics,
-							(int)f.Properties.Duration.TotalSeconds, string.Join(' ', f.Tag.Performers), f.Tag.Title);
-					}
-					catch (Exception e)
-					{
-						SendTextMessage(message, e.Message);
-						Log.Error(e);
-					}
-				});
-			}
-		}
 		private static void Main(string[] args)
 		{
 			var logRepository = LogManager.GetRepository(Assembly.GetEntryAssembly());
@@ -87,58 +45,52 @@ namespace TicTacTubeDemo
 
 			scheduler.Start();
 			scheduler.Join();
+		}
 
-			//var scheduler = new EventFiringScheduler();
-			//var pipelineBuilder = new DataPipelineBuilder();
+		private class TelegramScheduler : TelegramBotBaseScheduler
+		{
+			private static readonly ILog Log = LogManager.GetLogger(typeof(TelegramScheduler));
 
-			////new MediaRenamer<SongInfo>("This is my pattern {Title} {Artists} {Title}", new SongInfoExtractor());
+			public TelegramScheduler(string apiToken, UserList userList = UserList.None, IWebProxy proxy = null) : base(apiToken,
+				userList, proxy)
+			{
+				WelcomeText = "Hey there! Just send me youtube links ... :)";
+			}
 
-			////string[] testVals = { "WE ARE FURY - Waiting (feat. Olivia Lunny)",
-			////	"Laura Brehm - Breathe (Last Heroes & Crystal Skies Remix) (Lyric Video)",
-			////	"Laura Brehm - Breathe (Last Heroes & Crystal Skies Remix) (Lyric Video)",
-			////	"Rita Ora - Your Song(Official Lyric Video)",
-			////	"Rita Ora - Your Song(Official Video)",
-			////	"Dua Lipa - New Rules(Official Music Video)",
-			////	"Snugs - Radio Silence (ft. HAILZ) [Lyric Video]",
-			////	"Selena Gomez, Marshmello - Wolves"
-			////};
+			protected override void ProcessTextMessage(Message message)
+			{
+				Task.Run(() =>
+				{
+					try
+					{
+						SendTextMessage(message, "brb ...");
 
-			//	/*var extractor = new SongInfoExtractor();
-			//foreach (var testVal in testVals)
-			//{
-			//	extractor.ExtractFromFileName(testVal);
-			//}*/
+						Log.Info($"{message.From.Username} + {message.From.FirstName} requested {message.Text}");
+						var youtubeSource = new YoutubeDlSource(message.Text, Enums.AudioFormat.mp3, true);
+						IFileSource source = new FileSource(youtubeSource,
+							Path.Combine(Path.GetTempPath(), "TicTacTube"));
 
+						Execute(source);
 
-			////var source = new FileSource(@"C:\Marshmello - You And Me (Official Music Video).mp3");
-			///*var source =
-			//	new FileSource(
-			//		new UrlSource(@"https://www.dropbox.com/s/4uz4sx5q3mrfg4s/Old%20Telephone%20Uncompressed%20WAVE.wav?dl=1"),
-			//		@"C:\Users\plain\Desktop\newFolder\subfolder\");
-			//*/
+						Log.Info($"{message.From.Username} + {message.From.FirstName} downloaded {source.FileName}");
 
-			//FileSource source = @"C:\Users\plain\Desktop\test.mp3";
+						var f = TagLib.File.Create(source.FileInfo.FullName, ReadStyle.Average);
 
-			//pipelineBuilder
-			//	.Append(new SourceCloner(@"C:\Users\plain\Desktop\newFolder", false, true))
-			//	.Append(new SourceMover(@"C:\Users\plain\Desktop\newFolder\test2.mp3"));
-
-			////pipelineBuilder
-			////	.Append(new SourceConverter(Type.Mp3))
-			////	.Append(new MetaDataFiller())
-			////	.Append(new MusicDetector())
-			////	.Append(new MusicRenamer())
-			////	.Append(new ConditionalProcessor(file => file.Size > 10000),
-			////		new SourceMover(destination: "/home/plainer/podcasts/"),
-			////		new SourceMover(destination: "/home/plainer/music/"))
-			////	.Split(new SourceDuplicator("(2)"), new MultiProcessor(new SymlinkCreator()..., ... /*nested pipeline */), new SourceMover("/home/src"));
+						SendTextMessage(message,
+							$"{source.FileName}\nTitle:\t{f.Tag.Title}\nArtists:\t{string.Join(", ", f.Tag.Performers)}");
 
 
-			//scheduler.Add(pipelineBuilder);
-			//scheduler.Start();
-			//scheduler.Fire(source);
-
-			//Console.ReadKey();
+						BotClient.SendAudioAsync(message.Chat.Id,
+							new FileToSend(source.FileInfo.FullName, File.OpenRead(source.FileInfo.FullName)), f.Tag.Lyrics,
+							(int) f.Properties.Duration.TotalSeconds, string.Join(' ', f.Tag.Performers), f.Tag.Title);
+					}
+					catch (Exception e)
+					{
+						SendTextMessage(message, e.Message);
+						Log.Error(e);
+					}
+				});
+			}
 		}
 	}
 }

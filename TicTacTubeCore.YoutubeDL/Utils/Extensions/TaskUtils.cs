@@ -5,12 +5,12 @@ using System.Threading.Tasks;
 namespace TicTacTubeCore.YoutubeDL.Utils.Extensions
 {
 	/// <summary>
-	/// An utils class for task creation / monitoring.
+	///     An utils class for task creation / monitoring.
 	/// </summary>
 	public class TaskUtils
 	{
 		/// <summary>
-		/// Let a process run inside a task asynchronously.
+		///     Let a process run inside a task asynchronously.
 		/// </summary>
 		/// <param name="fileName">The process that will be executed.</param>
 		/// <returns>The task.</returns>
@@ -37,7 +37,7 @@ namespace TicTacTubeCore.YoutubeDL.Utils.Extensions
 		}
 
 		/// <summary>
-		/// Let a process run inside a task asynchronously.
+		///     Let a process run inside a task asynchronously.
 		/// </summary>
 		/// <param name="process">The process that will be wrapped.</param>
 		/// <returns>The task.</returns>

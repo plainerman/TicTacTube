@@ -8,6 +8,8 @@ namespace TicTacTubeCoreTest.Sources.Files
 		public const string DummyText =
 			"This is a temporary file for testing purposes. Only delete if no test is running";
 
+		public override string ExternalSource { get; } = "";
+
 		public TempExternalFileSource(bool lazyLoading) : base(lazyLoading)
 		{
 		}
@@ -36,8 +38,6 @@ namespace TicTacTubeCoreTest.Sources.Files
 				index++;
 			}
 		}
-
-		public override string ExternalSource { get; } = "";
 
 		/// <inheritdoc />
 		protected override void Download(string destinationPath)

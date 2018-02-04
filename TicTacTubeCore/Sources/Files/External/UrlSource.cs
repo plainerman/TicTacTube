@@ -15,6 +15,10 @@ namespace TicTacTubeCore.Sources.Files.External
 		/// </summary>
 		public string Url { get; }
 
+
+		/// <inheritdoc />
+		public override string ExternalSource => Url;
+
 		/// <summary>
 		///     Create a new <see cref="IExternalFileSource" /> that will be fetched from an url and define whether it is lazy
 		///     loaded or not.
@@ -49,10 +53,6 @@ namespace TicTacTubeCore.Sources.Files.External
 
 			return Path.Combine(destinationPath, filename);
 		}
-
-
-		/// <inheritdoc />
-		public override string ExternalSource => Url;
 
 		/// <inheritdoc />
 		protected override void Download(string destinationPath)
