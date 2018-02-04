@@ -236,7 +236,7 @@ namespace TicTacTubeCore.Processors.Media.Songs
 			/// <returns>A newly created picture frame that supports iTunes and other bitchy music players.</returns>
 			public IPicture CreatePictureFrame(bool dispose = true)
 			{
-				var frame = new AttachedPictureFrame(new Picture(Path)) { TextEncoding = StringType.Latin1, Type = Type };
+				var frame = SongInfo.CreatePictureFrame(Path, Type);
 
 				if (dispose) Dispose();
 
