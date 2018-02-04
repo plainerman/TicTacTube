@@ -42,8 +42,10 @@ namespace TicTacTubeCore.Processors.Media.Songs
 			else
 				info1.Artists = MergeDataArray(info1.Artists, info2.Artists, trusted, greedy);
 
-			// since we normally only use a single image, we do not wanna compare.
+			// since we normally only use a single image, we do not need to compare.
 			info1.Pictures = MergeData(info1.Pictures, info2.Pictures, trusted, greedy);
+
+			info1.Genres = MergeDataArray(info1.Genres, info2.Genres, trusted, greedy);
 			info1.Year = MergeData(info1.Year, info2.Year, trusted, greedy);
 
 			return info1;
@@ -131,8 +133,8 @@ namespace TicTacTubeCore.Processors.Media.Songs
 
 			int matchedLength = matchedTokens.Sum(s => s.Length);
 			int unmatchedLength = unmatchedTokens.Sum(s => s.Length);
-			float tokenMatch = (float) matchedTokens.Count / (matchedTokens.Count + unmatchedTokens.Count);
-			float lengthMatch = (float) matchedLength / (matchedLength + unmatchedLength);
+			float tokenMatch = (float)matchedTokens.Count / (matchedTokens.Count + unmatchedTokens.Count);
+			float lengthMatch = (float)matchedLength / (matchedLength + unmatchedLength);
 			return (tokenMatch + lengthMatch) / 2;
 		}
 	}
