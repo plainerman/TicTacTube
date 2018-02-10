@@ -7,27 +7,53 @@ using HtmlAgilityPack;
 using TagLib;
 using TicTacTubeCore.Processors.Media;
 using TicTacTubeCore.Processors.Media.Songs;
-using TicTacTubeCore.Sources.Files;
 using File = System.IO.File;
 
 namespace TicTacTubeCore.Soundcloud.Processors.Media.Songs
 {
-	public class SoundcloudSongInfoFetcher : IMediaInfoExtractor<SongInfo>
+	/// <summary>
+	/// A songinfo fetcher that fetches data from a soundcloud url.
+	/// Currently, this fetcher simulates a web browser, which might be against soundcloud terms of service.
+	/// Only use it with soundclouds written permission (as soundclouds API-validation is currently disabled).
+	/// </summary>
+	public class SoundcloudSongInfoFetcher : IMediaTextInfoExtractor<SongInfo>
 	{
+		/// <summary>
+		/// The user agent that will be sent to soundcloud.
+		/// </summary>
 		public string UserAgent { get; set; } = "Mozilla/5.0 (X11; Linux x86_64; rv:10.0) Gecko/20100101 Firefox/10.0";
-		public SongInfoExtractor SongInfoExtractor { get; }
+		/// <summary>
+		/// The extractor that is used to parse the title of the soundcloud song.
+		/// </summary>
+		public IMediaTextInfoExtractor<SongInfo> SongInfoExtractor { get; }
 
+		/// <summary>
+		/// Create a new soundcloud song fetcher with a default <see cref="SongInfoExtractor"/>.
+		/// </summary>
 		public SoundcloudSongInfoFetcher()
 		{
 			SongInfoExtractor = new SongInfoExtractor();
 		}
 
-		public Task<SongInfo> ExtractAsyncTask(IFileSource source)
+		private async Task<HtmlDocument> CreateDoc(WebClient webClient, string url)
 		{
-			throw new System.NotImplementedException();
+			webClient.Headers.Add("user-agent", UserAgent);
+			string pageContent = await webClient.DownloadStringTaskAsync(new Uri(url));
+
+			var doc = new HtmlDocument();
+			doc.LoadHtml(pageContent);
+
+			return doc;
 		}
 
-		public async Task<SongInfo> ExtractAsyncTask(string url)
+		/// <summary>
+		///     This method extracts a songinfo from a given string (<paramref name="url" />), which is a soundcloud url.
+		/// </summary>
+		/// <param name="url">
+		///     The url to the soundcloud song.
+		/// </param>
+		/// <returns>A <see cref="SongInfo" /> containing the extracted information.</returns>
+		public async Task<SongInfo> ExtractFromStringAsyncTask(string url)
 		{
 			//TODO: custom exception types
 			using (var webClient = new DecompressingWebClient())
@@ -53,13 +79,15 @@ namespace TicTacTubeCore.Soundcloud.Processors.Media.Songs
 				string coverArtDestinationFile = Path.GetTempFileName();
 				var downloadCoverArt = webClient.DownloadFileTaskAsync(new Uri(coverArtUrl), coverArtDestinationFile);
 
-				var info = SongInfoExtractor.ExtractFromString(HttpUtility.HtmlDecode(coverArtNode.Attributes["alt"].Value));
+				var infoTask = SongInfoExtractor.ExtractFromStringAsyncTask(HttpUtility.HtmlDecode(coverArtNode.Attributes["alt"].Value));
 
 				var genreNode = articleNode.SelectSingleNode("//header/meta[@itemprop='genre']");
 				if (genreNode == null)
 				{
 					throw new MissingFieldException("No genre node found.");
 				}
+
+				var info = await infoTask;
 
 				info.Genres = HttpUtility.HtmlDecode(genreNode.Attributes["content"].Value).Split('&');
 
@@ -71,22 +99,11 @@ namespace TicTacTubeCore.Soundcloud.Processors.Media.Songs
 			}
 		}
 
-		private async Task<HtmlDocument> CreateDoc(WebClient webClient, string url)
-		{
-			webClient.Headers.Add("user-agent", UserAgent);
-			string pageContent = await webClient.DownloadStringTaskAsync(new Uri(url));
-
-			var doc = new HtmlDocument();
-			doc.LoadHtml(pageContent);
-
-			return doc;
-		}
-
 		private class DecompressingWebClient : WebClient
 		{
 			protected override WebRequest GetWebRequest(Uri address)
 			{
-				var request = base.GetWebRequest(address) as HttpWebRequest;
+				var request = (HttpWebRequest) base.GetWebRequest(address);
 				request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
 				return request;
 			}

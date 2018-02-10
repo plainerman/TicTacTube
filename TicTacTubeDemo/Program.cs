@@ -11,6 +11,7 @@ using Telegram.Bot.Types;
 using TicTacTubeCore.Pipelines;
 using TicTacTubeCore.Processors.Logical;
 using TicTacTubeCore.Processors.Media.Songs;
+using TicTacTubeCore.Soundcloud.Processors.Media.Songs;
 using TicTacTubeCore.Sources.Files;
 using TicTacTubeCore.Telegram.Schedulers;
 using TicTacTubeCore.YoutubeDL.Sources.Files.External;
@@ -44,6 +45,10 @@ namespace TicTacTubeDemo
 			scheduler.Add(pipelineBuilder);
 
 			scheduler.Start();
+
+			var soundcloud = new SoundcloudSongInfoFetcher();
+			var soundcloudInfo = soundcloud.ExtractFromStringAsyncTask("https://soundcloud.com/roger-slato/dreamer-remode").GetAwaiter().GetResult();
+
 			scheduler.Join();
 		}
 
