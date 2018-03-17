@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using TicTacTubeCore.Sources.Files.External;
 
 namespace TicTacTubeCore.Sources.Files
 {
@@ -26,6 +27,11 @@ namespace TicTacTubeCore.Sources.Files
 		///     The extension of the file.
 		/// </summary>
 		string FileExtension { get; }
+
+		/// <summary>
+		///     If this file source wraps an <see cref="IExternalFileSource"/>, this external source should be set correctly. May be <c>null</c>.
+		/// </summary>
+		IExternalFileSource ExternalFileSource { get; }
 
 		/// <summary>
 		///     The path of the file.

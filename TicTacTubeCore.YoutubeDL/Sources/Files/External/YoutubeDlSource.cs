@@ -34,6 +34,12 @@ namespace TicTacTubeCore.YoutubeDL.Sources.Files.External
 		public NYoutubeDL.YoutubeDL YoutubeDl { get; }
 
 		/// <summary>
+		/// The title of the youtube video. This may be <c>null</c> until fully fetched.
+		/// </summary>
+		//TODO: multiple titles (playlist)
+		public string YoutubeTitle { get; protected set; }
+
+		/// <summary>
 		///     Create a new Youtube-DL source that downloads videos with a given video and audio format.
 		/// </summary>
 		/// <param name="url">
@@ -68,7 +74,7 @@ namespace TicTacTubeCore.YoutubeDL.Sources.Files.External
 			Enums.VideoFormat.best, audioFormat, lazyLoading)
 		{
 			if (audioFormat == Enums.AudioFormat.best)
-				throw new InvalidOperationException($"{audioFormat} not support—please specify it specifically.");
+				throw new InvalidOperationException($"{audioFormat} not supported—please specify it specifically.");
 
 			YoutubeDl.Options.PostProcessingOptions.ExtractAudio = true;
 		}
@@ -86,6 +92,7 @@ namespace TicTacTubeCore.YoutubeDL.Sources.Files.External
 		{
 			YoutubeDl.Options.FilesystemOptions.Output = Path.Combine(destinationPath, "%(title)s.%(ext)s");
 			YoutubeDl.Options.VerbositySimulationOptions.GetFilename = true;
+			YoutubeDl.Options.VerbositySimulationOptions.GetTitle = true;
 
 			SetFinishedPath();
 
@@ -102,7 +109,7 @@ namespace TicTacTubeCore.YoutubeDL.Sources.Files.External
 		/// </summary>
 		protected virtual void SetFinishedPath()
 		{
-			YoutubeDl.StandardOutputEvent += SetFinishedPath;
+			YoutubeDl.StandardOutputEvent += SetFinishedPathAndTitle;
 			// this works only for video files, if we have an audio, we have to find the output file ourselves ...
 			var process = YoutubeDl.Download(true);
 
@@ -122,12 +129,22 @@ namespace TicTacTubeCore.YoutubeDL.Sources.Files.External
 			}
 
 			YoutubeDl.Options.VerbositySimulationOptions.GetFilename = false;
+			YoutubeDl.Options.VerbositySimulationOptions.GetTitle = false;
 
-			YoutubeDl.StandardOutputEvent -= SetFinishedPath;
+			YoutubeDl.StandardOutputEvent -= SetFinishedPathAndTitle;
 
-			void SetFinishedPath(object sender, string output)
+			void SetFinishedPathAndTitle(object sender, string output)
 			{
-				FinishedPath = output.Trim();
+				// TODO: do i really need gettitle = true?
+				// cant i simply remove the file extension?
+				if (YoutubeTitle == null)
+				{
+					YoutubeTitle = output;
+				}
+				else
+				{
+					FinishedPath = output.Trim();
+				}
 			}
 		}
 	}

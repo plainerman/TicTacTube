@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -25,7 +26,10 @@ namespace TicTacTubeDemo
 			var logRepository = LogManager.GetRepository(Assembly.GetEntryAssembly());
 			XmlConfigurator.Configure(logRepository, new FileInfo("log4net.config"));
 
-			var scheduler = new TelegramScheduler(File.ReadAllText("telegram.token"));
+			var scheduler = new TelegramScheduler(File.ReadAllText("telegram.token"), UserList.Whitelist);
+
+			File.ReadLines("white.list").ToList().ForEach(user => scheduler.AddUser(int.Parse(user)));
+
 			var pipelineBuilder = new DataPipelineBuilder();
 
 			var fetcher = new GeniusSongInfoFetcher(File.ReadAllText("genius.token"));
@@ -33,7 +37,14 @@ namespace TicTacTubeDemo
 
 			pipelineBuilder.Append(new LambdaProcessor(source =>
 			{
-				var info = extractor.ExtractFromString(source.FileName);
+				string songTitle = source.FileName;
+
+				if (source.ExternalFileSource is YoutubeDlSource youtubeDlSource)
+				{
+					songTitle = youtubeDlSource.YoutubeTitle;
+				}
+
+				var info = extractor.ExtractFromString(songTitle);
 
 				info.WriteToFile(source.FileInfo.FullName);
 				info = fetcher.ExtractAsyncTask(info).GetAwaiter().GetResult();
@@ -41,6 +52,7 @@ namespace TicTacTubeDemo
 
 				return source;
 			}));
+
 			scheduler.Add(pipelineBuilder);
 
 			scheduler.Start();
@@ -82,7 +94,7 @@ namespace TicTacTubeDemo
 
 						BotClient.SendAudioAsync(message.Chat.Id,
 							new FileToSend(source.FileInfo.FullName, File.OpenRead(source.FileInfo.FullName)), f.Tag.Lyrics,
-							(int) f.Properties.Duration.TotalSeconds, string.Join(' ', f.Tag.Performers), f.Tag.Title);
+							(int)f.Properties.Duration.TotalSeconds, string.Join(' ', f.Tag.Performers), f.Tag.Title);
 					}
 					catch (Exception e)
 					{

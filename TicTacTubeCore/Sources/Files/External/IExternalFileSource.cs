@@ -11,7 +11,7 @@
 		bool LazyLoading { get; }
 
 		/// <summary>
-		///     The external source that this source references to.
+		///     The external source that this source references to. May not be <c>null</c>.
 		/// </summary>
 		string ExternalSource { get; }
 

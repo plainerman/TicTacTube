@@ -11,12 +11,16 @@ namespace TicTacTubeCore.Sources.Files
 	public abstract class BaseFileSource : IFileSource
 	{
 		private static readonly ILog Log = LogManager.GetLogger(typeof(BaseFileSource));
-		private IExternalFileSource _externalSource;
 
 		/// <summary>
 		///     The local filepath used temporarily for external sources;
 		/// </summary>
 		private string _filePath;
+
+		/// <summary>
+		/// Determines whether the external file source has already been fetched or not.
+		/// </summary>
+		private bool _externalFileSourceFetched;
 
 		/// <summary>
 		///     Create a <see cref="BaseFileSource" /> from a given filepath. This cannot be changed.
@@ -40,10 +44,11 @@ namespace TicTacTubeCore.Sources.Files
 			if (string.IsNullOrWhiteSpace(localPath))
 				throw new ArgumentException("Value cannot be null or whitespace.", nameof(localPath));
 
-			_externalSource = externalSource ?? throw new ArgumentNullException(nameof(externalSource));
+			ExternalFileSource = externalSource ?? throw new ArgumentNullException(nameof(externalSource));
+
 			_filePath = localPath;
 
-			if (!_externalSource.LazyLoading)
+			if (!ExternalFileSource.LazyLoading)
 				FetchExternalSource(true);
 		}
 
@@ -66,7 +71,7 @@ namespace TicTacTubeCore.Sources.Files
 		/// <param name="async">Whether the external source will be fetched asynchronously or not.</param>
 		protected virtual void FetchExternalSource(bool async)
 		{
-			if (_externalSource == null)
+			if (_externalFileSourceFetched)
 				return;
 
 			if (!Directory.Exists(_filePath))
@@ -75,21 +80,21 @@ namespace TicTacTubeCore.Sources.Files
 				Log.Info($"Creating directory {_filePath}");
 			}
 
-			Log.Info($"Fetching external source {_externalSource} to {_filePath}" + (async ? " asynchronously." : "."));
+			Log.Info($"Fetching external source {ExternalFileSource} to {_filePath}" + (async ? " asynchronously." : "."));
 
 			if (async)
 			{
-				_externalSource.FetchFileAsync(_filePath);
+				ExternalFileSource.FetchFileAsync(_filePath);
 			}
 			else
 			{
-				string path = _externalSource.FetchFile(_filePath);
+				string path = ExternalFileSource.FetchFile(_filePath);
 
 				AssignFilePath(path);
 
-				Log.Info($"Fetched external source {_externalSource} to {path}.");
+				Log.Info($"Fetched external source {ExternalFileSource} to {path}.");
 
-				_externalSource = null;
+				_externalFileSourceFetched = true;
 				_filePath = null;
 			}
 		}
@@ -105,6 +110,9 @@ namespace TicTacTubeCore.Sources.Files
 
 		/// <inheritdoc />
 		public string FileExtension => FileInfo?.Extension;
+
+		/// <inheritdoc />
+		public IExternalFileSource ExternalFileSource { get; }
 
 		/// <inheritdoc />
 		public string Path => FileInfo?.Directory.FullName;
