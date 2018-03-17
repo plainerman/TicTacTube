@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using TagLib;
+using File = TagLib.File;
 
 namespace TicTacTubeCore.Processors.Media.Songs
 {
@@ -28,10 +29,10 @@ namespace TicTacTubeCore.Processors.Media.Songs
 		/// </summary>
 		public string[] AlbumArtists;
 
-		///// <summary>
-		/////     The genres of the song.
-		///// </summary>
-		//public string[] Genres;
+		/// <summary>
+		///     The genres of the song.
+		/// </summary>
+		public string[] Genres;
 
 		/// <summary>
 		///     The year this song was released.
@@ -58,6 +59,7 @@ namespace TicTacTubeCore.Processors.Media.Songs
 				f.Tag.Performers = Artists;
 				f.Tag.Album = Album;
 				f.Tag.AlbumArtists = AlbumArtists;
+				f.Tag.Genres = Genres;
 				f.Tag.Year = Year;
 				f.Tag.Pictures = Pictures;
 
@@ -82,7 +84,7 @@ namespace TicTacTubeCore.Processors.Media.Songs
 				songInfo.Artists = f.Tag.Performers;
 				songInfo.Album = f.Tag.Album;
 				songInfo.AlbumArtists = f.Tag.AlbumArtists;
-				//songInfo.Genres = f.Tag.Genres;
+				songInfo.Genres = f.Tag.Genres;
 				songInfo.Year = f.Tag.Year;
 				songInfo.Bitrate = f.Properties.AudioBitrate;
 				songInfo.Pictures = f.Tag.Pictures;

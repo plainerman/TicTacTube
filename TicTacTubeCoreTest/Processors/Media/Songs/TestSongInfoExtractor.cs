@@ -42,6 +42,13 @@ namespace TicTacTubeCoreTest.Processors.Media.Songs
 			new[] { "Said The Sky", "Missio" })]
 		[DataRow("Said The Sky ft. Missio - Nostalgia [Test MashUp]", "Nostalgia [Test MashUp]",
 			new[] { "Said The Sky", "Missio" })]
+		[DataRow("Thor: Ragnarok Song | God Of Thunder | #NerdOut [Prod. by Boston]", "God Of Thunder #NerdOut",
+			new[] { "Thor: Ragnarok Song" })]
+		[DataRow("getting cozy ~ chill music mix ft.blackbear & jeremy zucker & eden", "chill music mix",
+			new[] { "getting cozy", "blackbear", "jeremy zucker", "eden" })]
+		[DataRow("Tritonal + Sj - Calabasas [Lyric Video]", "Calabasas", new[] { "Tritonal", "Sj" })]
+		[DataRow("Don Diablo - People Say ft. Paije | Official Music Video", "People Say", new[] { "Don Diablo", "Paije" })]
+		[DataRow("Marshmello & Anne-Marie - FRIENDS (Lyric Video) *OFFICIAL FRIENDZONE ANTHEM*", "FRIENDS", new[] { "Marshmello", "Anne-Marie" })]
 		public void TestSongInfoExtractionByName(string input, string title, string[] artists)
 		{
 			//TODO: readd / think about other concept, once the file has to exist in order to be analyzed
