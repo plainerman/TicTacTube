@@ -48,6 +48,7 @@ namespace TicTacTubeCoreTest.Processors.Media.Songs
 			new[] { "getting cozy", "blackbear", "jeremy zucker", "eden" })]
 		[DataRow("Tritonal + Sj - Calabasas [Lyric Video]", "Calabasas", new[] { "Tritonal", "Sj" })]
 		[DataRow("Don Diablo - People Say ft. Paije | Official Music Video", "People Say", new[] { "Don Diablo", "Paije" })]
+		[DataRow("Marshmello & Anne-Marie - FRIENDS (Lyric Video) *OFFICIAL FRIENDZONE ANTHEM*", "FRIENDS", new[] { "Marshmello", "Anne-Marie" })]
 		public void TestSongInfoExtractionByName(string input, string title, string[] artists)
 		{
 			//TODO: readd / think about other concept, once the file has to exist in order to be analyzed
