@@ -1,7 +1,9 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using log4net;
 using NYoutubeDL.Helpers;
+using NYoutubeDL.Models;
 using TicTacTubeCore.Sources.Files.External;
 using TicTacTubeCore.YoutubeDL.Utils.Extensions;
 
@@ -34,10 +36,10 @@ namespace TicTacTubeCore.YoutubeDL.Sources.Files.External
 		public NYoutubeDL.YoutubeDL YoutubeDl { get; }
 
 		/// <summary>
-		/// The title of the youtube video. This may be <c>null</c> until fully fetched.
+		/// The title of the youtube video(s) (maybe a playlist). This may be <c>null</c> until fully fetched.
 		/// </summary>
 		//TODO: multiple titles (playlist)
-		public string YoutubeTitle { get; protected set; }
+		public string[] YoutubeTitles { get; protected set; }
 
 		/// <summary>
 		///     Create a new Youtube-DL source that downloads videos with a given video and audio format.
@@ -92,7 +94,16 @@ namespace TicTacTubeCore.YoutubeDL.Sources.Files.External
 		{
 			YoutubeDl.Options.FilesystemOptions.Output = Path.Combine(destinationPath, "%(title)s.%(ext)s");
 			YoutubeDl.Options.VerbositySimulationOptions.GetFilename = true;
-			YoutubeDl.Options.VerbositySimulationOptions.GetTitle = true;
+
+			var info = YoutubeDl.GetDownloadInfo();
+			if (info is PlaylistDownloadInfo playlistInfo)
+			{
+				YoutubeTitles = playlistInfo.Videos.Select(i => i.Title).ToArray();
+			}
+			else
+			{
+				YoutubeTitles = new[] { info.Title };
+			}
 
 			SetFinishedPath();
 
@@ -129,22 +140,14 @@ namespace TicTacTubeCore.YoutubeDL.Sources.Files.External
 			}
 
 			YoutubeDl.Options.VerbositySimulationOptions.GetFilename = false;
-			YoutubeDl.Options.VerbositySimulationOptions.GetTitle = false;
 
 			YoutubeDl.StandardOutputEvent -= SetFinishedPathAndTitle;
 
 			void SetFinishedPathAndTitle(object sender, string output)
 			{
-				// TODO: do i really need gettitle = true?
-				// cant i simply remove the file extension?
-				if (YoutubeTitle == null)
-				{
-					YoutubeTitle = output;
-				}
-				else
-				{
-					FinishedPath = output.Trim();
-				}
+				// TODO: playlist (path will be set to a folder?)
+				// TODO: utf8 in video title (https://www.youtube.com/watch?v=Odum0r9gxA8)
+				FinishedPath = output.Trim();
 			}
 		}
 	}

@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
+using System.Text;
 using System.Threading.Tasks;
 using log4net;
 using log4net.Config;
@@ -41,7 +42,7 @@ namespace TicTacTubeDemo
 
 				if (source.ExternalFileSource is YoutubeDlSource youtubeDlSource)
 				{
-					songTitle = youtubeDlSource.YoutubeTitle;
+					songTitle = youtubeDlSource.YoutubeTitles[0];
 				}
 
 				var info = extractor.ExtractFromString(songTitle);
