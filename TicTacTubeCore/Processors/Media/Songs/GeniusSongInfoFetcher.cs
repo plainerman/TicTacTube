@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Net;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Genius;
 using Genius.Models;
@@ -26,18 +27,6 @@ namespace TicTacTubeCore.Processors.Media.Songs
 		protected readonly GeniusClient GeniusClient;
 
 		/// <summary>
-		///     Determine whether the title should be overriden (i.e. taken from genius - may result in completely wrong matched
-		///     songs) or expanded, fixed, or modified.
-		/// </summary>
-		public bool OverrideTitle { get; set; } = false;
-
-		/// <summary>
-		///     Determine whether the artists should be overriden (i.e. taken from genius - may result in completely wrong matched
-		///     songs) or expanded / modified.
-		/// </summary>
-		public bool OverrideArtists { get; set; }
-
-		/// <summary>
 		///     Whether to download the artist image or not. Setting it to <c>true</c> may cause problems when displaying the audio
 		///     cover art.
 		/// </summary>
@@ -45,57 +34,61 @@ namespace TicTacTubeCore.Processors.Media.Songs
 
 		/// <summary>
 		///     Create a new genius fetcher that requires a <paramref name="geniusApiKey" /> to query on https://genius.com.
-		///     Further, <paramref name="overrideArtists" /> can be specified.
 		///     It can expand / modify the artist information from a song.
 		/// </summary>
 		/// <param name="geniusApiKey">
 		///     The API-key that will be used for the queries (i.e. to create the
 		///     <see cref="GeniusClient" />).
 		/// </param>
-		/// <param name="overrideArtists">
-		///     Determine whether the artists should be overriden (i.e. taken from genius - may result in completely wrong matched
-		///     songs) or expanded / modified.
-		/// </param>
-		public GeniusSongInfoFetcher(string geniusApiKey, bool overrideArtists = true)
+		public GeniusSongInfoFetcher(string geniusApiKey)
 		{
 			if (string.IsNullOrWhiteSpace(geniusApiKey))
 				throw new ArgumentException("Value cannot be null or whitespace.", nameof(geniusApiKey));
-			OverrideArtists = overrideArtists;
 
 			GeniusClient = new GeniusClient(geniusApiKey);
 		}
 
 		/// <summary>
-		///     Comnpare the given songinfo (<paramref name="currentInfo" />) with the genius database and extend it. It may not be
-		///     modified (e.g. if no match could be found).
+		///     Comnpare the given songinfo (<paramref name="currentInfo" />) with the genius database and create a new one.
+		///     <c>null</c> may be returned (if no match could be found).
 		/// </summary>
 		/// <param name="currentInfo">
 		///     The info that will be used as baseline. <see cref="SongInfo.Title" /> and
 		///     <see cref="SongInfo.Artists" /> will be used for the query.
 		/// </param>
-		/// <returns>A new songinfo containing relevant info from https://genius.com.</returns>
+		/// <returns>
+		///     A new songinfo containing relevant info from https://genius.com. It may be completly wrong - analyze the
+		///     songinfo before using it.
+		/// </returns>
 		public virtual async Task<SongInfo> ExtractAsyncTask(SongInfo currentInfo)
 		{
 			return await Task.Run(async () =>
 			{
+				var newInfo = new SongInfo();
 				string searchTerm = currentInfo.Title;
 
 				if (currentInfo.Artists.Length > 0)
 					searchTerm = $"{currentInfo.Artists[0]} {searchTerm}";
 
+				// genius web api removes (*) - so do we
+				searchTerm = Regex.Replace(searchTerm, @"\(.*\)", "");
+				// genius web api cannot handle square brackets, so we remove them
+				searchTerm = Regex.Replace(searchTerm, @"\[.*\]", "");
+				searchTerm = searchTerm.Trim();
+
 				var result = (await GeniusClient.SearchClient.Search(TextFormat.Dom, searchTerm)).Response;
 
-				var correctHit = (from hit in result where hit.Type.Equals("song") select (JObject)hit.Result).FirstOrDefault();
+				var correctHit = (from hit in result where hit.Type.Equals("song") select (JObject) hit.Result).FirstOrDefault();
 
 				if (correctHit != null)
 				{
 					long songId = correctHit.GetValue("id").Value<long>();
 
 					var song = await GeniusClient.SongsClient.GetSong(TextFormat.Html, songId.ToString());
-					currentInfo = await SetSong(currentInfo, song.Response);
+					newInfo = await SetSong(newInfo, song.Response);
 				}
 
-				return currentInfo;
+				return newInfo;
 			});
 		}
 
@@ -125,7 +118,7 @@ namespace TicTacTubeCore.Processors.Media.Songs
 			if (!string.IsNullOrWhiteSpace(song.ReleaseDate))
 			{
 				var releaseDate = DateTime.ParseExact(song.ReleaseDate, "yyyy-MM-dd", CultureInfo.InvariantCulture);
-				info.Year = (uint)releaseDate.Year;
+				info.Year = (uint) releaseDate.Year;
 			}
 
 			if (song.Album != null)
@@ -136,27 +129,11 @@ namespace TicTacTubeCore.Processors.Media.Songs
 
 			var artists = new List<string>();
 
-			if (OverrideTitle)
-				info.Title = song.Title;
+			info.Title = song.Title;
 
-			if (OverrideArtists)
-			{
-				artists.Add(song.PrimaryArtist.Name);
-				artists.AddRange(song.FeaturedArtists.Select(artist => artist.Name));
-			}
-			else
-			{
-				artists.AddRange(info.Artists);
+			artists.Add(song.PrimaryArtist.Name);
+			artists.AddRange(song.FeaturedArtists.Select(artist => artist.Name));
 
-				if (artists.Count <= 0)
-					artists.Add(song.PrimaryArtist.Name);
-
-				foreach (var artist in song.FeaturedArtists)
-				{
-					if (!artists.Contains(artist.Name))
-						artists.Add(artist.Name);
-				}
-			}
 
 			info.Artists = artists.ToArray();
 
@@ -230,7 +207,7 @@ namespace TicTacTubeCore.Processors.Media.Songs
 			}
 
 			/// <summary>
-			///     Create a picture frame from the given iamge. Also dispose the tempfile of not otherwise sepcified.
+			///     Create a picture frame from the given image. Also dispose the tempfile of not otherwise sepcified.
 			/// </summary>
 			/// <param name="dispose">Whether to dispose the file after creating the picture.</param>
 			/// <returns>A newly created picture frame that supports iTunes and other bitchy music players.</returns>
