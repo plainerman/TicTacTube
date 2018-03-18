@@ -1,6 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using TagLib;
 using TagLib.Id3v2;
 using File = TagLib.File;
