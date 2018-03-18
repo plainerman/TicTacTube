@@ -16,7 +16,7 @@ namespace TicTacTubeCore.Sources.Files
 		}
 
 		/// <inheritdoc />
-		public FileSource(IExternalFileSource externalSource, string localPath) : base(externalSource, localPath)
+		public FileSource(IExternalFileSource externalSource, string localPath, bool alreadyFetched = false) : base(externalSource, localPath, alreadyFetched)
 		{
 		}
 

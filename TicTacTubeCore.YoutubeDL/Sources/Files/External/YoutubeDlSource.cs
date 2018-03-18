@@ -1,14 +1,37 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using log4net;
 using NYoutubeDL.Helpers;
 using NYoutubeDL.Models;
+using TicTacTubeCore.Sources.Files;
 using TicTacTubeCore.Sources.Files.External;
 using TicTacTubeCore.YoutubeDL.Utils.Extensions;
 
 namespace TicTacTubeCore.YoutubeDL.Sources.Files.External
 {
+	//TODO: add documention
+	//TODO: move to own class
+	public interface IYoutubeDlSource
+	{
+		/// <summary>
+		/// The title of either the playlist or the single video. This may be <c>null</c> until fully fetched.
+		/// </summary>
+		string Title { get; }
+
+		/// <summary>
+		/// If the specified youtube-dl source is a playlist, multiple child sources will be created. The source itself will point to the folder.
+		/// This may be <c>null</c> until fully fetched.
+		/// </summary>
+		IFileSource[] ChildSources { get; }
+
+		/// <summary>
+		/// Determines whether the object is a playlist. If this source is a playlist, the source will point to a folder instead of a file. 
+		/// </summary>
+		bool IsPlaylist { get; }
+	}
+
 	/// <summary>
 	///     An external source that is acquired by the program youtube-dl (see <a href="https://youtube-dl.org/">Youtube-DL</a>
 	///     ).
@@ -25,8 +48,10 @@ namespace TicTacTubeCore.YoutubeDL.Sources.Files.External
 	///         </item>
 	///     </list>
 	///     On linux they probably install all together.
+	/// 
+	///		If the specified URL consists of multiple elements (e.g. a playlist), this source will point to a folder where all sources are contained.
 	/// </summary>
-	public class YoutubeDlSource : UrlSource
+	public class YoutubeDlSource : UrlSource, IYoutubeDlSource
 	{
 		private static readonly ILog Log = LogManager.GetLogger(typeof(YoutubeDlSource));
 
@@ -35,11 +60,14 @@ namespace TicTacTubeCore.YoutubeDL.Sources.Files.External
 		/// </summary>
 		public NYoutubeDL.YoutubeDL YoutubeDl { get; }
 
-		/// <summary>
-		/// The title of the youtube video(s) (maybe a playlist). This may be <c>null</c> until fully fetched.
-		/// </summary>
-		//TODO: multiple titles (playlist)
-		public string[] YoutubeTitles { get; protected set; }
+		/// <inheritdoc />
+		public string Title { get; protected set; }
+
+		/// <inheritdoc />
+		public IFileSource[] ChildSources { get; protected set; }
+
+		/// <inheritdoc />
+		public bool IsPlaylist { get; protected set; }
 
 		/// <summary>
 		///     Create a new Youtube-DL source that downloads videos with a given video and audio format.
@@ -92,20 +120,32 @@ namespace TicTacTubeCore.YoutubeDL.Sources.Files.External
 		/// <inheritdoc />
 		protected override void DownloadAsync(string destinationPath)
 		{
-			YoutubeDl.Options.FilesystemOptions.Output = Path.Combine(destinationPath, "%(title)s.%(ext)s");
 			YoutubeDl.Options.VerbositySimulationOptions.GetFilename = true;
 
 			var info = YoutubeDl.GetDownloadInfo();
-			if (info is PlaylistDownloadInfo playlistInfo)
+			//if (info is PlaylistDownloadInfo playlistInfo)
+			//{
+			//	IsPlaylist = true;
+			//	ChildTitles = playlistInfo.Videos.Select(i => i.Title).ToArray();
+			//}
+
+			IsPlaylist = info is PlaylistDownloadInfo;
+			Title = info.Title;
+
+			if (IsPlaylist)
 			{
-				YoutubeTitles = playlistInfo.Videos.Select(i => i.Title).ToArray();
-			}
-			else
-			{
-				YoutubeTitles = new[] { info.Title };
+				destinationPath = AddUniqueFolder(destinationPath, Title);
+
+				if (!Directory.Exists(destinationPath))
+				{
+					Log.InfoFormat("Creating directory {0}", destinationPath);
+					Directory.CreateDirectory(destinationPath);
+				}
 			}
 
-			SetFinishedPath();
+			YoutubeDl.Options.FilesystemOptions.Output = Path.Combine(destinationPath, "%(title)s.%(ext)s");
+
+			SetFinishedPath(info);
 
 			YoutubeDl.StandardErrorEvent += PrintError;
 
@@ -118,37 +158,116 @@ namespace TicTacTubeCore.YoutubeDL.Sources.Files.External
 		/// <summary>
 		///     Set the finished path (i.e. the path where the downloaded file will be stored).
 		/// </summary>
-		protected virtual void SetFinishedPath()
+		/// <param name="info">The download info from the current download process.</param>
+		protected virtual void SetFinishedPath(DownloadInfo info)
 		{
-			YoutubeDl.StandardOutputEvent += SetFinishedPathAndTitle;
+			var downloadedPaths = new List<string>();
+
+			YoutubeDl.StandardOutputEvent += SetFinishedPath;
 			// this works only for video files, if we have an audio, we have to find the output file ourselves ...
 			var process = YoutubeDl.Download(true);
 
 			process.WaitForExit();
+			YoutubeDl.StandardOutputEvent -= SetFinishedPath;
+
+			// fix the path for all (or a single) audio file source
 			if (YoutubeDl.Options.PostProcessingOptions.ExtractAudio)
 			{
-				var audioFormat = YoutubeDl.Options.PostProcessingOptions.AudioFormat;
-				string extension = audioFormat.ToString();
+				downloadedPaths = downloadedPaths.Select(path =>
+				{
+					string extension = AudioFormatToExtension(YoutubeDl.Options.PostProcessingOptions.AudioFormat);
 
-				if (audioFormat == Enums.AudioFormat.threegp)
-					extension = "3gp";
-				else if (audioFormat == Enums.AudioFormat.vorbis)
-					extension = "ogg";
-
-				FinishedPath = Path.Combine(Path.GetDirectoryName(FinishedPath),
-					$"{Path.GetFileNameWithoutExtension(FinishedPath)}.{extension}");
+					return Path.Combine(Path.GetDirectoryName(path),
+						$"{Path.GetFileNameWithoutExtension(path)}.{extension}");
+				}).ToList();
 			}
+
+			// Create the child sources
+			if (IsPlaylist)
+			{
+				var videosInPlaylist = ((PlaylistDownloadInfo)info).Videos;
+				ChildSources = new IFileSource[downloadedPaths.Count];
+
+				for (int i = 0; i < downloadedPaths.Count; i++)
+				{
+					ChildSources[i] = new FileSource(new DummyYoutubeDlSource(videosInPlaylist[i].Url, videosInPlaylist[i].Title), downloadedPaths[i], true);
+				}
+			}
+
+			FinishedPath = IsPlaylist ? Path.GetDirectoryName(downloadedPaths[0]) : downloadedPaths[0];
 
 			YoutubeDl.Options.VerbositySimulationOptions.GetFilename = false;
 
-			YoutubeDl.StandardOutputEvent -= SetFinishedPathAndTitle;
-
-			void SetFinishedPathAndTitle(object sender, string output)
+			void SetFinishedPath(object sender, string output)
 			{
-				// TODO: playlist (path will be set to a folder?)
-				// TODO: utf8 in video title (https://www.youtube.com/watch?v=Odum0r9gxA8)
-				FinishedPath = output.Trim();
+				// TODO: utf8 in video title (https://www.youtube.com/watch?v=Odum0r9gxA8) or playlist title!
+				// TODO: space somewhere in download folder causes problems with youtube-dl setdownloadpath
+				// ReSharper disable once AccessToModifiedClosure
+				// This is fixed by removing the event after exit
+				downloadedPaths.Add(output.Trim());
 			}
+		}
+
+		/// <summary>
+		/// This method converts a given audioformat to the corresponding file extension.
+		/// </summary>
+		/// <param name="audioFormat">The audioformat that will be checked.</param>
+		/// <returns>The default 3-letter file extension of the audio format.</returns>
+		protected static string AudioFormatToExtension(Enums.AudioFormat audioFormat)
+		{
+			string extension = audioFormat.ToString();
+
+			if (audioFormat == Enums.AudioFormat.threegp)
+				extension = "3gp";
+			else if (audioFormat == Enums.AudioFormat.vorbis)
+				extension = "ogg";
+
+			return extension;
+		}
+
+		//TODO: make available to other classes
+		//TODO: documentation
+		protected static string CleanFileName(string fileName)
+		{
+			// TODO: removing the space is currently a hack
+			return Path.GetInvalidFileNameChars().Aggregate(fileName, (current, c) => current.Replace(c.ToString(), string.Empty)).Replace(" ", string.Empty);
+		}
+
+		//TODO: make available to other classes
+		//TODO: documentation
+		protected static string AddUniqueFolder(string baseFolder, string newFolder)
+		{
+			newFolder = CleanFileName(newFolder);
+			string newFolderName = newFolder;
+
+			string returnedFolder;
+			int i = 0;
+			while (Directory.Exists(returnedFolder = Path.Combine(baseFolder, newFolderName)))
+			{
+				newFolderName = $"{newFolder}-{++i}";
+			}
+
+			return returnedFolder;
+		}
+
+		//TODO: think about where to put the class (should it really be a subclass?)
+		//TODO: add documentation
+		protected class DummyYoutubeDlSource : UrlSource, IYoutubeDlSource
+		{
+			public DummyYoutubeDlSource(string url, string title) : base(url, true)
+			{
+				Title = title;
+			}
+
+			protected override void Download(string destinationPath)
+			{ }
+
+			protected override void DownloadAsync(string destinationPath)
+			{ }
+
+			public string Title { get; }
+			public IFileSource[] ChildSources => null;
+			public bool IsPlaylist => false;
 		}
 	}
 }

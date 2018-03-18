@@ -32,6 +32,7 @@ namespace TicTacTubeCore.Sources.Files
 				throw new ArgumentException("Value cannot be null or whitespace.", nameof(filePath));
 
 			AssignFilePath(filePath);
+			_externalFileSourceFetched = true;
 		}
 
 		/// <summary>
@@ -39,14 +40,24 @@ namespace TicTacTubeCore.Sources.Files
 		/// </summary>
 		/// <param name="externalSource">The external source.</param>
 		/// <param name="localPath">The local directory this file will be stored to.</param>
-		protected BaseFileSource(IExternalFileSource externalSource, string localPath)
+		/// <param name="alreadyFetched">If set to <c>true</c>, this external file source will be treated as it has been downloaded by this file source.</param>
+		protected BaseFileSource(IExternalFileSource externalSource, string localPath, bool alreadyFetched = false)
 		{
 			if (string.IsNullOrWhiteSpace(localPath))
 				throw new ArgumentException("Value cannot be null or whitespace.", nameof(localPath));
 
 			ExternalFileSource = externalSource ?? throw new ArgumentNullException(nameof(externalSource));
 
-			_filePath = localPath;
+			if (alreadyFetched)
+			{
+				AssignFilePath(localPath);
+			}
+			else
+			{
+				_filePath = localPath;
+			}
+
+			_externalFileSourceFetched = alreadyFetched;
 
 			if (!ExternalFileSource.LazyLoading)
 				FetchExternalSource(true);
@@ -76,11 +87,11 @@ namespace TicTacTubeCore.Sources.Files
 
 			if (!Directory.Exists(_filePath))
 			{
+				Log.InfoFormat("Creating directory {0}", _filePath);
 				Directory.CreateDirectory(_filePath);
-				Log.Info($"Creating directory {_filePath}");
 			}
 
-			Log.Info($"Fetching external source {ExternalFileSource} to {_filePath}" + (async ? " asynchronously." : "."));
+			Log.InfoFormat("Fetching external source {0} to {1}{2}", ExternalFileSource, _filePath, async ? " asynchronously." : ".");
 
 			if (async)
 			{
@@ -92,7 +103,7 @@ namespace TicTacTubeCore.Sources.Files
 
 				AssignFilePath(path);
 
-				Log.Info($"Fetched external source {ExternalFileSource} to {path}.");
+				Log.InfoFormat("Fetched external source {0} to {1}.", ExternalFileSource, path);
 
 				_externalFileSourceFetched = true;
 				_filePath = null;

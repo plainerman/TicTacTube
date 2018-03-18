@@ -1,9 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
 using log4net;
 using log4net.Config;
@@ -38,18 +38,33 @@ namespace TicTacTubeDemo
 
 			pipelineBuilder.Append(new LambdaProcessor(source =>
 			{
-				string songTitle = source.FileName;
-
-				if (source.ExternalFileSource is YoutubeDlSource youtubeDlSource)
+				//TODO: HACK: fix this ugly multiplexing hack
+				var multiplexedSources = new List<IFileSource>();
+				if (source.ExternalFileSource is IYoutubeDlSource youtubeDlSource && youtubeDlSource.IsPlaylist)
 				{
-					songTitle = youtubeDlSource.YoutubeTitles[0];
+					multiplexedSources.AddRange(youtubeDlSource.ChildSources);
+				}
+				else
+				{
+					multiplexedSources.Add(source);
 				}
 
-				var info = extractor.ExtractFromString(songTitle);
+				foreach (var nestedSource in multiplexedSources)
+				{
+					// TODO: rewrite to nested file
+					string songTitle = nestedSource.FileName;
 
-				info.WriteToFile(source.FileInfo.FullName);
-				info = fetcher.ExtractAsyncTask(info).GetAwaiter().GetResult();
-				info.WriteToFile(source.FileInfo.FullName);
+					if (nestedSource.ExternalFileSource is IYoutubeDlSource nestedYoutubeDlSource)
+					{
+						songTitle = nestedYoutubeDlSource.Title;
+					}
+
+					var info = extractor.ExtractFromString(songTitle);
+
+					info.WriteToFile(nestedSource.FileInfo.FullName);
+					info = fetcher.ExtractAsyncTask(info).GetAwaiter().GetResult();
+					info.WriteToFile(nestedSource.FileInfo.FullName);
+				}
 
 				return source;
 			}));
@@ -80,22 +95,37 @@ namespace TicTacTubeDemo
 
 						Log.Info($"{message.From.Username} + {message.From.FirstName} requested {message.Text}");
 						var youtubeSource = new YoutubeDlSource(message.Text, Enums.AudioFormat.mp3, true);
+
 						IFileSource source = new FileSource(youtubeSource,
 							Path.Combine(Path.GetTempPath(), "TicTacTube"));
 
 						Execute(source);
 
-						Log.Info($"{message.From.Username} + {message.From.FirstName} downloaded {source.FileName}");
+						//TODO: HACK: fix this ugly multiplexing hack
+						var multiplexedSources = new List<IFileSource>();
+						if (source.ExternalFileSource is IYoutubeDlSource youtubeDlSource && youtubeDlSource.IsPlaylist)
+						{
+							multiplexedSources.AddRange(youtubeDlSource.ChildSources);
+						}
+						else
+						{
+							multiplexedSources.Add(source);
+						}
 
-						var f = TagLib.File.Create(source.FileInfo.FullName, ReadStyle.Average);
+						foreach (var multiplexedSource in multiplexedSources)
+						{
+							Log.Info($"{message.From.Username} + {message.From.FirstName} downloaded {multiplexedSource.FileName}");
 
-						SendTextMessage(message,
-							$"{source.FileName}\nTitle:\t{f.Tag.Title}\nArtists:\t{string.Join(", ", f.Tag.Performers)}");
+							var f = TagLib.File.Create(multiplexedSource.FileInfo.FullName, ReadStyle.Average);
+
+							SendTextMessage(message,
+								$"{multiplexedSource.FileName}\nTitle:\t{f.Tag.Title}\nArtists:\t{string.Join(", ", f.Tag.Performers)}");
 
 
-						BotClient.SendAudioAsync(message.Chat.Id,
-							new FileToSend(source.FileInfo.FullName, File.OpenRead(source.FileInfo.FullName)), f.Tag.Lyrics,
-							(int)f.Properties.Duration.TotalSeconds, string.Join(' ', f.Tag.Performers), f.Tag.Title);
+							BotClient.SendAudioAsync(message.Chat.Id,
+								new FileToSend(multiplexedSource.FileInfo.FullName, File.OpenRead(multiplexedSource.FileInfo.FullName)), f.Tag.Lyrics,
+								(int)f.Properties.Duration.TotalSeconds, string.Join(' ', f.Tag.Performers), f.Tag.Title);
+						}
 					}
 					catch (Exception e)
 					{

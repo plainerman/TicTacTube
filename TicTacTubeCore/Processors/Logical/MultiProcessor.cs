@@ -7,7 +7,7 @@ using TicTacTubeCore.Sources.Files;
 namespace TicTacTubeCore.Processors.Logical
 {
 	/// <summary>
-	///     A processor that is like a nested pipeline and also aggregates the file sources.
+	///     A processor that is like a nested pipeline and also aggregates the file sources (i.e. a processor that contains a list of other processors that will modify the file source).
 	/// </summary>
 	public class MultiProcessor : BaseDataProcessor
 	{
