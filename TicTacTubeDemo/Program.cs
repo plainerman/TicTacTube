@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using log4net;
 using log4net.Config;
+using log4net.Core;
 using NYoutubeDL.Helpers;
 using TagLib;
 using Telegram.Bot.Types;
@@ -26,6 +27,12 @@ namespace TicTacTubeDemo
 		{
 			var logRepository = LogManager.GetRepository(Assembly.GetEntryAssembly());
 			XmlConfigurator.Configure(logRepository, new FileInfo("log4net.config"));
+
+
+#if DEBUG
+			((log4net.Repository.Hierarchy.Hierarchy)logRepository).Root.Level = Level.Debug;
+			((log4net.Repository.Hierarchy.Hierarchy)logRepository).RaiseConfigurationChanged(EventArgs.Empty);
+#endif
 
 			var scheduler = new TelegramScheduler(File.ReadAllText("telegram.token"), UserList.Whitelist);
 
@@ -49,9 +56,11 @@ namespace TicTacTubeDemo
 					multiplexedSources.Add(source);
 				}
 
+				// TODO: rewrite to nested file
+
 				foreach (var nestedSource in multiplexedSources)
 				{
-					// TODO: rewrite to nested file
+
 					string songTitle = nestedSource.FileName;
 
 					if (nestedSource.ExternalFileSource is IYoutubeDlSource nestedYoutubeDlSource)
@@ -96,8 +105,7 @@ namespace TicTacTubeDemo
 						Log.Info($"{message.From.Username} + {message.From.FirstName} requested {message.Text}");
 						var youtubeSource = new YoutubeDlSource(message.Text, Enums.AudioFormat.mp3, true);
 
-						IFileSource source = new FileSource(youtubeSource,
-							Path.Combine(Path.GetTempPath(), "TicTacTube"));
+						IFileSource source = new FileSource(youtubeSource, Path.Combine(Path.GetTempPath(), "TicTacTube"));
 
 						Execute(source);
 
@@ -122,9 +130,17 @@ namespace TicTacTubeDemo
 								$"{multiplexedSource.FileName}\nTitle:\t{f.Tag.Title}\nArtists:\t{string.Join(", ", f.Tag.Performers)}");
 
 
-							BotClient.SendAudioAsync(message.Chat.Id,
-								new FileToSend(multiplexedSource.FileInfo.FullName, File.OpenRead(multiplexedSource.FileInfo.FullName)), f.Tag.Lyrics,
-								(int)f.Properties.Duration.TotalSeconds, string.Join(' ', f.Tag.Performers), f.Tag.Title);
+							var task = BotClient.SendAudioAsync(message.Chat.Id,
+								new FileToSend(multiplexedSource.FileInfo.FullName, File.OpenRead(multiplexedSource.FileInfo.FullName)),
+								f.Tag.Lyrics,
+								(int) f.Properties.Duration.TotalSeconds, string.Join(' ', f.Tag.Performers), f.Tag.Title);
+
+							// TODO: test if required
+							task.Wait();
+							if (task.Exception != null)
+							{
+								throw task.Exception;
+							}
 						}
 					}
 					catch (Exception e)
