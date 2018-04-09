@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web;
@@ -71,7 +72,7 @@ namespace TicTacTubeCore.Soundcloud.Processors.Media.Songs
 				var articleNode = doc.DocumentNode.SelectSingleNode("//article[@itemscope]");
 				if (articleNode == null || articleNode.Attributes["itemtype"].Value != MusicRecordingSchema)
 				{
-					throw new InvalidSoundcloudPageType("Page type not supported.");
+					throw new InvalidSoundcloudPageTypeException("Page type not supported.");
 				}
 
 				var coverArtNode = articleNode.SelectSingleNode("//p/img");
@@ -97,7 +98,7 @@ namespace TicTacTubeCore.Soundcloud.Processors.Media.Songs
 
 				var info = await infoTask;
 
-				info.Genres = HttpUtility.HtmlDecode(genreNode.Attributes["content"].Value).Split('&');
+				info.Genres = HttpUtility.HtmlDecode(genreNode.Attributes["content"].Value).Split('&').Select(g=>g.Trim()).ToArray();
 
 				await downloadCoverArt;
 				info.Pictures = new[] { SongInfo.CreatePictureFrame(coverArtDestinationFile, PictureType.FrontCover) };
