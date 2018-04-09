@@ -9,7 +9,7 @@
     <Authors>Michael Plainer</Authors>
     <Company>Michael Plainer</Company>
     <Product>TicTacTube.Soundcloud</Product>
-    <Description>An extension for the easy to use data processing pipeline that allows the integration of soundcloud. Currently creating new Soundcloud API-keys is disabled, therefore this API uses web parsing which may be against soundcloud's terms of service.</Description>
+    <Description>An extension for the easy to use data processing pipeline that allows the integration of soundcloud. Creating new Soundcloud API-keys is currently disabled, therefore this API uses web parsing which may be against soundcloud's terms of service. Only use with soundclouds written permission.</Description>
     <Copyright>MIT</Copyright>
     <PackageLicenseUrl>https://choosealicense.com/licenses/mit/</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/plainerman/TicTacTube</PackageProjectUrl>

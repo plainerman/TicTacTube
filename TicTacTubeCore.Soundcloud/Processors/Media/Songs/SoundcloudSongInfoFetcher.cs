@@ -7,6 +7,8 @@ using HtmlAgilityPack;
 using TagLib;
 using TicTacTubeCore.Processors.Media;
 using TicTacTubeCore.Processors.Media.Songs;
+using TicTacTubeCore.Soundcloud.Processors.Media.Songs.Exceptions;
+using TicTacTubeCore.Soundcloud.Utils.Web;
 using File = System.IO.File;
 
 namespace TicTacTubeCore.Soundcloud.Processors.Media.Songs
@@ -14,10 +16,17 @@ namespace TicTacTubeCore.Soundcloud.Processors.Media.Songs
 	/// <summary>
 	/// A songinfo fetcher that fetches data from a soundcloud url.
 	/// Currently, this fetcher simulates a web browser, which might be against soundcloud terms of service.
-	/// Only use it with soundclouds written permission (as soundclouds API-validation is currently disabled).
+	/// Only use it with soundclouds written permission.
+	/// This is currently only a workaround for testing, as soundclouds API-validation is currently disabled.
 	/// </summary>
 	public class SoundcloudSongInfoFetcher : IMediaTextInfoExtractor<SongInfo>
 	{
+		/// <summary>
+		/// The schema string for a music recording.
+		/// This is used to test, whether the page actually is a record.
+		/// </summary>
+		protected const string MusicRecordingSchema = @"http://schema.org/MusicRecording";
+
 		/// <summary>
 		/// The user agent that will be sent to soundcloud.
 		/// </summary>
@@ -55,22 +64,21 @@ namespace TicTacTubeCore.Soundcloud.Processors.Media.Songs
 		/// <returns>A <see cref="SongInfo" /> containing the extracted information.</returns>
 		public async Task<SongInfo> ExtractFromStringAsyncTask(string url)
 		{
-			//TODO: custom exception types
 			using (var webClient = new DecompressingWebClient())
 			{
 				var doc = await CreateDoc(webClient, url);
 
 				var articleNode = doc.DocumentNode.SelectSingleNode("//article[@itemscope]");
-				if (articleNode == null || articleNode.Attributes["itemtype"].Value != @"http://schema.org/MusicRecording")
+				if (articleNode == null || articleNode.Attributes["itemtype"].Value != MusicRecordingSchema)
 				{
-					throw new InvalidOperationException("Page type not supported.");
+					throw new InvalidSoundcloudPageType("Page type not supported.");
 				}
 
 				var coverArtNode = articleNode.SelectSingleNode("//p/img");
 
 				if (coverArtNode == null)
 				{
-					throw new MissingFieldException("No cover art node found.");
+					throw new MissingCoverArtException("No cover art node found.");
 				}
 
 				// begin with downloading the cover art (since it is async)
@@ -84,7 +92,7 @@ namespace TicTacTubeCore.Soundcloud.Processors.Media.Songs
 				var genreNode = articleNode.SelectSingleNode("//header/meta[@itemprop='genre']");
 				if (genreNode == null)
 				{
-					throw new MissingFieldException("No genre node found.");
+					throw new MissingGenreException("No genre node found.");
 				}
 
 				var info = await infoTask;
@@ -96,16 +104,6 @@ namespace TicTacTubeCore.Soundcloud.Processors.Media.Songs
 				File.Delete(coverArtDestinationFile);
 
 				return info;
-			}
-		}
-
-		private class DecompressingWebClient : WebClient
-		{
-			protected override WebRequest GetWebRequest(Uri address)
-			{
-				var request = (HttpWebRequest) base.GetWebRequest(address);
-				request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
-				return request;
 			}
 		}
 	}
