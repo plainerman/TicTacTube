@@ -10,7 +10,7 @@ namespace TicTacTubeCore.Processors.Media.Songs
 	/// <summary>
 	///     A simple song info extractor that tries as hard as it can to parse from the filename.
 	/// </summary>
-	public class SongInfoExtractor : IMediaInfoExtractor<SongInfo>
+	public class SongInfoExtractor : IMediaInfoExtractor<SongInfo>, IMediaTextInfoExtractor<SongInfo>
 	{
 		private const string FeaturingRegexWithoutSpace = @"f(ea)?t(\.?\s|\.)";
 

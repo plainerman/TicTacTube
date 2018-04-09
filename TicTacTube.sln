@@ -5,11 +5,15 @@ VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TicTacTubeCore", "TicTacTubeCore\TicTacTubeCore.csproj", "{BB5B48E9-CAE9-4DEC-B32A-B1C19B7DCD6C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TicTacTubeCoreTest", "TicTacTubeCoreTest\TicTacTubeCoreTest.csproj", "{A92C66F1-1039-4017-8403-6B5E063E58F5}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TicTacTubeDemo", "TicTacTubeDemo\TicTacTubeDemo.csproj", "{12CDF96B-D6F2-4114-BB8D-5019B38B1A6E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TicTacTubeCore.Telegram", "TicTacTubeCore.Telegram\TicTacTubeCore.Telegram.csproj", "{C0785776-9087-4385-86FD-ADC6C35FD6A8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TicTacTubeCore.Telegram", "TicTacTubeCore.Telegram\TicTacTubeCore.Telegram.csproj", "{C0785776-9087-4385-86FD-ADC6C35FD6A8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TicTacTubeCore.YoutubeDL", "TicTacTubeCore.YoutubeDL\TicTacTubeCore.YoutubeDL.csproj", "{C92FAE50-8F7A-4E07-9864-191E38D3F99B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TicTacTubeCore.Soundcloud", "TicTacTubeCore.Soundcloud\TicTacTubeCore.Soundcloud.csproj", "{2C9F599B-87C8-46C0-AD04-D73BCA23417B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TicTacTubeTest", "TicTacTubeTest\TicTacTubeTest.csproj", "{BD666899-6939-402F-96C0-07B5DE74D93E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,10 +25,6 @@ Global
 		{BB5B48E9-CAE9-4DEC-B32A-B1C19B7DCD6C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BB5B48E9-CAE9-4DEC-B32A-B1C19B7DCD6C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BB5B48E9-CAE9-4DEC-B32A-B1C19B7DCD6C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A92C66F1-1039-4017-8403-6B5E063E58F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A92C66F1-1039-4017-8403-6B5E063E58F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A92C66F1-1039-4017-8403-6B5E063E58F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A92C66F1-1039-4017-8403-6B5E063E58F5}.Release|Any CPU.Build.0 = Release|Any CPU
 		{12CDF96B-D6F2-4114-BB8D-5019B38B1A6E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{12CDF96B-D6F2-4114-BB8D-5019B38B1A6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{12CDF96B-D6F2-4114-BB8D-5019B38B1A6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -33,6 +33,18 @@ Global
 		{C0785776-9087-4385-86FD-ADC6C35FD6A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C0785776-9087-4385-86FD-ADC6C35FD6A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C0785776-9087-4385-86FD-ADC6C35FD6A8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C92FAE50-8F7A-4E07-9864-191E38D3F99B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C92FAE50-8F7A-4E07-9864-191E38D3F99B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C92FAE50-8F7A-4E07-9864-191E38D3F99B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C92FAE50-8F7A-4E07-9864-191E38D3F99B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2C9F599B-87C8-46C0-AD04-D73BCA23417B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C9F599B-87C8-46C0-AD04-D73BCA23417B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C9F599B-87C8-46C0-AD04-D73BCA23417B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C9F599B-87C8-46C0-AD04-D73BCA23417B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD666899-6939-402F-96C0-07B5DE74D93E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD666899-6939-402F-96C0-07B5DE74D93E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD666899-6939-402F-96C0-07B5DE74D93E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD666899-6939-402F-96C0-07B5DE74D93E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

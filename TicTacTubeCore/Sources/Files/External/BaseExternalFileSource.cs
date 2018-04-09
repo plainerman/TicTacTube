@@ -118,5 +118,8 @@ namespace TicTacTubeCore.Sources.Files.External
 		{
 			DownloadAsync(destinationPath);
 		}
+
+		/// <inheritdoc />
+		public abstract string ExternalSource { get; }
 	}
 }

@@ -11,6 +11,11 @@
 		bool LazyLoading { get; }
 
 		/// <summary>
+		///     The external source that this source references to.
+		/// </summary>
+		string ExternalSource { get; }
+
+		/// <summary>
 		///     Fetch the file from the source. If it has already been fetched asnychronously,
 		///     this method waits for the download to finish and then returns the new file path.
 		/// </summary>
