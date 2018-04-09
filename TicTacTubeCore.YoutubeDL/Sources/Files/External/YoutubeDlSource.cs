@@ -123,12 +123,6 @@ namespace TicTacTubeCore.YoutubeDL.Sources.Files.External
 			YoutubeDl.Options.VerbositySimulationOptions.GetFilename = true;
 
 			var info = YoutubeDl.GetDownloadInfo();
-			//if (info is PlaylistDownloadInfo playlistInfo)
-			//{
-			//	IsPlaylist = true;
-			//	ChildTitles = playlistInfo.Videos.Select(i => i.Title).ToArray();
-			//}
-
 			IsPlaylist = info is PlaylistDownloadInfo;
 			Title = info.Title;
 
@@ -215,14 +209,12 @@ namespace TicTacTubeCore.YoutubeDL.Sources.Files.External
 		/// <returns>The default 3-letter file extension of the audio format.</returns>
 		protected static string AudioFormatToExtension(Enums.AudioFormat audioFormat)
 		{
-			string extension = audioFormat.ToString();
-
 			if (audioFormat == Enums.AudioFormat.threegp)
-				extension = "3gp";
-			else if (audioFormat == Enums.AudioFormat.vorbis)
-				extension = "ogg";
+				return "3gp";
+			if (audioFormat == Enums.AudioFormat.vorbis)
+				return "ogg";
 
-			return extension;
+			return audioFormat.ToString();
 		}
 
 		//TODO: make available to other classes

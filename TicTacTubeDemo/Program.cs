@@ -56,11 +56,8 @@ namespace TicTacTubeDemo
 					multiplexedSources.Add(source);
 				}
 
-				// TODO: rewrite to nested file
-
 				foreach (var nestedSource in multiplexedSources)
 				{
-
 					string songTitle = nestedSource.FileName;
 
 					if (nestedSource.ExternalFileSource is IYoutubeDlSource nestedYoutubeDlSource)
@@ -69,9 +66,8 @@ namespace TicTacTubeDemo
 					}
 
 					var info = extractor.ExtractFromString(songTitle);
+					info = new SongInfoMerger().Merge(info, fetcher.ExtractAsyncTask(info).GetAwaiter().GetResult(), true);
 
-					info.WriteToFile(nestedSource.FileInfo.FullName);
-					info = fetcher.ExtractAsyncTask(info).GetAwaiter().GetResult();
 					info.WriteToFile(nestedSource.FileInfo.FullName);
 				}
 
