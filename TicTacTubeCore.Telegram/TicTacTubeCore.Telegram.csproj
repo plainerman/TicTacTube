@@ -18,6 +18,7 @@
     <PackageTags>C# data processing pipeline telegram bot</PackageTags>
     <AssemblyVersion>0.1.0.0</AssemblyVersion>
     <FileVersion>0.1.0.0</FileVersion>
+    <PackageReleaseNotes>This is the initial version of the project. In combination with the TicTacTube core, it enables users to create a simple Telegram bot that can interact with it's users.</PackageReleaseNotes>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

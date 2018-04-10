@@ -16,6 +16,7 @@
     <RepositoryUrl>https://github.com/plainerman/TicTacTube</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageTags>C# data processing pipeline youtube-dl</PackageTags>
+    <PackageReleaseNotes>This is the initial version of the project. In combination with the TicTacTube core, it enables users to integrate the application youtube-dl to download audio and or video from webpages.</PackageReleaseNotes>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
