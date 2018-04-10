@@ -1,6 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace TicTacTubeCoreTest.Processors.Media.Songs
+namespace TicTacTubeTest.Processors.Media.Songs
 {
 	[TestClass]
 	public class TestSongInfo

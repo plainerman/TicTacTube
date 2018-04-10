@@ -1,7 +1,7 @@
 ﻿using TicTacTubeCore.Processors.Definitions;
 using TicTacTubeCore.Sources.Files;
 
-namespace TicTacTubeCoreTest.Processors
+namespace TicTacTubeTest.Processors
 {
 	public class MockDataProcessor : BaseDataProcessor
 	{

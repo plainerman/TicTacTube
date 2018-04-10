@@ -3,9 +3,9 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TicTacTubeCore.Processors.Logical;
 using TicTacTubeCore.Schedulers.Events;
 using TicTacTubeCore.Sources.Files;
-using TicTacTubeCoreTest.Sources.Files;
+using TicTacTubeTest.Sources.Files;
 
-namespace TicTacTubeCoreTest.Processors.Logical
+namespace TicTacTubeTest.Processors.Logical
 {
 	[TestClass]
 	public class TestConditionalProcessor

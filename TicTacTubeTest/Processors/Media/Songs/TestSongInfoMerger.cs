@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TicTacTubeCore.Processors.Media.Songs;
 
-namespace TicTacTubeCoreTest.Processors.Media.Songs
+namespace TicTacTubeTest.Processors.Media.Songs
 {
 	[TestClass]
 	public class TestSongInfoMerger

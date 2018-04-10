@@ -3,9 +3,9 @@ using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TicTacTubeCore.Pipelines;
 using TicTacTubeCore.Schedulers;
-using TicTacTubeCoreTest.Processors;
+using TicTacTubeTest.Processors;
 
-namespace TicTacTubeCoreTest.Schedulers
+namespace TicTacTubeTest.Schedulers
 {
 	[TestClass]
 	public class FileSystemSchedulerTest

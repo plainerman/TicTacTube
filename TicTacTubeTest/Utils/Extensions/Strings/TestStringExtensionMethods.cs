@@ -1,9 +1,9 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TicTacTubeCore.Utils.Extensions.Strings;
 
-namespace TicTacTubeCoreTest.Utils.Extensions.Strings
+namespace TicTacTubeTest.Utils.Extensions.Strings
 {
 	[TestClass]
 	public class TestStringExtensionMethods

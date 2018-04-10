@@ -4,7 +4,7 @@ using TicTacTubeCore.Sources.Files;
 using TicTacTubeCore.Sources.Files.External;
 using SystemPath = System.IO.Path;
 
-namespace TicTacTubeCoreTest.Sources.Files
+namespace TicTacTubeTest.Sources.Files
 {
 	public class TempFileSource : BaseFileSource
 	{

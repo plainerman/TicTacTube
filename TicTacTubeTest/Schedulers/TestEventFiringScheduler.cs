@@ -3,7 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TicTacTubeCore.Schedulers;
 using TicTacTubeCore.Schedulers.Events;
 
-namespace TicTacTubeCoreTest.Schedulers
+namespace TicTacTubeTest.Schedulers
 {
 	[TestClass]
 	public class TestEventFiringScheduler

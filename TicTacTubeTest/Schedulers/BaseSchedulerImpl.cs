@@ -1,7 +1,7 @@
 ﻿using TicTacTubeCore.Schedulers;
 using TicTacTubeCore.Sources.Files;
 
-namespace TicTacTubeCoreTest.Schedulers
+namespace TicTacTubeTest.Schedulers
 {
 	public class BaseSchedulerImpl : BaseScheduler
 	{

@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using TicTacTubeCore.Sources.Files.External;
 
-namespace TicTacTubeCoreTest.Sources.Files
+namespace TicTacTubeTest.Sources.Files
 {
 	public class TempExternalFileSource : BaseExternalFileSource
 	{

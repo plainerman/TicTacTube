@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TicTacTubeCore.Processors.Logical;
-using TicTacTubeCoreTest.Sources.Files;
+using TicTacTubeTest.Sources.Files;
 
-namespace TicTacTubeCoreTest.Processors.Logical
+namespace TicTacTubeTest.Processors.Logical
 {
 	[TestClass]
 	public class TestSourceSplitter

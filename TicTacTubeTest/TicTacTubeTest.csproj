@@ -13,10 +13,17 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\TicTacTubeCore.Genius\TicTacTubeCore.Genius.csproj" />
     <ProjectReference Include="..\TicTacTubeCore.Soundcloud\TicTacTubeCore.Soundcloud.csproj" />
     <ProjectReference Include="..\TicTacTubeCore.Telegram\TicTacTubeCore.Telegram.csproj" />
     <ProjectReference Include="..\TicTacTubeCore.YoutubeDL\TicTacTubeCore.YoutubeDL.csproj" />
     <ProjectReference Include="..\TicTacTubeCore\TicTacTubeCore.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="genius.token">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

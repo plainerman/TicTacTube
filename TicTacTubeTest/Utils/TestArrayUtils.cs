@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TicTacTubeCore.Utils;
 
-namespace TicTacTubeCoreTest.Utils
+namespace TicTacTubeTest.Utils
 {
 	[TestClass]
 	public class TestArrayUtils
