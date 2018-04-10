@@ -11,6 +11,7 @@ using log4net.Core;
 using NYoutubeDL.Helpers;
 using TagLib;
 using Telegram.Bot.Types;
+using TicTacTubeCore.Genius.Processors.Media.Songs;
 using TicTacTubeCore.Pipelines;
 using TicTacTubeCore.Processors.Logical;
 using TicTacTubeCore.Processors.Media.Songs;
@@ -77,6 +78,7 @@ namespace TicTacTubeDemo
 			scheduler.Add(pipelineBuilder);
 
 			scheduler.Start();
+
 			scheduler.Join();
 		}
 

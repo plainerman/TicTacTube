@@ -10,7 +10,7 @@ namespace TicTacTubeCore.Processors.Media.Songs
 	/// <summary>
 	///     A simple song info extractor that tries as hard as it can to parse from the filename.
 	/// </summary>
-	public class SongInfoExtractor : IMediaInfoExtractor<SongInfo>
+	public class SongInfoExtractor : IMediaInfoExtractor<SongInfo>, IMediaTextInfoExtractor<SongInfo>
 	{
 		private const string FeaturingRegexWithoutSpace = @"f(ea)?t(\.?\s|\.)";
 
@@ -60,27 +60,14 @@ namespace TicTacTubeCore.Processors.Media.Songs
 		protected string[] PreProcessors =
 		{
 			@"(?i)\s*\([^)]*(audio|video)\)", "(?i)(\"|“)audio(\"|”)", @"(?i)\s*\([^)]*explicit\)",
-			@"(?i)\s*\([^)]*visualiser\)", @"(?i)\|\s*\(?[^)]*(audio|video)\)?", @"(?i)\s*\*((official.*)|(.*(audio|video|explicit)))\*"
+			@"(?i)\s*\([^)]*visualiser\)", @"(?i)\|\s*\(?[^)]*(audio|video)\)?",
+			@"(?i)\s*\*((official.*)|(.*(audio|video|explicit)))\*"
 		};
 
 		/// <summary>
 		///     Determine whether the title should be used as album, if no album could be found.
 		/// </summary>
 		public bool UseTitleAsAlbum { get; set; } = true;
-
-		/// <summary>
-		///     This method extracts songinfo from a given string (<paramref name="songTitle" />).
-		///     Other features like bitrate won't be extracted here.
-		///     It works with formatting like:
-		///     Laura Brehm - Breathe (Last Heroes &amp; Crystal Skies Remix) (Lyric Video)
-		/// </summary>
-		/// <param name="songTitle">
-		///     The string that should be as verbose as possible for the program to correctly identify the
-		///     song.
-		/// </param>
-		/// <returns>A <see cref="SongInfo" /> containing the title and artists.</returns>
-		public virtual async Task<SongInfo> ExtractFromStringAsyncTask(string songTitle) =>
-			await Task.Run(() => ExtractFromString(songTitle));
 
 		/// <summary>
 		///     This method extracts songinfo from a given string (<paramref name="songTitle" />).
@@ -124,6 +111,7 @@ namespace TicTacTubeCore.Processors.Media.Songs
 					break;
 				}
 			}
+
 			var artists = new List<string>();
 			string titlePart;
 			if (split != null)
@@ -323,5 +311,19 @@ namespace TicTacTubeCore.Processors.Media.Songs
 
 			return songInfoFromFile;
 		}
+
+		/// <summary>
+		///     This method extracts songinfo from a given string (<paramref name="songTitle" />).
+		///     Other features like bitrate won't be extracted here.
+		///     It works with formatting like:
+		///     Laura Brehm - Breathe (Last Heroes &amp; Crystal Skies Remix) (Lyric Video)
+		/// </summary>
+		/// <param name="songTitle">
+		///     The string that should be as verbose as possible for the program to correctly identify the
+		///     song.
+		/// </param>
+		/// <returns>A <see cref="SongInfo" /> containing the title and artists.</returns>
+		public virtual async Task<SongInfo> ExtractFromStringAsyncTask(string songTitle) =>
+			await Task.Run(() => ExtractFromString(songTitle));
 	}
 }

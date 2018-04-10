@@ -4,31 +4,31 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <PackageId>TTT.TicTacTube.Telegram.YoutubeDL</PackageId>
+    <PackageId>TTT.TicTacTube.Soundcloud</PackageId>
     <Version>0.1.0</Version>
     <Authors>Michael Plainer</Authors>
     <Company>Michael Plainer</Company>
-    <Product>TicTacTube.YoutubeDL</Product>
-    <Description>An extension for the easy to use data processing pipeline that allows the integration of youtube-dl.</Description>
+    <Product>TicTacTube.Soundcloud</Product>
+    <Description>An extension for the easy to use data processing pipeline that allows the integration of soundcloud. Creating new Soundcloud API-keys is currently disabled, therefore this API uses web parsing which may be against soundcloud's terms of service. Only use with soundclouds written permission.</Description>
     <Copyright>MIT</Copyright>
     <PackageLicenseUrl>https://choosealicense.com/licenses/mit/</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/plainerman/TicTacTube</PackageProjectUrl>
     <RepositoryUrl>https://github.com/plainerman/TicTacTube</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
-    <PackageTags>C# data processing pipeline youtube-dl</PackageTags>
-    <PackageReleaseNotes>This is the initial version of the project. In combination with the TicTacTube core, it enables users to integrate the application youtube-dl to download audio and or video from webpages.</PackageReleaseNotes>
+    <PackageTags>C# data processing pipeline soundcloud</PackageTags>
+    <PackageReleaseNotes>This is the initial version of the project. In combination with the TicTacTube core, it enables users to parse soundcloud urls and fetch information from songs.</PackageReleaseNotes>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin\Release\netstandard2.0\TicTacTubeCore.YoutubeDL.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\netstandard2.0\TicTacTubeCore.Soundcloud.xml</DocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>bin\Debug\netstandard2.0\TicTacTubeCore.YoutubeDL.xml</DocumentationFile>
+    <DocumentationFile>bin\Debug\netstandard2.0\TicTacTubeCore.Soundcloud.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="NYoutubeDL" Version="0.6.3" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.6.16" />
   </ItemGroup>
 
   <ItemGroup>

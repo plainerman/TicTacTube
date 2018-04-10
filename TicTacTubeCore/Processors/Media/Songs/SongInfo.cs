@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using TagLib;
-using File = TagLib.File;
+using TagLib.Id3v2;
 
 namespace TicTacTubeCore.Processors.Media.Songs
 {
@@ -99,5 +99,15 @@ namespace TicTacTubeCore.Processors.Media.Songs
 		/// <param name="path">The path from which the information will be read.</param>
 		/// <returns>The extracted songinfo from the file.</returns>
 		public static async Task<SongInfo> ReadFromFileAsyncTask(string path) => await Task.Run(() => ReadFromFile(path));
+
+		/// <summary>
+		///     Create a picture frame from the given iamge—meaning that the picture can be displayed in apps like iTunes or Google
+		///     Play Music.
+		/// </summary>
+		/// <param name="path">The path to the image.</param>
+		/// <param name="type">The type this picture is.</param>
+		/// <returns>A newly created picture frame that supports iTunes and other bitchy music players.</returns>
+		public static IPicture CreatePictureFrame(string path, PictureType type) =>
+			new AttachedPictureFrame(new Picture(path)) { TextEncoding = StringType.Latin1, Type = type };
 	}
 }
