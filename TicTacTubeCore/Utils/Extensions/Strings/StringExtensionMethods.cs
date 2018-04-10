@@ -54,6 +54,7 @@ namespace TicTacTubeCore.Utils.Extensions.Strings
 					var prevSplit = splits[i - 1];
 					start = prevSplit.StartIndex + prevSplit.MatchLength;
 				}
+
 				if (i < splits.Count)
 					end = splits[i].StartIndex;
 

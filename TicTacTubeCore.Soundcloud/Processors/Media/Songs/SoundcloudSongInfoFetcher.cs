@@ -15,30 +15,31 @@ using File = System.IO.File;
 namespace TicTacTubeCore.Soundcloud.Processors.Media.Songs
 {
 	/// <summary>
-	/// A songinfo fetcher that fetches data from a soundcloud url.
-	/// Currently, this fetcher simulates a web browser, which might be against soundcloud terms of service.
-	/// Only use it with soundclouds written permission.
-	/// This is currently only a workaround for testing, as soundclouds API-validation is currently disabled.
+	///     A songinfo fetcher that fetches data from a soundcloud url.
+	///     Currently, this fetcher simulates a web browser, which might be against soundcloud terms of service.
+	///     Only use it with soundclouds written permission.
+	///     This is currently only a workaround for testing, as soundclouds API-validation is currently disabled.
 	/// </summary>
 	public class SoundcloudSongInfoFetcher : IMediaTextInfoExtractor<SongInfo>
 	{
 		/// <summary>
-		/// The schema string for a music recording.
-		/// This is used to test, whether the page actually is a record.
+		///     The schema string for a music recording.
+		///     This is used to test, whether the page actually is a record.
 		/// </summary>
 		protected const string MusicRecordingSchema = @"http://schema.org/MusicRecording";
 
 		/// <summary>
-		/// The user agent that will be sent to soundcloud.
+		///     The user agent that will be sent to soundcloud.
 		/// </summary>
 		public string UserAgent { get; set; } = "Mozilla/5.0 (X11; Linux x86_64; rv:10.0) Gecko/20100101 Firefox/10.0";
+
 		/// <summary>
-		/// The extractor that is used to parse the title of the soundcloud song.
+		///     The extractor that is used to parse the title of the soundcloud song.
 		/// </summary>
 		public IMediaTextInfoExtractor<SongInfo> SongInfoExtractor { get; }
 
 		/// <summary>
-		/// Create a new soundcloud song fetcher with a default <see cref="SongInfoExtractor"/>.
+		///     Create a new soundcloud song fetcher with a default <see cref="SongInfoExtractor" />.
 		/// </summary>
 		public SoundcloudSongInfoFetcher()
 		{
@@ -71,16 +72,11 @@ namespace TicTacTubeCore.Soundcloud.Processors.Media.Songs
 
 				var articleNode = doc.DocumentNode.SelectSingleNode("//article[@itemscope]");
 				if (articleNode == null || articleNode.Attributes["itemtype"].Value != MusicRecordingSchema)
-				{
 					throw new InvalidSoundcloudPageTypeException("Page type not supported.");
-				}
 
 				var coverArtNode = articleNode.SelectSingleNode("//p/img");
 
-				if (coverArtNode == null)
-				{
-					throw new MissingCoverArtException("No cover art node found.");
-				}
+				if (coverArtNode == null) throw new MissingCoverArtException("No cover art node found.");
 
 				// begin with downloading the cover art (since it is async)
 				string coverArtUrl = coverArtNode.Attributes["src"].Value;
@@ -88,17 +84,16 @@ namespace TicTacTubeCore.Soundcloud.Processors.Media.Songs
 				string coverArtDestinationFile = Path.GetTempFileName();
 				var downloadCoverArt = webClient.DownloadFileTaskAsync(new Uri(coverArtUrl), coverArtDestinationFile);
 
-				var infoTask = SongInfoExtractor.ExtractFromStringAsyncTask(HttpUtility.HtmlDecode(coverArtNode.Attributes["alt"].Value));
+				var infoTask =
+					SongInfoExtractor.ExtractFromStringAsyncTask(HttpUtility.HtmlDecode(coverArtNode.Attributes["alt"].Value));
 
 				var genreNode = articleNode.SelectSingleNode("//header/meta[@itemprop='genre']");
-				if (genreNode == null)
-				{
-					throw new MissingGenreException("No genre node found.");
-				}
+				if (genreNode == null) throw new MissingGenreException("No genre node found.");
 
 				var info = await infoTask;
 
-				info.Genres = HttpUtility.HtmlDecode(genreNode.Attributes["content"].Value).Split('&').Select(g=>g.Trim()).ToArray();
+				info.Genres = HttpUtility.HtmlDecode(genreNode.Attributes["content"].Value).Split('&').Select(g => g.Trim())
+					.ToArray();
 
 				await downloadCoverArt;
 				info.Pictures = new[] { SongInfo.CreatePictureFrame(coverArtDestinationFile, PictureType.FrontCover) };

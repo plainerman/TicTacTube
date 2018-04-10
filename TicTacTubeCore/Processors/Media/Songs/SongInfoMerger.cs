@@ -133,8 +133,8 @@ namespace TicTacTubeCore.Processors.Media.Songs
 
 			int matchedLength = matchedTokens.Sum(s => s.Length);
 			int unmatchedLength = unmatchedTokens.Sum(s => s.Length);
-			float tokenMatch = (float)matchedTokens.Count / (matchedTokens.Count + unmatchedTokens.Count);
-			float lengthMatch = (float)matchedLength / (matchedLength + unmatchedLength);
+			float tokenMatch = (float) matchedTokens.Count / (matchedTokens.Count + unmatchedTokens.Count);
+			float lengthMatch = (float) matchedLength / (matchedLength + unmatchedLength);
 			return (tokenMatch + lengthMatch) / 2;
 		}
 	}

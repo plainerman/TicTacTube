@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TicTacTubeCore.Genius.Processors.Media.Songs;
 using TicTacTubeCore.Processors.Media.Songs;
@@ -9,11 +10,12 @@ namespace TicTacTubeTest.Processors.Media.Songs
 	public class TestGeniusSongInfoFetcher
 	{
 		/// <summary>
-		/// The path to the token file containing the Genius API-Key.
+		///     The path to the token file containing the Genius API-Key.
 		/// </summary>
 		public const string TokenFile = "genius.token";
+
 		/// <summary>
-		/// The name of the environmental variable containing the Genius API-Key
+		///     The name of the environmental variable containing the Genius API-Key
 		/// </summary>
 		public const string SecretVariableName = "GeniusApiKey";
 
@@ -22,16 +24,14 @@ namespace TicTacTubeTest.Processors.Media.Songs
 		[ClassInitialize]
 		public static void CreateFetcher(TestContext context)
 		{
-			string secret = File.Exists(TokenFile) ? File.ReadAllText(TokenFile) : System.Environment.GetEnvironmentVariable(SecretVariableName);
+			string secret = File.Exists(TokenFile)
+				? File.ReadAllText(TokenFile)
+				: Environment.GetEnvironmentVariable(SecretVariableName);
 
 			if (secret?.Trim().Length > 0)
-			{
 				GeniusSongInfoFetcher = new GeniusSongInfoFetcher(secret);
-			}
 			else
-			{
 				Assert.Fail("Genius token could not be loaded.");
-			}
 		}
 
 		[DataTestMethod]
@@ -53,13 +53,9 @@ namespace TicTacTubeTest.Processors.Media.Songs
 			Assert.AreEqual(inputInfo.Artists[0].ToLower(), returnedInfo.Artists[0].ToLower());
 
 			if (hasCoverArt)
-			{
 				Assert.AreNotEqual(0, returnedInfo.Pictures.Length);
-			}
 			else
-			{
 				Assert.AreEqual(0, returnedInfo.Pictures.Length);
-			}
 		}
 	}
 }

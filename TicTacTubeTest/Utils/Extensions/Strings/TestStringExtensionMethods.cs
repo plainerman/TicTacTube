@@ -62,6 +62,7 @@ namespace TicTacTubeTest.Utils.Extensions.Strings
 			{
 				stringPos[i] = new StringPosition(positions[2 * i], positions[2 * i + 1]);
 			}
+
 			return stringPos;
 		}
 	}

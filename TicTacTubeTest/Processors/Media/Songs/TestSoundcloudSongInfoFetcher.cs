@@ -13,8 +13,10 @@ namespace TicTacTubeTest.Processors.Media.Songs
 		[DataTestMethod]
 		[DataRow("https://soundcloud.com/disciple/normalitea", "Normalitea", "Dodge", "Dubstep")]
 		[DataRow("https://soundcloud.com/foxstevenson/fox-stevenson-melange-1", "Melange", "Fox Stevenson", "Drum")]
-		[DataRow("https://soundcloud.com/monstercat/pegboard-nerds-party-freaks", "Party Freaks", "Pegboard Nerds", "Electro")]
-		[DataRow("https://soundcloud.com/monstercat/puppet-first-time-fighting", "First Time Fighting", "Puppet", "Electronic")]
+		[DataRow("https://soundcloud.com/monstercat/pegboard-nerds-party-freaks", "Party Freaks", "Pegboard Nerds",
+			"Electro")]
+		[DataRow("https://soundcloud.com/monstercat/puppet-first-time-fighting", "First Time Fighting", "Puppet",
+			"Electronic")]
 		public void TestExtractFromUrl(string url, string title, string firstArtist, string firstGenre)
 		{
 			var fetcher = new SoundcloudSongInfoFetcher();
@@ -34,7 +36,8 @@ namespace TicTacTubeTest.Processors.Media.Songs
 		public void TestExtractFromBadUrl(string badUrl)
 		{
 			var fetcher = new SoundcloudSongInfoFetcher();
-			Assert.ThrowsExceptionAsync<InvalidSoundcloudPageTypeException>(() => fetcher.ExtractFromStringAsyncTask(badUrl)).GetAwaiter().GetResult();
+			Assert.ThrowsExceptionAsync<InvalidSoundcloudPageTypeException>(() => fetcher.ExtractFromStringAsyncTask(badUrl))
+				.GetAwaiter().GetResult();
 		}
 	}
 }

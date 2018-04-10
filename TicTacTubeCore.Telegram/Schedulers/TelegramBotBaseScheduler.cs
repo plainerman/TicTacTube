@@ -122,6 +122,7 @@ namespace TicTacTubeCore.Telegram.Schedulers
 
 					return;
 				}
+
 			if (IsMessageTypeSupported(messageEventArgs.Message.Type))
 				ProcessMessage(messageEventArgs.Message);
 			else

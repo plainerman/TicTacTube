@@ -4,7 +4,7 @@ using TicTacTubeCore.Utils.Exceptions;
 namespace TicTacTubeCore.Soundcloud.Processors.Media.Songs.Exceptions
 {
 	/// <summary>
-	/// An exception prototype for all exceptions related to a missing node or element in the webpage of a soundcloud url.
+	///     An exception prototype for all exceptions related to a missing node or element in the webpage of a soundcloud url.
 	/// </summary>
 	public abstract class MissingSoundCloudNodeException : TicTacException
 	{

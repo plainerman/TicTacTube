@@ -4,7 +4,7 @@ using TicTacTubeCore.Utils.Exceptions;
 namespace TicTacTubeCore.Soundcloud.Processors.Media.Songs.Exceptions
 {
 	/// <summary>
-	/// An exception prototype for all exceptions related to soundcloud.
+	///     An exception prototype for all exceptions related to soundcloud.
 	/// </summary>
 	public abstract class SoundCloudException : TicTacException
 	{

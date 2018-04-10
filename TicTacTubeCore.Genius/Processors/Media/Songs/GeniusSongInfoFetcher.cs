@@ -79,7 +79,7 @@ namespace TicTacTubeCore.Genius.Processors.Media.Songs
 
 				var result = (await GeniusClient.SearchClient.Search(TextFormat.Dom, searchTerm)).Response;
 
-				var correctHit = (from hit in result where hit.Type.Equals("song") select (JObject)hit.Result).FirstOrDefault();
+				var correctHit = (from hit in result where hit.Type.Equals("song") select (JObject) hit.Result).FirstOrDefault();
 
 				if (correctHit != null)
 				{
@@ -102,7 +102,7 @@ namespace TicTacTubeCore.Genius.Processors.Media.Songs
 		protected virtual async Task<SongInfo> SetSong(SongInfo info, Song song)
 		{
 			// The pictures that should be fetched (if available)
-			var desiredPictures = new List<GeniusPicture>()
+			var desiredPictures = new List<GeniusPicture>
 			{
 				new GeniusPicture(song.SongArtImageUrl, PictureType.FrontCover)
 			};
@@ -111,7 +111,8 @@ namespace TicTacTubeCore.Genius.Processors.Media.Songs
 				desiredPictures.Add(new GeniusPicture(song.PrimaryArtist.ImageUrl, PictureType.Artist));
 
 			// Filter all null urls, and all urls that point to the default image.
-			desiredPictures = desiredPictures.Where(p => !string.IsNullOrWhiteSpace(p.Url)).Where(p => !IsUrlDefaultImage(p.Url)).ToList();
+			desiredPictures = desiredPictures.Where(p => !string.IsNullOrWhiteSpace(p.Url)).Where(p => !IsUrlDefaultImage(p.Url))
+				.ToList();
 
 			// The tasks for the pictures to fetch
 			var desiredPicturesTask = desiredPictures.Select(p => p.DownloadAsync()).ToList();
@@ -119,7 +120,7 @@ namespace TicTacTubeCore.Genius.Processors.Media.Songs
 			if (!string.IsNullOrWhiteSpace(song.ReleaseDate))
 			{
 				var releaseDate = DateTime.ParseExact(song.ReleaseDate, "yyyy-MM-dd", CultureInfo.InvariantCulture);
-				info.Year = (uint)releaseDate.Year;
+				info.Year = (uint) releaseDate.Year;
 			}
 
 			if (song.Album != null)
@@ -158,19 +159,17 @@ namespace TicTacTubeCore.Genius.Processors.Media.Songs
 			return info;
 		}
 
-		/// <inheritdoc />
-		public virtual async Task<SongInfo> ExtractAsyncTask(IFileSource source) =>
-			await ExtractAsyncTask(SongInfo.ReadFromFile(source.FileInfo.FullName));
-
 		/// <summary>
-		/// Genius uses a custom cover art, if none is available (https://assets.genius.com/images/default_cover_image.png). This method tests, whether it has a custom art or not.
+		///     Genius uses a custom cover art, if none is available (https://assets.genius.com/images/default_cover_image.png).
+		///     This method tests, whether it has a custom art or not.
 		/// </summary>
 		/// <param name="url">The url that will be tested.</param>
 		/// <returns><c>true</c>, if the provided url points to the default image, <c>false</c> otherwise.</returns>
-		protected bool IsUrlDefaultImage(string url)
-		{
-			return url.Contains("assets.genius.com/images/default_cover_image.png");
-		}
+		protected bool IsUrlDefaultImage(string url) => url.Contains("assets.genius.com/images/default_cover_image.png");
+
+		/// <inheritdoc />
+		public virtual async Task<SongInfo> ExtractAsyncTask(IFileSource source) =>
+			await ExtractAsyncTask(SongInfo.ReadFromFile(source.FileInfo.FullName));
 
 		/// <summary>
 		///     A genius picture that is used to easily download it
