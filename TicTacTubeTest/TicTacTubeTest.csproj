@@ -20,4 +20,10 @@
     <ProjectReference Include="..\TicTacTubeCore\TicTacTubeCore.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="genius.token">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
