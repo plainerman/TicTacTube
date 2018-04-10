@@ -3,7 +3,7 @@ using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TicTacTubeCore.Sources.Files;
 
-namespace TicTacTubeCoreTest.Sources.Files
+namespace TicTacTubeTest.Sources.Files
 {
 	[TestClass]
 	public class TestFileSource

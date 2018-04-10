@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using TicTacTubeCore.Sources.Files;
 
-namespace TicTacTubeCoreTest.Sources.Files
+namespace TicTacTubeTest.Sources.Files
 {
 	public class MockFileSource : IFileSource
 	{

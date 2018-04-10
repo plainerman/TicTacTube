@@ -9,11 +9,12 @@ using Genius;
 using Genius.Models;
 using Newtonsoft.Json.Linq;
 using TagLib;
-using TagLib.Id3v2;
+using TicTacTubeCore.Processors.Media;
+using TicTacTubeCore.Processors.Media.Songs;
 using TicTacTubeCore.Sources.Files;
 using File = System.IO.File;
 
-namespace TicTacTubeCore.Processors.Media.Songs
+namespace TicTacTubeCore.Genius.Processors.Media.Songs
 {
 	/// <summary>
 	///     A song info extractor that queries the already stored info to https://genius.com and downloads additional data
@@ -78,7 +79,7 @@ namespace TicTacTubeCore.Processors.Media.Songs
 
 				var result = (await GeniusClient.SearchClient.Search(TextFormat.Dom, searchTerm)).Response;
 
-				var correctHit = (from hit in result where hit.Type.Equals("song") select (JObject) hit.Result).FirstOrDefault();
+				var correctHit = (from hit in result where hit.Type.Equals("song") select (JObject)hit.Result).FirstOrDefault();
 
 				if (correctHit != null)
 				{
@@ -112,13 +113,12 @@ namespace TicTacTubeCore.Processors.Media.Songs
 			desiredPictures = desiredPictures.Where(p => !string.IsNullOrWhiteSpace(p.Url)).ToList();
 
 			// The tasks for the pictures to fetch
-			// ReSharper disable once AccessToDisposedClosure
 			var desiredPicturesTask = desiredPictures.Select(p => p.DownloadAsync()).ToList();
 
 			if (!string.IsNullOrWhiteSpace(song.ReleaseDate))
 			{
 				var releaseDate = DateTime.ParseExact(song.ReleaseDate, "yyyy-MM-dd", CultureInfo.InvariantCulture);
-				info.Year = (uint) releaseDate.Year;
+				info.Year = (uint)releaseDate.Year;
 			}
 
 			if (song.Album != null)

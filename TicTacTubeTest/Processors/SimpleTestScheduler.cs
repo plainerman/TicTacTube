@@ -1,8 +1,8 @@
 ﻿using TicTacTubeCore.Pipelines;
 using TicTacTubeCore.Sources.Files;
-using TicTacTubeCoreTest.Schedulers;
+using TicTacTubeTest.Schedulers;
 
-namespace TicTacTubeCoreTest.Processors
+namespace TicTacTubeTest.Processors
 {
 	public class SimpleTestScheduler
 	{

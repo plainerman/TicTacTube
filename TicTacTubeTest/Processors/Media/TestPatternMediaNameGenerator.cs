@@ -3,7 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TicTacTubeCore.Processors.Media;
 using TicTacTubeCore.Processors.Media.Songs;
 
-namespace TicTacTubeCoreTest.Processors.Media
+namespace TicTacTubeTest.Processors.Media
 {
 	[TestClass]
 	public class TestPatternMediaNameGenerator

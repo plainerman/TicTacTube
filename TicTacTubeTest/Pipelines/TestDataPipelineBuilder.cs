@@ -1,9 +1,9 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TicTacTubeCore.Pipelines;
 using TicTacTubeCore.Pipelines.Exceptions;
-using TicTacTubeCoreTest.Processors;
+using TicTacTubeTest.Processors;
 
-namespace TicTacTubeCoreTest.Pipelines
+namespace TicTacTubeTest.Pipelines
 {
 	[TestClass]
 	public class TestDataPipelineBuilder

@@ -2,9 +2,9 @@ using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TicTacTubeCore.Processors.Filesystem;
 using TicTacTubeCore.Sources.Files;
-using TicTacTubeCoreTest.Sources.Files;
+using TicTacTubeTest.Sources.Files;
 
-namespace TicTacTubeCoreTest.Processors.Filesystem
+namespace TicTacTubeTest.Processors.Filesystem
 {
 	[TestClass]
 	public class TestSourceMover

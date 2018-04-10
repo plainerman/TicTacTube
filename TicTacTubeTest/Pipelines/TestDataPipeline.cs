@@ -1,4 +1,4 @@
-﻿namespace TicTacTubeCoreTest.Pipelines
+﻿namespace TicTacTubeTest.Pipelines
 {
 	public class TestDataPipeline
 	{

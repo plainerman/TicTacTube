@@ -1,11 +1,11 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TicTacTubeCore.Soundcloud.Processors.Media.Songs;
 using TicTacTubeCore.Soundcloud.Processors.Media.Songs.Exceptions;
+
 // This disables the warnings for missing awaits
 #pragma warning disable 4014
 
-namespace TicTacTubeCoreTest.Processors.Media.Songs
+namespace TicTacTubeTest.Processors.Media.Songs
 {
 	[TestClass]
 	public class TestSoundcloudSongInfoFetcher
