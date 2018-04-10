@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Title>TicTacTube Telegram</Title>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <PackageId>TTT.TicTacTube.Telegram</PackageId>
+    <Version>0.1.0</Version>
+    <Authors>Michael Plainer</Authors>
+    <Company>Michael Plainer</Company>
+    <Product>TicTacTube.Telegram</Product>
+    <Description>An extension for the easy to use data processing pipeline that allows the integration of telegram bots.</Description>
+    <Copyright>MIT</Copyright>
+    <PackageLicenseUrl>https://choosealicense.com/licenses/mit/</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/plainerman/TicTacTube</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/plainerman/TicTacTube</RepositoryUrl>
+    <RepositoryType>Git</RepositoryType>
+    <PackageTags>C# data processing pipeline telegram bot</PackageTags>
+    <AssemblyVersion>0.1.0.0</AssemblyVersion>
+    <FileVersion>0.1.0.0</FileVersion>
+    <PackageReleaseNotes>This is the initial version of the project. In combination with the TicTacTube core, it enables users to create a simple Telegram bot that can interact with it's users.</PackageReleaseNotes>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>bin\Release\netstandard2.0\TicTacTubeCore.Telegram.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>bin\Debug\netstandard2.0\TicTacTubeCore.Telegram.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TicTacTubeCore\TicTacTubeCore.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Telegram.Bot" Version="13.4.0" />
+  </ItemGroup>
+
+</Project>

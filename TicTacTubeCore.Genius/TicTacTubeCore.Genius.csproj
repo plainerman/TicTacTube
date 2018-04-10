@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <PackageId>TTT.TicTacTube.Genius</PackageId>
+    <Version>0.1.0</Version>
+    <Authors>Michael Plainer</Authors>
+    <Company>Michael Plainer</Company>
+    <Product>TicTacTube.Genius</Product>
+    <Description>An extension for the easy to use data processing pipeline that allows the integration of Genius (https://genius.com).</Description>
+    <Copyright>MIT</Copyright>
+    <PackageLicenseUrl>https://choosealicense.com/licenses/mit/</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/plainerman/TicTacTube</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/plainerman/TicTacTube</RepositoryUrl>
+    <RepositoryType>Git</RepositoryType>
+    <PackageTags>C# data processing pipeline genius</PackageTags>
+    <AssemblyVersion>0.1.0.0</AssemblyVersion>
+    <FileVersion>0.1.0.0</FileVersion>
+    <PackageReleaseNotes>This is the initial version of the project. In combination with the TicTacTube core, it enables users to query the genius API.</PackageReleaseNotes>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>bin\Release\netstandard2.0\TicTacTubeCore.Genius.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>bin\Debug\netstandard2.0\TicTacTubeCore.Genius.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Genius.NET" Version="2.0.0" />
+    <PackageReference Include="taglib-sharp-netstandard2.0" Version="2.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TicTacTubeCore\TicTacTubeCore.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -47,37 +47,6 @@ namespace TicTacTubeCore.Sources.Files
 				FetchExternalSource(true);
 		}
 
-		/// <inheritdoc />
-		public FileInfo FileInfo { get; private set; }
-
-		/// <inheritdoc />
-		public string FileName { get; private set; }
-
-		/// <inheritdoc />
-		public string FullFileName { get; private set; }
-
-		/// <inheritdoc />
-		public string FileExtension => FileInfo?.Extension;
-
-		/// <inheritdoc />
-		public string Path => FileInfo?.Directory.FullName;
-
-		/// <inheritdoc />
-		public void Init()
-		{
-			FetchExternalSource(false);
-		}
-
-		/// <inheritdoc />
-		public void BeginExecute()
-		{
-		}
-
-		/// <inheritdoc />
-		public void EndExecute()
-		{
-		}
-
 		/// <summary>
 		///     Assign all local variables from the given filepath.
 		/// </summary>
@@ -123,6 +92,37 @@ namespace TicTacTubeCore.Sources.Files
 				_externalSource = null;
 				_filePath = null;
 			}
+		}
+
+		/// <inheritdoc />
+		public FileInfo FileInfo { get; private set; }
+
+		/// <inheritdoc />
+		public string FileName { get; private set; }
+
+		/// <inheritdoc />
+		public string FullFileName { get; private set; }
+
+		/// <inheritdoc />
+		public string FileExtension => FileInfo?.Extension;
+
+		/// <inheritdoc />
+		public string Path => FileInfo?.Directory.FullName;
+
+		/// <inheritdoc />
+		public void Init()
+		{
+			FetchExternalSource(false);
+		}
+
+		/// <inheritdoc />
+		public void BeginExecute()
+		{
+		}
+
+		/// <inheritdoc />
+		public void EndExecute()
+		{
 		}
 	}
 }

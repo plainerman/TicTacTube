@@ -54,6 +54,7 @@ namespace TicTacTubeCore.Utils.Extensions.Strings
 					var prevSplit = splits[i - 1];
 					start = prevSplit.StartIndex + prevSplit.MatchLength;
 				}
+
 				if (i < splits.Count)
 					end = splits[i].StartIndex;
 
@@ -91,15 +92,13 @@ namespace TicTacTubeCore.Utils.Extensions.Strings
 		}
 
 		/// <summary>
-		/// Determine whether a given string contains <paramref name="toCheck"/>.
+		///     Determine whether a given string contains <paramref name="toCheck" />.
 		/// </summary>
 		/// <param name="text">The string this operation is based on.</param>
 		/// <param name="toCheck">The string that will be tested if it is contained.</param>
 		/// <param name="comp">The string comparison options.</param>
-		/// <returns><c>True</c>, if the <paramref name="text"/> contains <paramref name="toCheck"/>.</returns>
-		public static bool Contains(this string text, string toCheck, StringComparison comp)
-		{
-			return text.IndexOf(toCheck, comp) >= 0;
-		}
+		/// <returns><c>True</c>, if the <paramref name="text" /> contains <paramref name="toCheck" />.</returns>
+		public static bool Contains(this string text, string toCheck, StringComparison comp) =>
+			text.IndexOf(toCheck, comp) >= 0;
 	}
 }

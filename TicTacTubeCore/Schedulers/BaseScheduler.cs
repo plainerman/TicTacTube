@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Threading;
 using log4net;
 using TicTacTubeCore.Pipelines;
 using TicTacTubeCore.Schedulers.Events;
@@ -22,6 +23,11 @@ namespace TicTacTubeCore.Schedulers
 		protected readonly List<IDataPipelineOrBuilder> InternalPipelines;
 
 		/// <summary>
+		///     This reset event will wait until stop has been called — so join works by waiting for a stop from another thread.
+		/// </summary>
+		protected ManualResetEvent ManualJoinReset;
+
+		/// <summary>
 		///     The default constructor.
 		/// </summary>
 		protected BaseScheduler()
@@ -29,51 +35,6 @@ namespace TicTacTubeCore.Schedulers
 			InternalPipelines = new List<IDataPipelineOrBuilder>();
 			Pipelines = InternalPipelines.AsReadOnly();
 		}
-
-		/// <inheritdoc />
-		public event EventHandler<SchedulerLifeCycleEventArgs> LifeCycleEvent;
-
-		/// <inheritdoc />
-		public bool IsRunning { get; protected set; }
-
-		/// <inheritdoc />
-		public ReadOnlyCollection<IDataPipelineOrBuilder> Pipelines { get; }
-
-		/// <inheritdoc />
-		public virtual IDataPipelineOrBuilder Add(IDataPipelineOrBuilder pipelineOrBuilder)
-		{
-			InternalPipelines.Add(pipelineOrBuilder);
-			return pipelineOrBuilder;
-		}
-
-
-		/// <inheritdoc />
-		public virtual void Start()
-		{
-			ExecuteStart();
-			IsRunning = true;
-			OnStarted();
-			ExecuteEvent(SchedulerLifeCycleEventType.Start);
-		}
-
-		/// <inheritdoc />
-		public virtual void Stop()
-		{
-			ExecuteStop();
-			IsRunning = false;
-			OnStopped();
-			ExecuteEvent(SchedulerLifeCycleEventType.Stop);
-		}
-
-		/// <summary>
-		/// This method will be called after <see cref="ExecuteStart"/>, once <see cref="IsRunning"/> is <c>true</c>. (<see cref="LifeCycleEvent"/> not yet executed).
-		/// </summary>
-		protected virtual void OnStarted() { }
-
-		/// <summary>
-		/// This method will be called after <see cref="ExecuteStop"/>, once <see cref="IsRunning"/> is <c>false</c>. (<see cref="LifeCycleEvent"/> not yet executed).
-		/// </summary>
-		protected virtual void OnStopped() { }
 
 		/// <summary>
 		///     This method is called before setting the global running state to <c>true</c>.
@@ -98,6 +59,53 @@ namespace TicTacTubeCore.Schedulers
 			ExecuteEvent(SchedulerLifeCycleEventType.Execute);
 		}
 
+		/// <inheritdoc />
+		public event EventHandler<SchedulerLifeCycleEventArgs> LifeCycleEvent;
+
+		/// <inheritdoc />
+		public bool IsRunning { get; protected set; }
+
+		/// <inheritdoc />
+		public ReadOnlyCollection<IDataPipelineOrBuilder> Pipelines { get; }
+
+		/// <inheritdoc />
+		public virtual IDataPipelineOrBuilder Add(IDataPipelineOrBuilder pipelineOrBuilder)
+		{
+			InternalPipelines.Add(pipelineOrBuilder);
+			return pipelineOrBuilder;
+		}
+
+		/// <inheritdoc />
+		public virtual void Start()
+		{
+			ExecuteStart();
+			IsRunning = true;
+			OnStarted();
+			ExecuteEvent(SchedulerLifeCycleEventType.Start);
+			ManualJoinReset?.Dispose();
+			ManualJoinReset = new ManualResetEvent(false);
+		}
+
+		/// <inheritdoc />
+		public virtual void Stop()
+		{
+			ExecuteStop();
+			IsRunning = false;
+			OnStopped();
+			ExecuteEvent(SchedulerLifeCycleEventType.Stop);
+			ManualJoinReset.Set();
+		}
+
+		/// <summary>
+		/// This method will be called after <see cref="ExecuteStart"/>, once <see cref="IsRunning"/> is <c>true</c>. (<see cref="LifeCycleEvent"/> not yet executed).
+		/// </summary>
+		protected virtual void OnStarted() { }
+
+		/// <summary>
+		/// This method will be called after <see cref="ExecuteStop"/>, once <see cref="IsRunning"/> is <c>false</c>. (<see cref="LifeCycleEvent"/> not yet executed).
+		/// </summary>
+		protected virtual void OnStopped() { }
+
 		/// <summary>
 		///     Execute a lifecycle event with given parameters.
 		/// </summary>
@@ -105,6 +113,12 @@ namespace TicTacTubeCore.Schedulers
 		protected virtual void ExecuteEvent(SchedulerLifeCycleEventType eventType)
 		{
 			LifeCycleEvent?.Invoke(this, new SchedulerLifeCycleEventArgs(IsRunning, eventType));
+		}
+
+		/// <inheritdoc />
+		public virtual void Join()
+		{
+			ManualJoinReset.WaitOne();
 		}
 	}
 }

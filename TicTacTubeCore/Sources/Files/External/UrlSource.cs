@@ -11,6 +11,15 @@ namespace TicTacTubeCore.Sources.Files.External
 	public class UrlSource : BaseExternalFileSource
 	{
 		/// <summary>
+		///     The url from which the file will be fetched.
+		/// </summary>
+		public string Url { get; }
+
+
+		/// <inheritdoc />
+		public override string ExternalSource => Url;
+
+		/// <summary>
 		///     Create a new <see cref="IExternalFileSource" /> that will be fetched from an url and define whether it is lazy
 		///     loaded or not.
 		/// </summary>
@@ -23,11 +32,6 @@ namespace TicTacTubeCore.Sources.Files.External
 
 			Url = url;
 		}
-
-		/// <summary>
-		///     The url from which the file will be fetched.
-		/// </summary>
-		public string Url { get; }
 
 		/// <summary>
 		///     This method returns the preferred filepath based on the given <see ref="destinationPath" /> and the default
@@ -49,7 +53,6 @@ namespace TicTacTubeCore.Sources.Files.External
 
 			return Path.Combine(destinationPath, filename);
 		}
-
 
 		/// <inheritdoc />
 		protected override void Download(string destinationPath)

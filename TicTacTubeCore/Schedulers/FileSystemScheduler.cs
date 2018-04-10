@@ -5,29 +5,33 @@ using TicTacTubeCore.Sources.Files;
 namespace TicTacTubeCore.Schedulers
 {
 	/// <summary>
-	/// A scheduler that can watch a directory and trigger when something has changed. 
-	/// It has to be disposed.
+	///     A scheduler that can watch a directory and trigger when something has changed.
+	///     It has to be disposed.
 	/// </summary>
 	public class FileSystemScheduler : BaseScheduler, IDisposable
 	{
 		/// <summary>
-		/// The path that will be watched.
+		///     The path that will be watched.
 		/// </summary>
 		public string Path { get; }
 
 		/// <summary>
-		/// The watcher that keeps track of the tracking.
+		///     The watcher that keeps track of the tracking.
 		/// </summary>
 		public FileSystemWatcher Watcher { get; }
 
 		/// <summary>
-		/// Create a new scheduler that watches a given <paramref name="path"/>, filters files (<paramref name="filter"/> see <see cref="FileSystemWatcher.Filter"/>),
-		/// and the <paramref name="filters"/> that specify when to trigger (see <see cref="FileSystemWatcher.NotifyFilter"/>).
+		///     Create a new scheduler that watches a given <paramref name="path" />, filters files (<paramref name="filter" /> see
+		///     <see cref="FileSystemWatcher.Filter" />),
+		///     and the <paramref name="filters" /> that specify when to trigger (see <see cref="FileSystemWatcher.NotifyFilter" />
+		///     ).
 		/// </summary>
 		/// <param name="path">The path that will be watched.</param>
 		/// <param name="filters">The filters that decide when to trigger.</param>
 		/// <param name="filter">A filter that is applied to file names.</param>
-		public FileSystemScheduler(string path, NotifyFilters filters = NotifyFilters.LastAccess | NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName, string filter = "*.*")
+		public FileSystemScheduler(string path,
+			NotifyFilters filters = NotifyFilters.LastAccess | NotifyFilters.LastWrite | NotifyFilters.FileName |
+			                        NotifyFilters.DirectoryName, string filter = "*.*")
 		{
 			Path = path;
 			Watcher = new FileSystemWatcher(path, filter) { NotifyFilter = filters };
@@ -43,7 +47,7 @@ namespace TicTacTubeCore.Schedulers
 		}
 
 		/// <summary>
-		/// The method that will be excecuted once a file changes.
+		///     The method that will be excecuted once a file changes.
 		/// </summary>
 		/// <param name="source">The source of the event.</param>
 		/// <param name="e">The args for the triggered event.</param>
@@ -59,7 +63,7 @@ namespace TicTacTubeCore.Schedulers
 		}
 
 		/// <summary>
-		/// Dispose this scheduler.
+		///     Dispose this scheduler.
 		/// </summary>
 		/// <param name="disposing">The boolean whether to dispose.</param>
 		protected virtual void Dispose(bool disposing)
@@ -73,6 +77,7 @@ namespace TicTacTubeCore.Schedulers
 			}
 		}
 
+		/// <inheritdoc />
 		public void Dispose()
 		{
 			Dispose(true);
