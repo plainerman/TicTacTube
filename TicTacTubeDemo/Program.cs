@@ -1,14 +1,14 @@
-﻿using System;
+﻿using log4net;
+using log4net.Config;
+using log4net.Core;
+using NYoutubeDL.Helpers;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Threading.Tasks;
-using log4net;
-using log4net.Config;
-using log4net.Core;
-using NYoutubeDL.Helpers;
 using TagLib;
 using Telegram.Bot.Types;
 using TicTacTubeCore.Genius.Processors.Media.Songs;
@@ -29,13 +29,12 @@ namespace TicTacTubeDemo
 			var logRepository = LogManager.GetRepository(Assembly.GetEntryAssembly());
 			XmlConfigurator.Configure(logRepository, new FileInfo("log4net.config"));
 
-
 #if DEBUG
 			((log4net.Repository.Hierarchy.Hierarchy)logRepository).Root.Level = Level.Debug;
 			((log4net.Repository.Hierarchy.Hierarchy)logRepository).RaiseConfigurationChanged(EventArgs.Empty);
 #endif
 
-			var scheduler = new TelegramScheduler(File.ReadAllText("telegram.token"), UserList.Whitelist);
+			var scheduler = new TelegramScheduler(File.ReadAllText("telegram.plainerdebugbot.token"), UserList.Whitelist);
 
 			File.ReadLines("white.list").ToList().ForEach(user => scheduler.AddUser(int.Parse(user)));
 
@@ -92,6 +91,12 @@ namespace TicTacTubeDemo
 				WelcomeText = "Hey there! Just send me youtube links ... :)";
 			}
 
+			protected override void ExecuteStart()
+			{
+				base.ExecuteStart();
+				Log.Info("Telegram bot is about to be started...");
+			}
+
 			protected override void ProcessTextMessage(Message message)
 			{
 				Task.Run(() =>
@@ -129,9 +134,8 @@ namespace TicTacTubeDemo
 
 
 							var task = BotClient.SendAudioAsync(message.Chat.Id,
-								new FileToSend(multiplexedSource.FileInfo.FullName, File.OpenRead(multiplexedSource.FileInfo.FullName)),
-								f.Tag.Lyrics,
-								(int) f.Properties.Duration.TotalSeconds, string.Join(' ', f.Tag.Performers), f.Tag.Title);
+								new FileToSend(multiplexedSource.FileInfo.FullName, File.OpenRead(multiplexedSource.FileInfo.FullName)), f.Tag.Lyrics,
+								(int)f.Properties.Duration.TotalSeconds, string.Join(' ', f.Tag.Performers), f.Tag.Title);
 
 							// TODO: test if required
 							task.Wait();
@@ -144,7 +148,7 @@ namespace TicTacTubeDemo
 					catch (Exception e)
 					{
 						SendTextMessage(message, e.Message);
-						Log.Error(e);
+						Log.Error("Error while processing user request.", e);
 					}
 				});
 			}

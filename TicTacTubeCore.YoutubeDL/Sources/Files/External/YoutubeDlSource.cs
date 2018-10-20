@@ -33,8 +33,8 @@ namespace TicTacTubeCore.YoutubeDL.Sources.Files.External
 	}
 
 	/// <summary>
-	///     An external source that is acquired by the program youtube-dl (see <a href="https://youtube-dl.org/">Youtube-DL</a>
-	///     ).
+	///     An external source that is acquired by the program youtube-dl
+	///		(see <a href="https://youtube-dl.org/">Youtube-DL</a>).
 	///     For it to work properly, it is based if you have the following programs in your Path variable:
 	///     <list type="bullet">
 	///         <item>
@@ -86,6 +86,7 @@ namespace TicTacTubeCore.YoutubeDL.Sources.Files.External
 			YoutubeDl.Options.VideoFormatOptions.Format = videoFormat;
 			YoutubeDl.Options.PostProcessingOptions.AudioFormat = audioFormat;
 			YoutubeDl.Options.DownloadOptions.ExternalDownloader = Enums.ExternalDownloader.aria2c;
+			YoutubeDl.Options.FilesystemOptions.RestrictFilenames = true;
 		}
 
 		/// <summary>
@@ -123,11 +124,14 @@ namespace TicTacTubeCore.YoutubeDL.Sources.Files.External
 			YoutubeDl.Options.VerbositySimulationOptions.GetFilename = true;
 
 			var info = YoutubeDl.GetDownloadInfo();
+
 			IsPlaylist = info is PlaylistDownloadInfo;
 			Title = info.Title;
 
 			if (IsPlaylist)
 			{
+				Log.InfoFormat("Downloading playlist {0}", Title);
+
 				destinationPath = AddUniqueFolder(destinationPath, Title);
 
 				if (!Directory.Exists(destinationPath))
@@ -135,6 +139,9 @@ namespace TicTacTubeCore.YoutubeDL.Sources.Files.External
 					Log.InfoFormat("Creating directory {0}", destinationPath);
 					Directory.CreateDirectory(destinationPath);
 				}
+
+				//TODO make this an option
+				YoutubeDl.Options.GeneralOptions.AbortOnError = false;
 			}
 
 			YoutubeDl.Options.FilesystemOptions.Output = Path.Combine(destinationPath, "%(title)s.%(ext)s");
@@ -184,6 +191,7 @@ namespace TicTacTubeCore.YoutubeDL.Sources.Files.External
 
 				for (int i = 0; i < downloadedPaths.Count; i++)
 				{
+					Log.DebugFormat("Downloading {0}...", videosInPlaylist[i].Title);
 					ChildSources[i] = new FileSource(new DummyYoutubeDlSource(videosInPlaylist[i].Url, videosInPlaylist[i].Title), downloadedPaths[i], true);
 				}
 			}
@@ -244,6 +252,7 @@ namespace TicTacTubeCore.YoutubeDL.Sources.Files.External
 
 		//TODO: think about where to put the class (should it really be a subclass?)
 		//TODO: add documentation
+		//TODO: rename to childdlsource or something similar
 		protected class DummyYoutubeDlSource : UrlSource, IYoutubeDlSource
 		{
 			public DummyYoutubeDlSource(string url, string title) : base(url, true)
