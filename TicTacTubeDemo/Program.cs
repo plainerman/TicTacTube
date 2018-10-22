@@ -40,7 +40,12 @@ namespace TicTacTubeDemo
 
 			var pipelineBuilder = new DataPipelineBuilder();
 
-			var fetcher = new GeniusSongInfoFetcher(File.ReadAllText("genius.token"));
+			string geniusToken = null;
+			if (File.Exists("genius.token"))
+			{
+				geniusToken = File.ReadAllText("genius.token");
+			}
+			var fetcher = new GeniusSongInfoFetcher(geniusToken);
 			var extractor = new SongInfoExtractor();
 
 			pipelineBuilder.Append(new LambdaProcessor(source =>
