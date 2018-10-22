@@ -14,24 +14,19 @@ namespace TicTacTubeTest.Processors.Media.Songs
 		/// </summary>
 		public const string TokenFile = "genius.token";
 
-		/// <summary>
-		///     The name of the environmental variable containing the Genius API-Key
-		/// </summary>
-		public const string SecretVariableName = "GeniusApiKey";
-
 		protected static GeniusSongInfoFetcher GeniusSongInfoFetcher;
 
 		[ClassInitialize]
 		public static void CreateFetcher(TestContext context)
 		{
-			string secret = File.Exists(TokenFile)
-				? File.ReadAllText(TokenFile)
-				: Environment.GetEnvironmentVariable(SecretVariableName);
+			string secret = null;
 
-			if (secret?.Trim().Length > 0)
-				GeniusSongInfoFetcher = new GeniusSongInfoFetcher(secret);
-			else
-				Assert.Fail("Genius token could not be loaded.");
+			if (File.Exists(TokenFile))
+			{
+				secret = File.ReadAllText(TokenFile);
+			}
+
+			GeniusSongInfoFetcher = new GeniusSongInfoFetcher(secret);
 		}
 
 		[DataTestMethod]

@@ -1,13 +1,13 @@
-﻿using System;
+﻿using Genius;
+using Genius.Models;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Genius;
-using Genius.Models;
-using Newtonsoft.Json.Linq;
 using TagLib;
 using TicTacTubeCore.Processors.Media;
 using TicTacTubeCore.Processors.Media.Songs;
@@ -34,17 +34,27 @@ namespace TicTacTubeCore.Genius.Processors.Media.Songs
 		public bool DownloadArtistImage { get; set; } = false;
 
 		/// <summary>
+		/// The default constructor of this class, tries to fetch the genius token from a system variable. This variable
+		/// contains the key to this system variable.
+		/// </summary>
+		public const string GeniusSystemVariable = "GeniusApiKey";
+
+		/// <summary>
 		///     Create a new genius fetcher that requires a <paramref name="geniusApiKey" /> to query on https://genius.com.
 		///     It can expand / modify the artist information from a song.
 		/// </summary>
 		/// <param name="geniusApiKey">
 		///     The API-key that will be used for the queries (i.e. to create the
-		///     <see cref="GeniusClient" />).
+		///     <see cref="GeniusClient" />). If the genius api key is <code>null</code> (or empty), then the constructor will try to find a 
+		///		system variable identified by <see cref="GeniusSystemVariable"/> and use this value instead.
 		/// </param>
-		public GeniusSongInfoFetcher(string geniusApiKey)
+		public GeniusSongInfoFetcher(string geniusApiKey = null)
 		{
 			if (string.IsNullOrWhiteSpace(geniusApiKey))
-				throw new ArgumentException("Value cannot be null or whitespace.", nameof(geniusApiKey));
+				geniusApiKey = Environment.GetEnvironmentVariable(GeniusSystemVariable);
+
+			if (string.IsNullOrWhiteSpace(geniusApiKey))
+				throw new ArgumentException($"Value cannot be null or whitespace. System variable ${GeniusSystemVariable} is also not set.", nameof(geniusApiKey));
 
 			GeniusClient = new GeniusClient(geniusApiKey);
 		}
@@ -79,7 +89,7 @@ namespace TicTacTubeCore.Genius.Processors.Media.Songs
 
 				var result = (await GeniusClient.SearchClient.Search(TextFormat.Dom, searchTerm)).Response;
 
-				var correctHit = (from hit in result where hit.Type.Equals("song") select (JObject) hit.Result).FirstOrDefault();
+				var correctHit = (from hit in result where hit.Type.Equals("song") select (JObject)hit.Result).FirstOrDefault();
 
 				if (correctHit != null)
 				{
@@ -120,7 +130,7 @@ namespace TicTacTubeCore.Genius.Processors.Media.Songs
 			if (!string.IsNullOrWhiteSpace(song.ReleaseDate))
 			{
 				var releaseDate = DateTime.ParseExact(song.ReleaseDate, "yyyy-MM-dd", CultureInfo.InvariantCulture);
-				info.Year = (uint) releaseDate.Year;
+				info.Year = (uint)releaseDate.Year;
 			}
 
 			if (song.Album != null)
@@ -168,8 +178,10 @@ namespace TicTacTubeCore.Genius.Processors.Media.Songs
 		protected bool IsUrlDefaultImage(string url) => url.Contains("assets.genius.com/images/default_cover_image.png");
 
 		/// <inheritdoc />
-		public virtual async Task<SongInfo> ExtractAsyncTask(IFileSource source) =>
-			await ExtractAsyncTask(SongInfo.ReadFromFile(source.FileInfo.FullName));
+		public virtual async Task<SongInfo> ExtractAsyncTask(IFileSource source)
+		{
+			return await ExtractAsyncTask(SongInfo.ReadFromFile(source.FileInfo.FullName));
+		}
 
 		/// <summary>
 		///     A genius picture that is used to easily download it

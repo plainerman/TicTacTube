@@ -19,6 +19,12 @@ namespace TicTacTubeCore.Telegram.Schedulers
 		private static readonly ILog Log = LogManager.GetLogger(typeof(TelegramBotBaseScheduler));
 
 		/// <summary>
+		/// The default constructor of this class, tries to fetch the telegram api-token from a system variable. This variable
+		/// contains the key to this system variable.
+		/// </summary>
+		public const string TelegramSystemVariable = "TELEGRAM_TOKEN";
+
+		/// <summary>
 		///     The client that is used to make interactions with the telegram api.
 		/// </summary>
 		protected ITelegramBotClient BotClient;
@@ -50,29 +56,35 @@ namespace TicTacTubeCore.Telegram.Schedulers
 		/// </summary>
 		public bool AllowBots { get; set; } = false;
 
+		/// <inheritdoc />
 		/// <summary>
-		///     Create a new uninitialised telegram scheduler — the <see cref="BotClient" /> has to be manually set before calling
-		///     <see cref="ExecuteStart" />.
+		///     Create a new uninitialised telegram scheduler — the <see cref="F:TicTacTubeCore.Telegram.Schedulers.TelegramBotBaseScheduler.BotClient" /> has to be manually set before calling
+		///     <see cref="M:TicTacTubeCore.Telegram.Schedulers.TelegramBotBaseScheduler.ExecuteStart" />.
 		/// </summary>
 		private TelegramBotBaseScheduler()
 		{
 			Users = new HashSet<int>();
 		}
 
+		/// <inheritdoc />
 		/// <summary>
 		///     The constructor for a new telegram scheduler. The API token can be received by chatting with @botfather.
 		/// </summary>
-		/// <param name="apiToken">The api token that uniquely identifies a bot. May not be <c>null</c>.</param>
+		/// <param name="apiToken">The api token that uniquely identifies a bot. If this api-token is <code>null</code> (or only whitespace), the constructor will try to
+		/// fetch the api-token from a systemvariable identified by <see cref="TelegramSystemVariable"/>.</param>
 		/// <param name="userList">
 		///     The user handling. If <see ref="UserList.None" />, all users are allowd. With black / whitelist
 		///     users can be selecteively allowed / forbidden.
 		/// </param>
 		/// <param name="proxy">The proxy that is used, if set. If <c>null</c>, no proxy will be used.</param>
-		protected TelegramBotBaseScheduler(string apiToken, UserList userList = UserList.None, IWebProxy proxy = null) :
+		protected TelegramBotBaseScheduler(string apiToken = null, UserList userList = UserList.None, IWebProxy proxy = null) :
 			this()
 		{
 			if (string.IsNullOrWhiteSpace(apiToken))
-				throw new ArgumentException("Value cannot be null or whitespace.", nameof(apiToken));
+				apiToken = Environment.GetEnvironmentVariable(TelegramSystemVariable);
+
+			if (string.IsNullOrWhiteSpace(apiToken))
+				throw new ArgumentException($"Value cannot be null or whitespace. System variable ${TelegramSystemVariable} is also not set.", nameof(apiToken));
 			if (!Enum.IsDefined(typeof(UserList), userList))
 				throw new InvalidEnumArgumentException(nameof(userList), (int) userList, typeof(UserList));
 
@@ -142,11 +154,12 @@ namespace TicTacTubeCore.Telegram.Schedulers
 		/// <param name="message">The message that contains all information from the new message.</param>
 		protected virtual void ProcessMessage(Message message)
 		{
-			if (message.Type == MessageType.TextMessage)
-				if (message.Text.StartsWith("/"))
-					ProcessTextCommands(message);
-				else
-					ProcessTextMessage(message);
+			if (message.Type != MessageType.TextMessage) return;
+
+			if (message.Text.StartsWith("/"))
+				ProcessTextCommands(message);
+			else
+				ProcessTextMessage(message);
 		}
 
 		/// <summary>
