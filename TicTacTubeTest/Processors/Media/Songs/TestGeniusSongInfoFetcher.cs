@@ -30,7 +30,7 @@ namespace TicTacTubeTest.Processors.Media.Songs
 
 		[DataTestMethod]
 		[DataRow("Havana", "Camila Cabello", true)]
-		[DataRow("Friends", "Marshmello", true)]
+		[DataRow("Alone", "Marshmello", true)]
 		[DataRow("Intake", "Stevie McFly", false)]
 		public void TestExtractFromUrl(string title, string artist, bool hasCoverArt)
 		{
