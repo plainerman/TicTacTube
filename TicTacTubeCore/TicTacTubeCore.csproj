@@ -7,20 +7,20 @@
     <Authors>Michael Plainer</Authors>
     <Company>Michael Plainer</Company>
     <Product>TicTacTube</Product>
-    <Description>An easy to use data processing pipeline compatible with .NET Standard 2.0.</Description>
+    <Description>A versatile pipelining library, created with media organization in mind and meant to be run as a service.</Description>
     <PackageLicenseUrl>https://choosealicense.com/licenses/mit/</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/plainerman/TicTacTube</PackageProjectUrl>
     <Copyright>MIT</Copyright>
     <RepositoryUrl>https://github.com/plainerman/TicTacTube</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
-    <Version>0.3.0</Version>
+    <Version>0.3.1</Version>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <SignAssembly>false</SignAssembly>
-    <AssemblyVersion>0.3.0.0</AssemblyVersion>
-    <FileVersion>0.3.0.0</FileVersion>
+    <AssemblyVersion>0.3.1.0</AssemblyVersion>
+    <FileVersion>0.3.1.0</FileVersion>
     <PackageTags>C# data processing pipeline</PackageTags>
     <NeutralLanguage>(None)</NeutralLanguage>
-    <PackageReleaseNotes>Moved Genius feature to a custom nuget package.</PackageReleaseNotes>
+    <PackageReleaseNotes>Fixed a bug with downloading remote resources.</PackageReleaseNotes>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DocumentationFile>bin\Release\netstandard2.0\TicTacTubeCore.xml</DocumentationFile>
