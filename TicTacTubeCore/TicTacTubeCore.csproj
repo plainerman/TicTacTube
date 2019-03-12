@@ -13,14 +13,14 @@
     <Copyright>MIT</Copyright>
     <RepositoryUrl>https://github.com/plainerman/TicTacTube</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
-    <Version>0.3.1</Version>
+    <Version>0.3.2</Version>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <SignAssembly>false</SignAssembly>
     <AssemblyVersion>0.3.1.0</AssemblyVersion>
     <FileVersion>0.3.1.0</FileVersion>
-    <PackageTags>C# data processing pipeline</PackageTags>
+    <PackageTags>dataprocessing pipeline pipeline-framework genius telegram telegram-bot youtube-dl soundcloud album metadata metadata-management songs media</PackageTags>
     <NeutralLanguage>(None)</NeutralLanguage>
-    <PackageReleaseNotes>Fixed a bug with downloading remote resources.</PackageReleaseNotes>
+    <PackageReleaseNotes>Allow SongInfoExtractor to prefer filename or existing tags.</PackageReleaseNotes>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DocumentationFile>bin\Release\netstandard2.0\TicTacTubeCore.xml</DocumentationFile>

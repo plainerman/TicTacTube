@@ -5,7 +5,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageId>TTT.TicTacTube.Soundcloud</PackageId>
-    <Version>0.1.0</Version>
+    <Version>0.1.1</Version>
     <Authors>Michael Plainer</Authors>
     <Company>Michael Plainer</Company>
     <Product>TicTacTube.Soundcloud</Product>
@@ -16,7 +16,7 @@
     <RepositoryUrl>https://github.com/plainerman/TicTacTube</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageTags>C# data processing pipeline soundcloud</PackageTags>
-    <PackageReleaseNotes>This is the initial version of the project. In combination with the TicTacTube core, it enables users to parse soundcloud urls and fetch information from songs.</PackageReleaseNotes>
+    <PackageReleaseNotes>Add support for version 0.3.2</PackageReleaseNotes>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
