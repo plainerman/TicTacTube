@@ -70,6 +70,20 @@ namespace TicTacTubeCore.Processors.Media.Songs
 		public bool UseTitleAsAlbum { get; set; } = true;
 
 		/// <summary>
+		/// Whether the filename should be able to override existing tags. If <code>true</code>, ID3 tags cannot be overriden.
+		/// </summary>
+		protected bool RetainExistingTags { get; set; }
+
+		/// <summary>
+		///		Create a new SongInfoExtractor and allowing whether existing tags should be retained or not.
+		/// </summary>
+		/// <param name="retainExistingTags">If set to <code>true</code>, ID3 tags are not modified, only extended. Otherwise the filename will always override tags.</param>
+		public SongInfoExtractor(bool retainExistingTags)
+		{
+			RetainExistingTags = retainExistingTags;
+		}
+
+		/// <summary>
 		///     This method extracts songinfo from a given string (<paramref name="songTitle" />).
 		///     Other features like bitrate won't be extracted here.
 		///     It works with formatting like:
@@ -303,9 +317,10 @@ namespace TicTacTubeCore.Processors.Media.Songs
 			var songInfoFromFile = await SongInfo.ReadFromFileAsyncTask(song.FileInfo.FullName);
 			var songInfo = await ExtractFromStringAsyncTask(fileName);
 
-			songInfoFromFile.Title = songInfo.Title;
-			songInfoFromFile.Artists = songInfo.Artists;
-
+			if (!RetainExistingTags || string.IsNullOrEmpty(songInfoFromFile.Title))
+				songInfoFromFile.Title = songInfo.Title;
+			if (!RetainExistingTags || songInfoFromFile.Artists == null || songInfoFromFile.Artists.Length <= 0 || string.IsNullOrEmpty(songInfoFromFile.Artists[0]))
+				songInfoFromFile.Artists = songInfo.Artists;
 			if (string.IsNullOrEmpty(songInfoFromFile.Album))
 				songInfoFromFile.Album = songInfo.Album;
 
@@ -323,7 +338,9 @@ namespace TicTacTubeCore.Processors.Media.Songs
 		///     song.
 		/// </param>
 		/// <returns>A <see cref="SongInfo" /> containing the title and artists.</returns>
-		public virtual async Task<SongInfo> ExtractFromStringAsyncTask(string songTitle) =>
-			await Task.Run(() => ExtractFromString(songTitle));
+		public virtual async Task<SongInfo> ExtractFromStringAsyncTask(string songTitle)
+		{
+			return await Task.Run(() => ExtractFromString(songTitle));
+		}
 	}
 }

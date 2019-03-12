@@ -43,7 +43,7 @@ namespace TicTacTubeCore.Soundcloud.Processors.Media.Songs
 		/// </summary>
 		public SoundcloudSongInfoFetcher()
 		{
-			SongInfoExtractor = new SongInfoExtractor();
+			SongInfoExtractor = new SongInfoExtractor(false);
 		}
 
 		private async Task<HtmlDocument> CreateDoc(WebClient webClient, string url)
