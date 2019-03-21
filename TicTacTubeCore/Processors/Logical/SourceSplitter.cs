@@ -26,14 +26,14 @@ namespace TicTacTubeCore.Processors.Logical
 		}
 
 		/// <inheritdoc />
-		public override IFileSource Execute(IFileSource fileSoure)
+		public override IFileSource Execute(IFileSource fileSource)
 		{
 			foreach (var dataProcessorOrBuilder in Processors)
 			{
-				dataProcessorOrBuilder.Build().Execute(fileSoure);
+				dataProcessorOrBuilder.Build().Execute(fileSource);
 			}
 
-			return fileSoure;
+			return fileSource;
 		}
 	}
 }

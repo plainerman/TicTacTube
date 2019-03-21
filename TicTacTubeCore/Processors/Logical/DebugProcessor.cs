@@ -29,9 +29,9 @@ namespace TicTacTubeCore.Processors.Logical
 		}
 
 		/// <inheritdoc />
-		public override IFileSource Execute(IFileSource fileSoure)
+		public override IFileSource Execute(IFileSource fileSource)
 		{
-			var newFileSource = DataProcessor.Build().Execute(fileSoure);
+			var newFileSource = DataProcessor.Build().Execute(fileSource);
 			ExecutionCount++;
 
 			return newFileSource;

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading;
@@ -9,6 +10,7 @@ using TicTacTubeCore.Sources.Files;
 
 namespace TicTacTubeCore.Schedulers
 {
+	/// <inheritdoc />
 	/// <summary>
 	///     A scheduler that executes a data pipelineOrBuilder on some event.
 	/// </summary>
@@ -17,14 +19,14 @@ namespace TicTacTubeCore.Schedulers
 		private static readonly ILog Log = LogManager.GetLogger(typeof(BaseScheduler));
 
 		/// <summary>
-		///     Multiple pipelines that are executed on a certion condition / event.
+		///     Multiple pipelines that are executed on a certain condition / event.
 		/// </summary>
 		protected readonly List<IDataPipelineOrBuilder> InternalPipelines;
 
 		/// <summary>
 		///     This reset event will wait until stop has been called — so join works by waiting for a stop from another thread.
 		/// </summary>
-		protected ManualResetEvent ManualJoinReset;
+		protected ManualResetEventSlim ManualJoinReset;
 
 		/// <summary>
 		///     The default constructor.
@@ -81,7 +83,6 @@ namespace TicTacTubeCore.Schedulers
 			return pipelineOrBuilder;
 		}
 
-
 		/// <inheritdoc />
 		public virtual void Start()
 		{
@@ -89,7 +90,7 @@ namespace TicTacTubeCore.Schedulers
 			IsRunning = true;
 			ExecuteEvent(SchedulerLifeCycleEventType.Start);
 			ManualJoinReset?.Dispose();
-			ManualJoinReset = new ManualResetEvent(false);
+			ManualJoinReset = new ManualResetEventSlim(false);
 		}
 
 		/// <inheritdoc />
@@ -104,7 +105,7 @@ namespace TicTacTubeCore.Schedulers
 		/// <inheritdoc />
 		public virtual void Join()
 		{
-			ManualJoinReset.WaitOne();
+			ManualJoinReset.Wait();
 		}
 	}
 }

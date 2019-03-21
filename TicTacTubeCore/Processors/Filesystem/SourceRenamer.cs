@@ -5,6 +5,7 @@ using TicTacTubeCore.Sources.Files;
 
 namespace TicTacTubeCore.Processors.Filesystem
 {
+	/// <inheritdoc />
 	/// <summary>
 	///     A data processor that can rename a given file.
 	/// </summary>
@@ -21,6 +22,7 @@ namespace TicTacTubeCore.Processors.Filesystem
 		/// </summary>
 		public Func<IFileSource, string> NameProducer { get; protected set; }
 
+		/// <inheritdoc />
 		/// <summary>
 		///     Create a new source renamer, that renames files with a given renamer.
 		/// </summary>
@@ -47,15 +49,15 @@ namespace TicTacTubeCore.Processors.Filesystem
 		}
 
 		/// <inheritdoc />
-		public override IFileSource Execute(IFileSource fileSoure)
+		public override IFileSource Execute(IFileSource fileSource)
 		{
-			string newFileName = NameProducer(fileSoure);
+			string newFileName = NameProducer(fileSource);
 			string newFolder = Path.GetDirectoryName(newFileName);
-			string fullPath = Path.Combine(fileSoure.FileInfo.DirectoryName, newFileName);
+			string fullPath = Path.Combine(fileSource.FileInfo.DirectoryName ?? "", newFileName);
 
 			if (!string.IsNullOrEmpty(newFolder))
 			{
-				string newFolderFullPath = Path.Combine(Path.Combine(fileSoure.FileInfo.DirectoryName), newFolder);
+				string newFolderFullPath = Path.Combine(Path.Combine(fileSource.FileInfo.DirectoryName), newFolder);
 
 				if (!Directory.Exists(newFolderFullPath))
 					Directory.CreateDirectory(newFolderFullPath);
@@ -64,7 +66,7 @@ namespace TicTacTubeCore.Processors.Filesystem
 			if (Override && File.Exists(fullPath))
 				File.Delete(fullPath);
 
-			fileSoure.FileInfo.MoveTo(fullPath);
+			fileSource.FileInfo.MoveTo(fullPath);
 
 			return new FileSource(fullPath);
 		}

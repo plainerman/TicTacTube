@@ -11,7 +11,7 @@ namespace TicTacTubeCore.Processors.Definitions
 		public IDataProcessor Build() => this;
 
 		/// <inheritdoc />
-		public abstract IFileSource Execute(IFileSource fileSoure);
+		public abstract IFileSource Execute(IFileSource fileSource);
 
 		/// <summary>
 		///     Check whether the object is a builder or not. (Hint: it is never a builder).

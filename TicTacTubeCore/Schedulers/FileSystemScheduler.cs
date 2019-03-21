@@ -1,9 +1,11 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
 using TicTacTubeCore.Sources.Files;
 
 namespace TicTacTubeCore.Schedulers
 {
+	/// <inheritdoc cref="BaseScheduler" />
 	/// <summary>
 	///     A scheduler that can watch a directory and trigger when something has changed.
 	///     It has to be disposed.
@@ -20,10 +22,11 @@ namespace TicTacTubeCore.Schedulers
 		/// </summary>
 		public FileSystemWatcher Watcher { get; }
 
+		/// <inheritdoc />
 		/// <summary>
 		///     Create a new scheduler that watches a given <paramref name="path" />, filters files (<paramref name="filter" /> see
-		///     <see cref="FileSystemWatcher.Filter" />),
-		///     and the <paramref name="filters" /> that specify when to trigger (see <see cref="FileSystemWatcher.NotifyFilter" />
+		///     <see cref="P:System.IO.FileSystemWatcher.Filter" />),
+		///     and the <paramref name="filters" /> that specify when to trigger (see <see cref="P:System.IO.FileSystemWatcher.NotifyFilter" />
 		///     ).
 		/// </summary>
 		/// <param name="path">The path that will be watched.</param>
@@ -35,8 +38,8 @@ namespace TicTacTubeCore.Schedulers
 		{
 			Path = path;
 			Watcher = new FileSystemWatcher(path, filter) { NotifyFilter = filters };
-			Watcher.Changed += OnChanged;
 			Watcher.Created += OnChanged;
+			Watcher.Changed += OnChanged;
 			Watcher.Renamed += OnChanged;
 		}
 
@@ -47,12 +50,12 @@ namespace TicTacTubeCore.Schedulers
 		}
 
 		/// <summary>
-		///     The method that will be excecuted once a file changes.
+		///     The method that will be executed once a file changes.
 		/// </summary>
 		/// <param name="source">The source of the event.</param>
 		/// <param name="e">The args for the triggered event.</param>
 		protected virtual void OnChanged(object source, FileSystemEventArgs e)
-		{
+		{ 
 			Execute(new FileSource(e.FullPath));
 		}
 

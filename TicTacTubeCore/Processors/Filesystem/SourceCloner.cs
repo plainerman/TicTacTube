@@ -39,17 +39,17 @@ namespace TicTacTubeCore.Processors.Filesystem
 		}
 
 		/// <inheritdoc />
-		public override IFileSource Execute(IFileSource fileSoure)
+		public override IFileSource Execute(IFileSource fileSource)
 		{
-			string dest = _keepName ? Path.Combine(_destinationPath, fileSoure.FileInfo.Name) : _destinationPath;
+			string dest = _keepName ? Path.Combine(_destinationPath, fileSource.FileInfo.Name) : _destinationPath;
 
 			string directory = Path.GetDirectoryName(dest);
 			if (!Directory.Exists(directory))
 				Directory.CreateDirectory(directory);
 
-			fileSoure.FileInfo.CopyTo(dest);
+			fileSource.FileInfo.CopyTo(dest);
 
-			return _workOnClone ? new FileSource(dest) : fileSoure;
+			return _workOnClone ? new FileSource(dest) : fileSource;
 		}
 	}
 }

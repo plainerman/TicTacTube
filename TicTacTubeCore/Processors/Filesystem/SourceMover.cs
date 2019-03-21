@@ -51,9 +51,9 @@ namespace TicTacTubeCore.Processors.Filesystem
 		}
 
 		/// <inheritdoc />
-		public override IFileSource Execute(IFileSource fileSoure)
+		public override IFileSource Execute(IFileSource fileSource)
 		{
-			string dest = KeepName ? Path.Combine(DestinationPath, fileSoure.FileInfo.Name) : DestinationPath;
+			string dest = KeepName ? Path.Combine(DestinationPath, fileSource.FileInfo.Name) : DestinationPath;
 
 			string directory = Path.GetDirectoryName(dest);
 			if (!Directory.Exists(directory))
@@ -62,7 +62,7 @@ namespace TicTacTubeCore.Processors.Filesystem
 			if (Override && File.Exists(dest))
 				File.Delete(dest);
 
-			fileSoure.FileInfo.MoveTo(dest);
+			fileSource.FileInfo.MoveTo(dest);
 
 			return new FileSource(dest);
 		}

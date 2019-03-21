@@ -32,9 +32,9 @@ namespace TicTacTubeCore.Processors.Logical
 		}
 
 		/// <inheritdoc />
-		public override IFileSource Execute(IFileSource fileSoure)
+		public override IFileSource Execute(IFileSource fileSource)
 		{
-			return Processors.Aggregate(fileSoure,
+			return Processors.Aggregate(fileSource,
 				(current, dataProcessorOrBuilder) => dataProcessorOrBuilder.Build().Execute(current));
 		}
 	}

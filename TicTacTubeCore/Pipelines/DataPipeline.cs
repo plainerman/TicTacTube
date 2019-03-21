@@ -7,6 +7,7 @@ using TicTacTubeCore.Sources.Files;
 
 namespace TicTacTubeCore.Pipelines
 {
+	/// <inheritdoc />
 	/// <summary>
 	///     A pipeline that stores multiple processors that process / modify / ... some sort of data.
 	/// </summary>
@@ -47,7 +48,7 @@ namespace TicTacTubeCore.Pipelines
 		/// <inheritdoc />
 		public void Execute(IFileSource fileSource)
 		{
-			Log.Info($"Executing pipeline with filesource {fileSource.GetType().Name}");
+			Log.Info($"Executing pipeline with fileSource {fileSource.GetType().Name}");
 			IFileSource prev = null;
 			DataProcessors.Aggregate(fileSource, (current, processor) =>
 			{

@@ -50,21 +50,21 @@ namespace TicTacTubeCore.Processors.Logical
 		}
 
 		/// <inheritdoc />
-		public override IFileSource Execute(IFileSource fileSoure)
+		public override IFileSource Execute(IFileSource fileSource)
 		{
-			bool eval = _condition(fileSoure);
+			bool eval = _condition(fileSource);
 			if (eval)
 			{
 				if (_dataProcessorA != null)
-					return _dataProcessorA.Build().Execute(fileSoure);
+					return _dataProcessorA.Build().Execute(fileSource);
 			}
 			else
 			{
 				if (_dataProcessorB != null)
-					return _dataProcessorB.Build().Execute(fileSoure);
+					return _dataProcessorB.Build().Execute(fileSource);
 			}
 
-			return fileSoure;
+			return fileSource;
 		}
 	}
 }
