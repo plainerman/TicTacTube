@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TicTacTubeCore.Schedulers;
 using TicTacTubeCore.Schedulers.Events;
 using TicTacTubeCore.Sources.Files;
+using TicTacTubeTest.Sources.Files;
 
 namespace TicTacTubeTest.Schedulers
 {
@@ -19,9 +21,9 @@ namespace TicTacTubeTest.Schedulers
 
 			eventFiringScheduler.Start();
 
-			eventFiringScheduler.Fire(new FileSource("test"));
-			eventFiringScheduler.Fire(new FileSource("test"));
-			eventFiringScheduler.Fire(null, EventArgs.Empty,new FileSource("test2"));
+			eventFiringScheduler.Fire(new MockFileSource());
+			eventFiringScheduler.Fire(new MockFileSource());
+			eventFiringScheduler.Fire(null, EventArgs.Empty, new MockFileSource());
 
 			eventFiringScheduler.Stop();
 			eventFiringScheduler.Join();

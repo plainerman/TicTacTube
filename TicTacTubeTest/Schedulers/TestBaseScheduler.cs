@@ -5,6 +5,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TagLib.Riff;
 using TicTacTubeCore.Schedulers.Events;
 using TicTacTubeCore.Sources.Files;
+using TicTacTubeTest.Sources.Files;
 
 namespace TicTacTubeTest.Schedulers
 {
@@ -21,8 +22,8 @@ namespace TicTacTubeTest.Schedulers
 
 			scheduler.Start();
 
-			scheduler.Execute(new FileSource("temp.txt"));
-			scheduler.Execute(new FileSource("temp2.txt"));
+			scheduler.Execute(new MockFileSource());
+			scheduler.Execute(new MockFileSource());
 
 			scheduler.Stop();
 			scheduler.Join();
