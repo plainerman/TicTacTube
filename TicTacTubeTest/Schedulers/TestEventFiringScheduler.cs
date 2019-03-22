@@ -2,14 +2,13 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TicTacTubeCore.Schedulers;
 using TicTacTubeCore.Schedulers.Events;
+using TicTacTubeCore.Sources.Files;
 
 namespace TicTacTubeTest.Schedulers
 {
 	[TestClass]
 	public class TestEventFiringScheduler
 	{
-		private event EventHandler TestEvent;
-
 		[TestMethod]
 		public void TestExecute()
 		{
@@ -20,31 +19,19 @@ namespace TicTacTubeTest.Schedulers
 
 			eventFiringScheduler.Start();
 
-			TestEvent += EmptyFire;
-
-			Assert.AreEqual(0, executeCounter);
-
-			TestEvent?.Invoke(this, EventArgs.Empty);
-			Assert.AreEqual(1, executeCounter);
-
-			TestEvent?.Invoke(this, EventArgs.Empty);
-			Assert.AreEqual(2, executeCounter);
+			eventFiringScheduler.Fire(new FileSource("test"));
+			eventFiringScheduler.Fire(new FileSource("test"));
+			eventFiringScheduler.Fire(null, EventArgs.Empty,new FileSource("test2"));
 
 			eventFiringScheduler.Stop();
+			eventFiringScheduler.Join();
 
-			Assert.AreEqual(2, executeCounter);
-
-			TestEvent -= EmptyFire;
+			Assert.AreEqual(3, executeCounter);
 
 			void Executed(object sender, SchedulerLifeCycleEventArgs args)
 			{
-				if (args.EventType == SchedulerLifeCycleEventType.Execute)
+				if (args.EventType == SchedulerLifeCycleEventType.SourceReady)
 					executeCounter++;
-			}
-
-			void EmptyFire(object sender, EventArgs args)
-			{
-				eventFiringScheduler.Fire(sender, args, null);
 			}
 		}
 	}

@@ -16,6 +16,8 @@ namespace TicTacTubeTest.Processors.Filesystem
 
 			scheduler.Builder.Append(new SourceCloner(newFilePath, false));
 
+			scheduler.Start();
+
 			TestBasicClone(source, newFilePath, scheduler, newFolderPath);
 
 			AppendDeleteAndExecute(scheduler, source);
@@ -29,6 +31,8 @@ namespace TicTacTubeTest.Processors.Filesystem
 			var scheduler = InitVars(out var source, out string newFolderPath, out string newFilePath);
 
 			scheduler.Builder.Append(new SourceCloner(newFilePath, true));
+
+			scheduler.Start();
 
 			TestBasicClone(source, newFilePath, scheduler, newFolderPath);
 
@@ -45,6 +49,8 @@ namespace TicTacTubeTest.Processors.Filesystem
 
 			scheduler.Builder.Append(new SourceCloner(newFolderPath, false, true));
 
+			scheduler.Start();
+
 			TestBasicClone(source, newFilePath, scheduler, newFolderPath);
 
 			AppendDeleteAndExecute(scheduler, source);
@@ -60,6 +66,8 @@ namespace TicTacTubeTest.Processors.Filesystem
 
 			scheduler.Builder.Append(new SourceCloner(newFolderPath, true, true));
 
+			scheduler.Start();
+
 			TestBasicClone(source, newFilePath, scheduler, newFolderPath);
 
 			AppendDeleteAndExecute(scheduler, source);
@@ -72,7 +80,7 @@ namespace TicTacTubeTest.Processors.Filesystem
 		private static void AppendDeleteAndExecute(SimpleTestScheduler scheduler, IFileSource source)
 		{
 			scheduler.Builder.Append(new SourceDeleter());
-			scheduler.Execute(source);
+			scheduler.ExecuteBlocking(source);
 		}
 
 		#endregion TestUtils
@@ -101,7 +109,7 @@ namespace TicTacTubeTest.Processors.Filesystem
 			Assert.AreEqual(true, File.Exists(source.FileInfo.FullName));
 			Assert.AreEqual(false, File.Exists(newFilePath));
 
-			scheduler.Execute(source);
+			scheduler.ExecuteBlocking(source);
 
 			Assert.AreEqual(true, File.Exists(source.FileInfo.FullName));
 			Assert.AreEqual(true, File.Exists(newFilePath));

@@ -15,10 +15,11 @@ namespace TicTacTubeTest.Processors.Filesystem
 			var source = new TempFileSource();
 
 			scheduler.Builder.Append(new SourceDeleter());
+			scheduler.Start();
 
 			Assert.AreEqual(true, File.Exists(source.FileInfo.FullName));
 
-			scheduler.Execute(source);
+			scheduler.ExecuteBlocking(source);
 
 			Assert.AreEqual(false, File.Exists(source.FileInfo.FullName));
 		}

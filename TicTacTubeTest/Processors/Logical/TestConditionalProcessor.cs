@@ -1,5 +1,6 @@
 using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using TicTacTubeCore.Executors.Events;
 using TicTacTubeCore.Processors.Logical;
 using TicTacTubeCore.Schedulers.Events;
 using TicTacTubeCore.Sources.Files;
@@ -40,19 +41,22 @@ namespace TicTacTubeTest.Processors.Logical
 			var scheduler = new SimpleTestScheduler();
 			int execCount = 0;
 
-			scheduler.Scheduler.LifeCycleEvent += Executed;
+			scheduler.Scheduler.Executor.LifeCycleEvent += Executed;
 
 			scheduler.Builder.Append(useSourceB
 				? new ConditionalProcessor(evalFunc, null, new MockDataProcessor())
 				: new ConditionalProcessor(evalFunc, new MockDataProcessor(), null));
 
-			scheduler.Execute(new MockFileSource());
+			scheduler.Start();
+
+			scheduler.ExecuteBlocking(new MockFileSource());
 
 			Assert.AreEqual(1, execCount);
 
-			void Executed(object sender, SchedulerLifeCycleEventArgs schedulerLifeCycleEventArgs)
+			void Executed(object sender, ExecutorLifeCycleEventArgs args)
 			{
-				execCount++;
+				if (args.EventType == ExecutorLifeCycleEventType.SourceExecutionFinished)
+					execCount++;
 			}
 		}
 	}

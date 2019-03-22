@@ -1,5 +1,10 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using TagLib.Riff;
 using TicTacTubeCore.Schedulers.Events;
+using TicTacTubeCore.Sources.Files;
 
 namespace TicTacTubeTest.Schedulers
 {
@@ -10,28 +15,22 @@ namespace TicTacTubeTest.Schedulers
 		public void TestLifeCycleEvents()
 		{
 			var scheduler = new BaseSchedulerImpl();
-			bool desiredRunning = true;
-			var desiredType = SchedulerLifeCycleEventType.Start;
+			var events = new List<SchedulerLifeCycleEventArgs>();
 
-			scheduler.LifeCycleEvent += (o, a) => TestArgs(a);
+			scheduler.LifeCycleEvent += (o, a) => events.Add(a);
 
 			scheduler.Start();
 
-			desiredType = SchedulerLifeCycleEventType.Execute;
-
-			scheduler.Execute(null);
-			scheduler.Execute(null);
-
-			desiredType = SchedulerLifeCycleEventType.Stop;
-			desiredRunning = false;
+			scheduler.Execute(new FileSource("temp.txt"));
+			scheduler.Execute(new FileSource("temp2.txt"));
 
 			scheduler.Stop();
+			scheduler.Join();
 
-			void TestArgs(SchedulerLifeCycleEventArgs args)
-			{
-				Assert.AreEqual(desiredRunning, args.IsRunning);
-				Assert.AreEqual(desiredType, args.EventType);
-			}
+			Assert.AreEqual(4, events.Count, "Not all events have been stored");
+			Assert.AreEqual(1, events.Count(e => e.EventType == SchedulerLifeCycleEventType.Start), "The number of start events has to be 1.");
+			Assert.AreEqual(1, events.Count(e => e.EventType == SchedulerLifeCycleEventType.Stop), "The number of stop events has to be 1.");
+			Assert.AreEqual(2, events.Count(e => e.EventType == SchedulerLifeCycleEventType.SourceReady), "The number of source ready events has to be 2.");
 		}
 	}
 }

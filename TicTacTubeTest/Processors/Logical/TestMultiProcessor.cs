@@ -24,12 +24,13 @@ namespace TicTacTubeTest.Processors.Logical
 			CheckExecutionCount(0, processors);
 
 			scheduler.Builder.Append(new MultiProcessor(processors));
+			scheduler.Start();
 
-			scheduler.Execute(new MockFileSource());
+			scheduler.ExecuteBlocking(new MockFileSource());
 
 			CheckExecutionCount(1, processors);
 
-			scheduler.Execute(new MockFileSource());
+			scheduler.ExecuteBlocking(new MockFileSource());
 
 			CheckExecutionCount(2, processors);
 		}
