@@ -12,8 +12,8 @@ namespace TicTacTubeCore.Processors.Definitions
 		///     somehow changes, return a new source - otherwise, the same source can
 		///     be returned.
 		/// </summary>
-		/// <param name="fileSoure">The file source that will be processed.</param>
+		/// <param name="fileSource">The file source that will be processed.</param>
 		/// <returns>The file source which will be used for the next pipeline step. May be a new one or the same reference.</returns>
-		IFileSource Execute(IFileSource fileSoure);
+		IFileSource Execute(IFileSource fileSource);
 	}
 }

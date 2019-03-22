@@ -24,6 +24,6 @@ namespace TicTacTubeCore.Processors.Logical
 		}
 
 		/// <inheritdoc />
-		public override IFileSource Execute(IFileSource fileSoure) => Processor(fileSoure);
+		public override IFileSource Execute(IFileSource fileSource) => Processor(fileSource);
 	}
 }

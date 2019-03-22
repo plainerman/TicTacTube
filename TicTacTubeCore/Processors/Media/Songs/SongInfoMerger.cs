@@ -3,8 +3,9 @@ using System.Text.RegularExpressions;
 
 namespace TicTacTubeCore.Processors.Media.Songs
 {
+	/// <inheritdoc />
 	/// <summary>
-	///     An <see cref="IMediaInfoMerger{T}" /> that merges two <see cref="SongInfo" />s based on their aritst and title
+	///     An <see cref="T:TicTacTubeCore.Processors.Media.IMediaInfoMerger`1" /> that merges two <see cref="T:TicTacTubeCore.Processors.Media.Songs.SongInfo" />s based on their artists and title
 	///     similarity.
 	/// </summary>
 	public class SongInfoMerger : BaseMediaInfoMerger<SongInfo>
@@ -27,12 +28,9 @@ namespace TicTacTubeCore.Processors.Media.Songs
 				CalculateTrustScore(info1, info2, out artistTrust, out titleTrust, out combinedTrust);
 			}
 
-			// we require a higher title trust score
-			if (titleTrust > TrustThreshold)
-			{
-				info1.Title = MergeData(info1.Title, info2.Title, trusted, greedy);
-				info1.Album = MergeData(info1.Album, info2.Album, trusted, greedy);
-			}
+			// depending on the general trust threshold and the title trust, the data will be merged.
+			info1.Title = MergeData(info1.Title, info2.Title, trusted && titleTrust > TrustThreshold, greedy);
+			info1.Album = MergeData(info1.Album, info2.Album, trusted && titleTrust > TrustThreshold, greedy);
 
 			info1.AlbumArtists = MergeDataArray(info1.AlbumArtists, info2.AlbumArtists, trusted, greedy);
 
@@ -73,7 +71,7 @@ namespace TicTacTubeCore.Processors.Media.Songs
 		/// <param name="info2">The second info.</param>
 		/// <param name="artistTrust">The match score for the artists.</param>
 		/// <param name="titleTrust">The match score for the titles.</param>
-		/// <param name="combinedTrust">The match score for a concatination of artists and title.</param>
+		/// <param name="combinedTrust">The match score for a concatenation of artists and title.</param>
 		protected virtual void CalculateTrustScore(SongInfo info1, SongInfo info2, out float artistTrust,
 			out float titleTrust, out float combinedTrust)
 		{
@@ -93,27 +91,27 @@ namespace TicTacTubeCore.Processors.Media.Songs
 		///     <list type="number">
 		///         <item>
 		///             <description>
-		///                 All space seperated items will be tokenized. Then they will be compared how many of these
+		///                 All space separated items will be tokenized. Then they will be compared how many of these
 		///                 completely match.
 		///             </description>
 		///         </item>
 		///         <item>
 		///             <description>
 		///                 The length of the matched and unmatched tokens will be compared (i.e. the actual character
-		///                 length not the token count as in 1.). So longer tokens will be punished more severly.
+		///                 length not the token count as in 1.). So longer tokens will be punished more severely.
 		///             </description>
 		///         </item>
 		///     </list>
 		/// </summary>
 		/// <param name="strA">The first string.</param>
 		/// <param name="strB">The second string.</param>
-		/// <param name="caseSensitve">Whether the comparison should be case sensitve or not.</param>
+		/// <param name="caseSensitive">Whether the comparison should be case sensitive or not.</param>
 		/// <returns>A value between [0;1] is returned — one is an absolute match and 0 no match.</returns>
-		protected virtual float TestMatch(string strA, string strB, bool caseSensitve = false)
+		protected virtual float TestMatch(string strA, string strB, bool caseSensitive = false)
 		{
 			if (string.IsNullOrWhiteSpace(strA) || string.IsNullOrWhiteSpace(strB)) return 0;
 
-			if (!caseSensitve)
+			if (!caseSensitive)
 			{
 				strA = strA.ToLower();
 				strB = strB.ToLower();

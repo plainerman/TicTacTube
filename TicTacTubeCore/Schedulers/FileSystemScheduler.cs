@@ -22,6 +22,19 @@ namespace TicTacTubeCore.Schedulers
 		/// </summary>
 		public FileSystemWatcher Watcher { get; }
 
+		/// <summary>
+		/// Whether the scheduler should wait for the file to be readable.
+		/// Is highly recommended, since the event is triggered once the file is created but if it is (e.g.) still copying,
+		/// it will create issues when opening the files.
+		/// </summary>
+		public bool WaitForRead { get; set; } = true;
+
+		/// <summary>
+		/// Whether the scheduler should wait for the file to be writable.
+		/// Use this option with caution: if the user does not have enough permission it will prevent stopping the scheduler.
+		/// </summary>
+		public bool WaitForWrite { get; set; } = false;
+
 		/// <inheritdoc />
 		/// <summary>
 		///     Create a new scheduler that watches a given <paramref name="path" />, filters files (<paramref name="filter" /> see
@@ -39,8 +52,8 @@ namespace TicTacTubeCore.Schedulers
 		{
 			Path = path;
 			Watcher = new FileSystemWatcher(path, filter) { NotifyFilter = filters };
-			Watcher.Changed += OnChanged;
 			Watcher.Created += OnChanged;
+			Watcher.Changed += OnChanged;
 			Watcher.Renamed += OnChanged;
 		}
 
@@ -77,9 +90,10 @@ namespace TicTacTubeCore.Schedulers
 		{
 			Execute(new FileSource(e.FullPath), f =>
 			{
+				if (!WaitForRead && !WaitForWrite) return true;
 				try
 				{
-					using (new FileStream(f.FileInfo.FullName, FileMode.Open))
+					using (new FileStream(f.FileInfo.FullName, WaitForWrite ? FileMode.Append : FileMode.Open))
 					{
 						return true;
 					}

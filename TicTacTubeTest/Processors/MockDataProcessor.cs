@@ -7,10 +7,10 @@ namespace TicTacTubeTest.Processors
 	{
 		public int ExecutionCount { get; protected set; }
 
-		public override IFileSource Execute(IFileSource fileSoure)
+		public override IFileSource Execute(IFileSource fileSource)
 		{
 			ExecutionCount++;
-			return fileSoure;
+			return fileSource;
 		}
 
 		public void ResetExecutionCount() => ExecutionCount = 0;

@@ -108,6 +108,8 @@ namespace TicTacTubeCore.Schedulers
 		///  <param name="waitCondition">A predicate determining when a given <paramref name="fileSource"/> is ready.</param>
 		protected virtual void Execute(IFileSource fileSource, Predicate<IFileSource> waitCondition)
 		{
+			// TODO: idea: if waitConditon throws an exception, discard it
+
 			if (!IsRunning) return;
 			QueuedSources.TryAdd(fileSource, waitCondition);
 			_sourceRequestedUpdate.Set();

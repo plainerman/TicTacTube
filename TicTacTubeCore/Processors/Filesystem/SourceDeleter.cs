@@ -12,11 +12,11 @@ namespace TicTacTubeCore.Processors.Filesystem
 		/// <summary>
 		///     Delete the passed file source.
 		/// </summary>
-		/// <param name="fileSoure">The file source that will be deleted.</param>
+		/// <param name="fileSource">The file source that will be deleted.</param>
 		/// <returns>This method always returns <c>null</c>.</returns>
-		public override IFileSource Execute(IFileSource fileSoure)
+		public override IFileSource Execute(IFileSource fileSource)
 		{
-			File.Delete(fileSoure.FileInfo.FullName);
+			File.Delete(fileSource.FileInfo.FullName);
 
 			return null;
 		}
