@@ -23,6 +23,21 @@ namespace TicTacTubeCore.Processors.Logical
 			Processor = processor ?? throw new ArgumentNullException(nameof(processor));
 		}
 
+		/// <summary>
+		///     Create a new lambda processor with a single action that completely defines the processor.
+		///		The source is not modified.
+		/// </summary>
+		/// <param name="processor">The processor that processes the <see cref="IFileSource" />.</param>
+		public LambdaProcessor(Action<IFileSource> processor)
+		{
+			if (processor == null) throw new ArgumentNullException(nameof(processor));
+			Processor = source =>
+			{
+				processor(source);
+				return source;
+			};
+		}
+
 		/// <inheritdoc />
 		public override IFileSource Execute(IFileSource fileSource) => Processor(fileSource);
 	}
