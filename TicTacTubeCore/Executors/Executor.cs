@@ -23,6 +23,11 @@ namespace TicTacTubeCore.Executors
 		protected readonly IProducerConsumerCollection<IFileSource> PendingFileSources;
 
 		/// <summary>
+		/// A semaphore counting the queued elements (0 means no queued elements).
+		/// </summary>
+		private readonly SemaphoreSlim _queuedSemaphore;
+
+		/// <summary>
 		/// This boolean determines whether the executor has already been initialized or not.
 		/// Per default, once set to <code>true</code> it will never become false.
 		/// </summary>
@@ -58,6 +63,7 @@ namespace TicTacTubeCore.Executors
 
 			PendingFileSources = new ConcurrentBag<IFileSource>();
 			Executors = new Thread[threadCount];
+			_queuedSemaphore = new SemaphoreSlim(0);
 		}
 
 		/// <inheritdoc />
@@ -96,20 +102,22 @@ namespace TicTacTubeCore.Executors
 		{
 			while (IsRunning || PendingFileSources.Count > 0)
 			{
-				//TODO: this method is spinning (i.e. active waiting)
-				if (PendingFileSources.TryTake(out var source))
+				Console.WriteLine("Loop start");
+				_queuedSemaphore.Wait();
+				// when forcing the thread to stop, we release the semaphore without 
+				// actually adding an element, causing it to continue and break the loop
+				if (!PendingFileSources.TryTake(out var source)) continue;
+
+				LifeCycleEvent?.Invoke(this,
+					new ExecutorLifeCycleEventArgs(ExecutorLifeCycleEventType.SourceExecutionStart, source));
+
+				foreach (var p in Pipeline)
 				{
-					LifeCycleEvent?.Invoke(this,
-						new ExecutorLifeCycleEventArgs(ExecutorLifeCycleEventType.SourceExecutionStart, source));
-
-					foreach (var p in Pipeline)
-					{
-						p.Build().Execute(source);
-					}
-
-					LifeCycleEvent?.Invoke(this,
-						new ExecutorLifeCycleEventArgs(ExecutorLifeCycleEventType.SourceExecutionFinished, source));
+					p.Build().Execute(source);
 				}
+
+				LifeCycleEvent?.Invoke(this,
+					new ExecutorLifeCycleEventArgs(ExecutorLifeCycleEventType.SourceExecutionFinished, source));
 			}
 		}
 
@@ -118,9 +126,13 @@ namespace TicTacTubeCore.Executors
 		/// <inheritdoc />
 		public bool Add(IFileSource fileSource)
 		{
-			if (!IsRunning) return false;
+			lock (this) // could collide with stop
+			{
+				if (!IsRunning) return false;
 
-			if (!PendingFileSources.TryAdd(fileSource)) return false;
+				if (!PendingFileSources.TryAdd(fileSource)) return false;
+				_queuedSemaphore.Release();
+			}
 
 			LifeCycleEvent?.Invoke(this,
 				new ExecutorLifeCycleEventArgs(ExecutorLifeCycleEventType.SourceAdded, fileSource));
@@ -136,6 +148,11 @@ namespace TicTacTubeCore.Executors
 				if (_fullyStopped) return;
 
 				IsRunning = false;
+
+				// see PipelineExecution_Thread, basically we release for every thread
+				// so every thread is able to stop
+				// when stopping, every thread consumes exactly one semaphore
+				_queuedSemaphore.Release(Executors.Length);
 
 				foreach (var executor in Executors)
 				{
