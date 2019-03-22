@@ -54,15 +54,15 @@ namespace TicTacTubeCore.Pipelines
 			{
 				if (current != prev)
 				{
-					current.Init();
+					current?.Init();
 					prev = current;
 				}
 
-				current.BeginExecute();
+				current?.BeginExecute();
 
 				var newSource = processor.Execute(current);
 
-				current.EndExecute();
+				current?.EndExecute();
 
 				return newSource;
 			});
