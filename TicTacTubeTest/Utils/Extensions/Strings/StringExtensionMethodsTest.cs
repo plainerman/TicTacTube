@@ -6,7 +6,7 @@ using TicTacTubeCore.Utils.Extensions.Strings;
 namespace TicTacTubeTest.Utils.Extensions.Strings
 {
 	[TestClass]
-	public class TestStringExtensionMethods
+	public class StringExtensionMethodsTest
 	{
 		[DataTestMethod]
 		[DataRow(@"Game over", @"e", @"3", 0, @"Gam3 over")]

@@ -203,9 +203,9 @@ namespace TicTacTubeCore.Schedulers
 			{
 				if (!IsRunning) return;
 
-				ExecuteStop();
-
 				IsRunning = false;
+
+				ExecuteStop();
 
 				ExecuteEvent(SchedulerLifeCycleEventType.Stop);
 

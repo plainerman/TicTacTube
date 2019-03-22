@@ -43,6 +43,11 @@ namespace TicTacTubeCore.Executors
 		protected readonly Thread[] Executors;
 
 		/// <summary>
+		/// Whether this executor has already been stopped or not.
+		/// </summary>
+		private bool _fullyStopped;
+
+		/// <summary>
 		/// Create a new executor with a given number of threads.
 		/// </summary>
 		/// <param name="threadCount">The number of threads that will process in parallel.
@@ -91,6 +96,7 @@ namespace TicTacTubeCore.Executors
 		{
 			while (IsRunning || PendingFileSources.Count > 0)
 			{
+				//TODO: this method is spinning (i.e. active waiting)
 				if (PendingFileSources.TryTake(out var source))
 				{
 					LifeCycleEvent?.Invoke(this,
@@ -112,6 +118,8 @@ namespace TicTacTubeCore.Executors
 		/// <inheritdoc />
 		public bool Add(IFileSource fileSource)
 		{
+			if (!IsRunning) return false;
+
 			if (!PendingFileSources.TryAdd(fileSource)) return false;
 
 			LifeCycleEvent?.Invoke(this,
@@ -125,13 +133,16 @@ namespace TicTacTubeCore.Executors
 		{
 			lock (this)
 			{
-				if (!IsRunning) return;
+				if (_fullyStopped) return;
 
 				IsRunning = false;
+
 				foreach (var executor in Executors)
 				{
 					executor.Join();
 				}
+
+				_fullyStopped = true;
 			}
 
 			LifeCycleEvent?.Invoke(this, new ExecutorLifeCycleEventArgs(ExecutorLifeCycleEventType.Stop));

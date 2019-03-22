@@ -4,7 +4,7 @@ using TicTacTubeCore.Utils.Extensions.Strings;
 namespace TicTacTubeTest.Utils.Extensions.Strings
 {
 	[TestClass]
-	public class TestRegexUtils
+	public class RegexUtilsTest
 	{
 		private const string BasicTest = "This is-a,simple-test";
 

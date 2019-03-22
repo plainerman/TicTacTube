@@ -4,7 +4,7 @@ using TicTacTubeCore.Utils;
 namespace TicTacTubeTest.Utils
 {
 	[TestClass]
-	public class TestArrayUtils
+	public class ArrayUtilsTest
 	{
 		[DataTestMethod]
 		[DataRow("hallo", 3)]
