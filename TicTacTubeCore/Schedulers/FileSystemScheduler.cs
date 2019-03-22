@@ -1,9 +1,11 @@
 ﻿using System;
 using System.IO;
+using TicTacTubeCore.Executors;
 using TicTacTubeCore.Sources.Files;
 
 namespace TicTacTubeCore.Schedulers
 {
+	/// <inheritdoc cref="BaseScheduler" />
 	/// <summary>
 	///     A scheduler that can watch a directory and trigger when something has changed.
 	///     It has to be disposed.
@@ -20,18 +22,20 @@ namespace TicTacTubeCore.Schedulers
 		/// </summary>
 		public FileSystemWatcher Watcher { get; }
 
+		/// <inheritdoc />
 		/// <summary>
 		///     Create a new scheduler that watches a given <paramref name="path" />, filters files (<paramref name="filter" /> see
-		///     <see cref="FileSystemWatcher.Filter" />),
-		///     and the <paramref name="filters" /> that specify when to trigger (see <see cref="FileSystemWatcher.NotifyFilter" />
+		///     <see cref="P:System.IO.FileSystemWatcher.Filter" />),
+		///     and the <paramref name="filters" /> that specify when to trigger (see <see cref="P:System.IO.FileSystemWatcher.NotifyFilter" />
 		///     ).
 		/// </summary>
+		/// <param name="executor">The executor that will be used when executing the pipeline.</param>
 		/// <param name="path">The path that will be watched.</param>
 		/// <param name="filters">The filters that decide when to trigger.</param>
 		/// <param name="filter">A filter that is applied to file names.</param>
-		public FileSystemScheduler(string path,
+		public FileSystemScheduler(IExecutor executor, string path,
 			NotifyFilters filters = NotifyFilters.LastAccess | NotifyFilters.LastWrite | NotifyFilters.FileName |
-			                        NotifyFilters.DirectoryName, string filter = "*.*")
+			                        NotifyFilters.DirectoryName, string filter = "*.*") : base(executor)
 		{
 			Path = path;
 			Watcher = new FileSystemWatcher(path, filter) { NotifyFilter = filters };
@@ -41,19 +45,50 @@ namespace TicTacTubeCore.Schedulers
 		}
 
 		/// <inheritdoc />
+		/// <summary>
+		///     Create a new scheduler that watches a given <paramref name="path" />, filters files (<paramref name="filter" /> see
+		///     <see cref="P:System.IO.FileSystemWatcher.Filter" />),
+		///     and the <paramref name="filters" /> that specify when to trigger (see <see cref="P:System.IO.FileSystemWatcher.NotifyFilter" />
+		///     ). The default executor specified in <see cref="BaseScheduler"/> will be used.
+		/// </summary>
+		/// <param name="path">The path that will be watched.</param>
+		/// <param name="filters">The filters that decide when to trigger.</param>
+		/// <param name="filter">A filter that is applied to file names.</param>
+		public FileSystemScheduler(string path,
+			NotifyFilters filters = NotifyFilters.LastAccess | NotifyFilters.LastWrite | NotifyFilters.FileName |
+			                        NotifyFilters.DirectoryName, string filter = "*.*") :
+			this(null, path, filters, filter)
+		{
+		}
+
+
+		/// <inheritdoc />
 		protected override void ExecuteStart()
 		{
 			Watcher.EnableRaisingEvents = true;
 		}
 
 		/// <summary>
-		///     The method that will be excecuted once a file changes.
+		///     The method that will be executed once a file changes.
 		/// </summary>
 		/// <param name="source">The source of the event.</param>
 		/// <param name="e">The args for the triggered event.</param>
 		protected virtual void OnChanged(object source, FileSystemEventArgs e)
 		{
-			Execute(new FileSource(e.FullPath));
+			Execute(new FileSource(e.FullPath), f =>
+			{
+				try
+				{
+					using (new FileStream(f.FileInfo.FullName, FileMode.Open))
+					{
+						return true;
+					}
+				}
+				catch
+				{
+					return false;
+				}
+			});
 		}
 
 		/// <inheritdoc />

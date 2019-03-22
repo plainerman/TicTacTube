@@ -1,14 +1,27 @@
 ﻿using System;
+using TicTacTubeCore.Executors;
 using TicTacTubeCore.Schedulers.Exceptions;
 using TicTacTubeCore.Sources.Files;
 
 namespace TicTacTubeCore.Schedulers
 {
+	/// <inheritdoc />
 	/// <summary>
 	///     A scheduler that can be executed by manually calling a method.
 	/// </summary>
 	public class EventFiringScheduler : BaseScheduler
 	{
+		/// <inheritdoc />
+		/// <summary>
+		/// Create a new scheduler that can be triggered manually.
+		/// </summary>
+		/// <param name="executor">The executor that will be used. If <code>null</code>,
+		/// the default executor specified in <see cref="T:TicTacTubeCore.Schedulers.BaseScheduler" /> will be used. </param>
+		public EventFiringScheduler(IExecutor executor = null) : base(executor)
+		{
+		}
+
+		/// <inheritdoc />
 		/// <summary>
 		///     Execute the start of the scheduler.
 		/// </summary>
@@ -16,6 +29,7 @@ namespace TicTacTubeCore.Schedulers
 		{
 		}
 
+		/// <inheritdoc />
 		/// <summary>
 		///     Execute the stop of the scheduler.
 		/// </summary>
@@ -39,7 +53,7 @@ namespace TicTacTubeCore.Schedulers
 		}
 
 		/// <summary>
-		///     A method that ignores the parmeters but is handy for adding it to an external event.
+		///     A method that ignores the parameters but is handy for adding it to an external event.
 		/// </summary>
 		/// <param name="sender">Ignored.</param>
 		/// <param name="args">Ignored.</param>

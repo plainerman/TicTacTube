@@ -14,9 +14,9 @@ namespace TicTacTubeCore.Schedulers.Events
 		Start,
 
 		/// <summary>
-		///     When a scheduler executes the pipeline.
+		///		Once a given source is ready to be processed by an executor.
 		/// </summary>
-		Execute,
+		SourceReady,
 
 		/// <summary>
 		///     When a scheduler stops scheduling.
@@ -24,8 +24,9 @@ namespace TicTacTubeCore.Schedulers.Events
 		Stop
 	}
 
+	/// <inheritdoc />
 	/// <summary>
-	///     The <see cref="EventArgs" /> for events related to the lifecycle of the scheduler.
+	///     The <see cref="T:System.EventArgs" /> for events related to the lifecycle of the scheduler.
 	/// </summary>
 	public class SchedulerLifeCycleEventArgs : SchedulerEventArgs
 	{

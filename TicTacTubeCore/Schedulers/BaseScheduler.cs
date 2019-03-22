@@ -1,14 +1,19 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading;
 using log4net;
+using TicTacTubeCore.Executors;
 using TicTacTubeCore.Pipelines;
 using TicTacTubeCore.Schedulers.Events;
+using TicTacTubeCore.Schedulers.Exceptions;
 using TicTacTubeCore.Sources.Files;
 
 namespace TicTacTubeCore.Schedulers
 {
+	/// <inheritdoc />
 	/// <summary>
 	///     A scheduler that executes a data pipelineOrBuilder on some event.
 	/// </summary>
@@ -17,22 +22,58 @@ namespace TicTacTubeCore.Schedulers
 		private static readonly ILog Log = LogManager.GetLogger(typeof(BaseScheduler));
 
 		/// <summary>
-		///     Multiple pipelines that are executed on a certion condition / event.
+		///     Multiple pipelines that are executed on a certain condition / event.
 		/// </summary>
 		protected readonly List<IDataPipelineOrBuilder> InternalPipelines;
 
 		/// <summary>
-		///     This reset event will wait until stop has been called — so join works by waiting for a stop from another thread.
+		///		This thread-safe collection stores file sources that have not been added to a IPipelineProcessor.
 		/// </summary>
-		protected ManualResetEvent ManualJoinReset;
+		protected ConcurrentDictionary<IFileSource, Predicate<IFileSource>> QueuedSources;
 
 		/// <summary>
-		///     The default constructor.
+		/// The thread that will check all sources with a delay if they are available and adds sources that
+		/// become available to the executor.
 		/// </summary>
-		protected BaseScheduler()
+		private Thread _sourceUpdater;
+
+		/// <summary>
+		/// The semaphore used to force an update of the <see cref="_sourceUpdater"/>.
+		/// </summary>
+		private ManualResetEventSlim _sourceRequestedUpdate;
+
+		/// <summary>
+		/// The delay that will be waited before checking all queued sources again, if they have already become available.
+		/// The unit is milliseconds. The default value is 1000 milliseconds.
+		/// </summary>
+		public int SourceConditionDelay { get; set; } = 1000;
+
+		/// <inheritdoc />
+		public event EventHandler<SchedulerLifeCycleEventArgs> LifeCycleEvent;
+
+		/// <inheritdoc />
+		public IExecutor Executor { get; }
+
+		/// <inheritdoc />
+		public bool IsRunning { get; protected set; }
+
+		/// <inheritdoc />
+		public bool Stopped { get; protected set; }
+
+		/// <inheritdoc />
+		public ReadOnlyCollection<IDataPipelineOrBuilder> Pipelines { get; }
+
+		/// <summary>
+		/// Create a base scheduler with a given executor.
+		/// </summary>
+		/// <param name="executor">The executor that will be used for processing the pipelines.
+		/// If <code>null</code>, a single threaded executor will be used.</param>
+		protected BaseScheduler(IExecutor executor)
 		{
+			Executor = executor ?? new Executor(1);
 			InternalPipelines = new List<IDataPipelineOrBuilder>();
 			Pipelines = InternalPipelines.AsReadOnly();
+			QueuedSources = new ConcurrentDictionary<IFileSource, Predicate<IFileSource>>();
 		}
 
 		/// <summary>
@@ -46,14 +87,61 @@ namespace TicTacTubeCore.Schedulers
 		protected abstract void ExecuteStop();
 
 		/// <summary>
-		///     The method that will be called internally to execute the pipelineOrBuilder.
+		///     The method that will be called internally to execute the pipelineOrBuilder. No condition will be added, so
+		///		all sources are immediately accepted.
+		///
+		///		If the scheduler is not running, the source will not be added.
 		/// </summary>
-		/// <param name="fileSource">The filesource with which the execute will be triggered.</param>
+		/// <param name="fileSource">The fileSource with which the execute will be triggered.</param>
 		protected virtual void Execute(IFileSource fileSource)
 		{
-			Log.Info($"Scheduler has been triggered, executing {InternalPipelines.Count} pipelineOrBuilder(s).");
-			InternalPipelines.ForEach(p => p.Build().Execute(fileSource));
-			ExecuteEvent(SchedulerLifeCycleEventType.Execute);
+			Execute(fileSource, s => true);
+		}
+
+		///  <summary>
+		///		The method that will be called internally to execute the pipelineOrBuilder. It will be regularly checked, whether
+		///		the condition evaluates to <code>true</code> - once it does, the source will be triggered to execute.
+		///
+		///		If the scheduler is not running, the source will not be added.
+		///  </summary>
+		///  <param name="fileSource">The fileSource with which the execute will be triggered.</param>
+		///  <param name="waitCondition">A predicate determining when a given <paramref name="fileSource"/> is ready.</param>
+		protected virtual void Execute(IFileSource fileSource, Predicate<IFileSource> waitCondition)
+		{
+			if (!IsRunning) return;
+			QueuedSources.TryAdd(fileSource, waitCondition);
+			_sourceRequestedUpdate.Set();
+		}
+
+		/// <summary>
+		/// The method that will be added to <see cref="_sourceUpdater"/>.
+		/// While the scheduler is running (or there are sources left), it will check all sources if they become available.
+		/// </summary>
+		private void SourceUpdater_Thread()
+		{
+			while (IsRunning || !QueuedSources.IsEmpty)
+			{
+				if (!IsRunning)
+				{
+					Log.Debug($"{GetType().Name} is waiting for {QueuedSources.Count} source(s).");
+				}
+
+				_sourceRequestedUpdate.Wait(SourceConditionDelay); // wait for forced update, or else every second
+				_sourceRequestedUpdate.Reset();
+
+				// Try all queued sources and find those available.
+				foreach (var queuedSource in QueuedSources)
+				{
+					if (queuedSource.Value(queuedSource.Key)
+					    && QueuedSources.TryRemove(queuedSource.Key, out _))
+					{
+						//TODO: think about logging (custom add to event?)
+						//Log.Info($"Scheduler has been triggered, executing {InternalPipelines.Count} pipelineOrBuilder(s).");
+						ExecuteEvent(SchedulerLifeCycleEventType.SourceReady);
+						Executor.Add(queuedSource.Key);
+					}
+				}
+			}
 		}
 
 		/// <summary>
@@ -66,45 +154,69 @@ namespace TicTacTubeCore.Schedulers
 		}
 
 		/// <inheritdoc />
-		public event EventHandler<SchedulerLifeCycleEventArgs> LifeCycleEvent;
-
-		/// <inheritdoc />
-		public bool IsRunning { get; protected set; }
-
-		/// <inheritdoc />
-		public ReadOnlyCollection<IDataPipelineOrBuilder> Pipelines { get; }
-
-		/// <inheritdoc />
 		public virtual IDataPipelineOrBuilder Add(IDataPipelineOrBuilder pipelineOrBuilder)
 		{
-			InternalPipelines.Add(pipelineOrBuilder);
-			return pipelineOrBuilder;
-		}
+			lock (this)
+			{
+				if (IsRunning)
+					throw new SchedulerException("The pipeline cannot be modified until the scheduler is stopped.");
 
+				InternalPipelines.Add(pipelineOrBuilder);
+				return pipelineOrBuilder;
+			}
+		}
 
 		/// <inheritdoc />
 		public virtual void Start()
 		{
-			ExecuteStart();
-			IsRunning = true;
-			ExecuteEvent(SchedulerLifeCycleEventType.Start);
-			ManualJoinReset?.Dispose();
-			ManualJoinReset = new ManualResetEvent(false);
+			lock (this)
+			{
+				if (Stopped)
+					throw new SchedulerStateException(
+						"The scheduler has already been stopped and cannot be restarted.");
+				if (IsRunning) return;
+
+				ExecuteStart();
+
+				_sourceRequestedUpdate = new ManualResetEventSlim();
+				_sourceUpdater = new Thread(SourceUpdater_Thread);
+
+				Executor.Initialize(Pipelines);
+
+				IsRunning = true;
+
+				_sourceUpdater.Start();
+
+				ExecuteEvent(SchedulerLifeCycleEventType.Start);
+			}
 		}
 
 		/// <inheritdoc />
+		/// <summary>
+		///	This method forces to stop the scheduler. Once stopped, it cannot be restarted.
+		/// </summary>
 		public virtual void Stop()
 		{
-			ExecuteStop();
-			IsRunning = false;
-			ExecuteEvent(SchedulerLifeCycleEventType.Stop);
-			ManualJoinReset.Set();
+			lock (this)
+			{
+				if (!IsRunning) return;
+
+				ExecuteStop();
+
+				IsRunning = false;
+
+				ExecuteEvent(SchedulerLifeCycleEventType.Stop);
+
+				_sourceUpdater.Join();
+				Stopped = true;
+			}
 		}
 
 		/// <inheritdoc />
 		public virtual void Join()
 		{
-			ManualJoinReset.WaitOne();
+			_sourceUpdater.Join();
+			Executor.Stop();
 		}
 	}
 }

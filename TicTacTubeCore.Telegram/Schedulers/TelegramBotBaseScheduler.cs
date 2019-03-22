@@ -7,6 +7,7 @@ using Telegram.Bot;
 using Telegram.Bot.Args;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+using TicTacTubeCore.Executors;
 using TicTacTubeCore.Schedulers;
 
 namespace TicTacTubeCore.Telegram.Schedulers
@@ -58,41 +59,55 @@ namespace TicTacTubeCore.Telegram.Schedulers
 
 		/// <inheritdoc />
 		/// <summary>
-		///     Create a new uninitialised telegram scheduler — the <see cref="F:TicTacTubeCore.Telegram.Schedulers.TelegramBotBaseScheduler.BotClient" /> has to be manually set before calling
-		///     <see cref="M:TicTacTubeCore.Telegram.Schedulers.TelegramBotBaseScheduler.ExecuteStart" />.
-		/// </summary>
-		private TelegramBotBaseScheduler()
-		{
-			Users = new HashSet<int>();
-		}
-
-		/// <inheritdoc />
-		/// <summary>
 		///     The constructor for a new telegram scheduler. The API token can be received by chatting with @botfather.
 		/// </summary>
+		/// <param name="executor">The executor that will be used for executing the pipelines.</param>
 		/// <param name="apiToken">The api token that uniquely identifies a bot. If this api-token is <code>null</code> (or only whitespace), the constructor will try to
-		/// fetch the api-token from a systemvariable identified by <see cref="TelegramSystemVariable"/>.</param>
+		/// fetch the api-token from a system variable identified by <see cref="TelegramSystemVariable"/>.</param>
 		/// <param name="userList">
-		///     The user handling. If <see ref="UserList.None" />, all users are allowd. With black / whitelist
-		///     users can be selecteively allowed / forbidden.
+		///     The user handling. If <see ref="UserList.None" />, all users are allowed. With black / whitelist
+		///     users can be selectively allowed / forbidden.
 		/// </param>
 		/// <param name="proxy">The proxy that is used, if set. If <c>null</c>, no proxy will be used.</param>
-		protected TelegramBotBaseScheduler(string apiToken = null, UserList userList = UserList.None, IWebProxy proxy = null) :
-			this()
+		protected TelegramBotBaseScheduler(IExecutor executor, string apiToken = null,
+			UserList userList = UserList.None, IWebProxy proxy = null) :
+			base(executor)
 		{
 			if (string.IsNullOrWhiteSpace(apiToken))
 				apiToken = Environment.GetEnvironmentVariable(TelegramSystemVariable);
 
 			if (string.IsNullOrWhiteSpace(apiToken))
-				throw new ArgumentException($"Value cannot be null or whitespace. System variable ${TelegramSystemVariable} is also not set.", nameof(apiToken));
+				throw new ArgumentException(
+					$"Value cannot be null or whitespace. System variable ${TelegramSystemVariable} is also not set.",
+					nameof(apiToken));
 			if (!Enum.IsDefined(typeof(UserList), userList))
 				throw new InvalidEnumArgumentException(nameof(userList), (int) userList, typeof(UserList));
+
+			Users = new HashSet<int>();
 
 			BotClient = proxy == null ? new TelegramBotClient(apiToken) : new TelegramBotClient(apiToken, proxy);
 			UserList = userList;
 
 			if (UserList != UserList.None)
 				Log.Info($"User list specified to {userList.ToString()}");
+		}
+
+		/// <inheritdoc />
+		/// <summary>
+		///     The constructor for a new telegram scheduler. The API token can be received by chatting with @botfather.
+		///		The default executor specified in <see cref="BaseScheduler"/> will be used.
+		/// </summary>
+		/// <param name="apiToken">The api token that uniquely identifies a bot. If this api-token is <code>null</code> (or only whitespace), the constructor will try to
+		/// fetch the api-token from a system variable identified by <see cref="TelegramSystemVariable"/>.</param>
+		/// <param name="userList">
+		///     The user handling. If <see ref="UserList.None" />, all users are allowed. With black / whitelist
+		///     users can be selectively allowed / forbidden.
+		/// </param>
+		/// <param name="proxy">The proxy that is used, if set. If <c>null</c>, no proxy will be used.</param>
+		protected TelegramBotBaseScheduler(string apiToken = null, UserList userList = UserList.None,
+			IWebProxy proxy = null) :
+			this(null, apiToken, userList, proxy)
+		{
 		}
 
 		/// <inheritdoc />
@@ -110,7 +125,7 @@ namespace TicTacTubeCore.Telegram.Schedulers
 		///     <see cref="OnUnknownMessageTypeReceived" /> otherwise.
 		/// </summary>
 		/// <param name="sender">The sender of the event.</param>
-		/// <param name="messageEventArgs">The messageeventarg that contain all information from the new message.</param>
+		/// <param name="messageEventArgs">The <see cref="MessageEventArgs"/> that contain all information from the new message.</param>
 		protected virtual void OnMessageReceived(object sender, MessageEventArgs messageEventArgs)
 		{
 			if (!AllowBots && messageEventArgs.Message.From.IsBot)
@@ -209,7 +224,7 @@ namespace TicTacTubeCore.Telegram.Schedulers
 		///     This method can be used to expand the available commands. Return <c>true</c> if the command could be processed,
 		///     <c>false</c> otherwise.
 		/// </summary>
-		/// <param name="message">The messageeventarg that contains all information from the new message.</param>
+		/// <param name="message">The <see cref="MessageEventArgs"/> that contains all information from the new message.</param>
 		/// <returns><c>True</c> if the command could be processed, <c>false</c> otherwise.</returns>
 		protected virtual bool ProcessCustomCommands(Message message) => false;
 

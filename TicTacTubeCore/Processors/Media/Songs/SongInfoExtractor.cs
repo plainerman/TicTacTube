@@ -209,7 +209,7 @@ namespace TicTacTubeCore.Processors.Media.Songs
 		/// <returns>A collection of all found featuring parts (e.g. Marshmello, Porter Robinson).</returns>
 		protected virtual IEnumerable<string> FindFeaturingParts(ref string input, bool artistsOnly)
 		{
-			// the indexes where a new autor line begins or ends
+			// the indexes where a new author line begins or ends
 			var splitStartIndexes = new List<int>();
 			var splitEndIndexes = new List<int>();
 
@@ -239,7 +239,7 @@ namespace TicTacTubeCore.Processors.Media.Songs
 			var featuringParts = new List<string>();
 			foreach (int splitStart in splitStartIndexes)
 			{
-				// find the closest matching end indexs (e.g. closes closing bracket)
+				// find the closest matching end indices (e.g. closes closing bracket)
 				var end = FindClosest(splitStart, splitEndIndexes);
 				int splitEnd;
 				bool toBreak = false;
