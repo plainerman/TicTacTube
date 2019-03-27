@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using TicTacTubeCore.Executors.Events;
 using TicTacTubeCore.Pipelines;
@@ -36,20 +37,26 @@ namespace TicTacTubeCore.Executors
 		public bool AbortPipelineOnError { get; set; } = true;
 
 		/// <summary>
-		/// In this collection all pending file sources are stored. Threads then pick an element and remove it.
-		/// </summary>
-		protected readonly IProducerConsumerCollection<IFileSource> PendingFileSources;
-
-		/// <summary>
 		/// A semaphore counting the queued elements (0 means no queued elements).
 		/// </summary>
 		private readonly SemaphoreSlim _queuedSemaphore;
 
 		/// <summary>
-		/// This boolean determines whether the executor has already been initialized or not.
-		/// Per default, once set to <code>true</code> it will never become false.
+		/// In this collection all pending file sources are stored. Threads then pick an element and remove it.
 		/// </summary>
-		protected bool Initialized { get; set; }
+		protected readonly IProducerConsumerCollection<IFileSource> PendingFileSources;
+
+		/// <summary>
+		/// The file sources that are currently processed.
+		/// </summary>
+		protected readonly IList<IFileSource> ActiveFileSources;
+
+		/// <summary>
+		/// In this collection, all conflicting file sources are stored. Conflicted file sources, are file sources
+		/// that are pending but locked due to a thread currently processing an identical source.
+		/// If two sources are identical is determined by <see cref="FileSourceComparer"/>.
+		/// </summary>
+		protected readonly IList<IFileSource> ConflictingFileSources;
 
 		/// <summary>
 		/// The pipeline that will be executed by this executor. Is <code>null</code>,
@@ -59,6 +66,12 @@ namespace TicTacTubeCore.Executors
 
 		/// <inheritdoc />
 		public bool IsRunning { get; protected set; }
+
+		/// <summary>
+		/// This boolean determines whether the executor has already been initialized or not.
+		/// Per default, once set to <code>true</code> it will never become false.
+		/// </summary>
+		protected bool Initialized { get; set; }
 
 		/// <summary>
 		/// The array containing the executor threads. Once <see cref="Initialize"/> is called, the threads will be created and started.
@@ -73,7 +86,7 @@ namespace TicTacTubeCore.Executors
 		/// <summary>
 		/// This comparer is used to ensure that not two identical file sources are started to process.
 		/// </summary>
-		protected IEqualityComparer<IFileSource> FileInfoComparer { get; }
+		protected IEqualityComparer<IFileSource> FileSourceComparer { get; }
 
 		/// <inheritdoc />
 		/// <summary>
@@ -91,17 +104,19 @@ namespace TicTacTubeCore.Executors
 		/// </summary>
 		/// <param name="threadCount">The number of threads that will process in parallel.
 		/// This number has to be greater than zero.</param>
-		/// <param name="fileInfoComparer">This interface compares two file source. Two sources that are the same cannot be executed simultaneously.</param>
-		public Executor(int threadCount, IEqualityComparer<IFileSource> fileInfoComparer)
+		/// <param name="fileSourceComparer">This interface compares two file source. Two sources that are the same cannot be executed simultaneously.</param>
+		public Executor(int threadCount, IEqualityComparer<IFileSource> fileSourceComparer)
 		{
 			if (threadCount <= 0) throw new ArgumentOutOfRangeException(nameof(threadCount));
 
-			PendingFileSources = new ConcurrentBag<IFileSource>();
 			_queuedSemaphore = new SemaphoreSlim(0);
+			PendingFileSources = new ConcurrentBag<IFileSource>();
+			ActiveFileSources = new List<IFileSource>();
+			ConflictingFileSources = new List<IFileSource>();
 
 			Executors = new Thread[threadCount];
 
-			FileInfoComparer = fileInfoComparer ?? throw new ArgumentNullException(nameof(fileInfoComparer));
+			FileSourceComparer = fileSourceComparer ?? throw new ArgumentNullException(nameof(fileSourceComparer));
 		}
 
 		/// <inheritdoc />
@@ -131,6 +146,8 @@ namespace TicTacTubeCore.Executors
 			LifeCycleEvent?.Invoke(this, new ExecutorLifeCycleEventArgs(ExecutorLifeCycleEventType.Initialize));
 		}
 
+		//TODO: test conflicting file sources
+
 		/// <summary>
 		/// The method that will actually execute the logic of the executor.
 		/// It is responsible for the correct running condition (i.e. when it should be stopped), taking sources, processing them,
@@ -141,11 +158,33 @@ namespace TicTacTubeCore.Executors
 			while (IsRunning || PendingFileSources.Count > 0)
 			{
 				_queuedSemaphore.Wait();
+
+				IFileSource source;
 				// when forcing the thread to stop, we release the semaphore without 
 				// actually adding an element, causing it to continue and break the loop
-				if (!PendingFileSources.TryTake(out var source)) continue;
+				lock (ActiveFileSources)
+				{
+					// ensure that the element is either active or pending
+					if (!PendingFileSources.TryTake(out source)) continue;
+					ActiveFileSources.Add(source);
+				}
 
 				ProcessSource(source);
+
+				lock (ActiveFileSources)
+				{
+					if (ActiveFileSources.Remove(source))
+					{
+						var conflictingSource =
+							ConflictingFileSources.FirstOrDefault(s => FileSourceComparer.Equals(s, source));
+
+						if (conflictingSource != null && PendingFileSources.TryAdd(conflictingSource))
+						{
+							ConflictingFileSources.Remove(conflictingSource);
+							_queuedSemaphore.Release();
+						}
+					}
+				}
 			}
 		}
 
@@ -180,8 +219,31 @@ namespace TicTacTubeCore.Executors
 
 			if (error && DieOnException)
 			{
-				new Thread(Stop).Start(); // call stop in another thread, so that it won't cause a deadlock.
+				new Thread(Stop).Start(); // call stop from another thread, so that it won't cause a deadlock.
 			}
+		}
+
+		/// <summary>
+		/// If the given file source is conflicting, it will be added to <see cref="ConflictingFileSources"/>.
+		/// Conflicted file sources are file sources that are pending but locked due to a thread currently
+		/// processing an identical source.
+		/// </summary>
+		/// <param name="source">The source that will be checked if it is conflicting and (maybe) added.</param>
+		/// <returns><code>true</code> if the file source is currently active or already pending (i.e. conflicting);
+		/// <code>false</code> otherwise.</returns>
+		protected virtual bool TryAddConflicting(IFileSource source)
+		{
+			lock (ActiveFileSources)
+			{
+				if (PendingFileSources.Any(s => FileSourceComparer.Equals(s, source)) ||
+				    ActiveFileSources.Any(s => FileSourceComparer.Equals(s, source)))
+				{
+					ConflictingFileSources.Add(source);
+					return true;
+				}
+			}
+
+			return false;
 		}
 
 		//TODO: format and fix imports
@@ -190,12 +252,18 @@ namespace TicTacTubeCore.Executors
 		/// <inheritdoc />
 		public bool Add(IFileSource fileSource)
 		{
+			if (fileSource == null) throw new ArgumentNullException(nameof(fileSource));
+
 			lock (this)
 			{
 				if (!IsRunning) return false;
 
-				if (!PendingFileSources.TryAdd(fileSource)) return false;
-				_queuedSemaphore.Release();
+				if (!TryAddConflicting(fileSource))
+				{
+					if (!PendingFileSources.TryAdd(fileSource)) return false;
+
+					_queuedSemaphore.Release();
+				}
 			}
 
 			LifeCycleEvent?.Invoke(this,

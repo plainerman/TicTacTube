@@ -111,6 +111,8 @@ namespace TicTacTubeCore.Schedulers
 		protected virtual void Execute(IFileSource fileSource, Predicate<IFileSource> waitCondition)
 		{
 			if (!IsRunning) return;
+			//TODO: this does not allow two reference identical file sources
+			//TODO: it was not designed to support that - but should it?
 			QueuedSources.TryAdd(fileSource, waitCondition);
 			_sourceRequestedUpdate.Set();
 		}

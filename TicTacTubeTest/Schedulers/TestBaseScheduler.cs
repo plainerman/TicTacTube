@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TagLib.Riff;
 using TicTacTubeCore.Schedulers.Events;
-using TicTacTubeCore.Sources.Files;
 using TicTacTubeTest.Sources.Files;
 
 namespace TicTacTubeTest.Schedulers
