@@ -145,33 +145,42 @@ namespace TicTacTubeCore.Executors
 				// actually adding an element, causing it to continue and break the loop
 				if (!PendingFileSources.TryTake(out var source)) continue;
 
-				LifeCycleEvent?.Invoke(this,
-					new ExecutorLifeCycleEventArgs(ExecutorLifeCycleEventType.SourceExecutionStart, source));
+				ProcessSource(source);
+			}
+		}
 
-				bool error = false;
+		/// <summary>
+		/// This method actually processes the sources, invokes all required events, and handles errors.
+		/// </summary>
+		/// <param name="source">The source that will be executed.</param>
+		protected virtual void ProcessSource(IFileSource source)
+		{
+			LifeCycleEvent?.Invoke(this,
+				new ExecutorLifeCycleEventArgs(ExecutorLifeCycleEventType.SourceExecutionStart, source));
 
-				foreach (var p in Pipeline)
+			bool error = false;
+
+			foreach (var p in Pipeline)
+			{
+				try
 				{
-					try
-					{
-						p.Build().Execute(source);
-					}
-					catch (Exception e)
-					{
-						error = true;
-
-						LifeCycleEvent?.Invoke(this, new ExecutorLifeCycleEventArgs(p, source, e));
-						if (AbortPipelineOnError) break;
-					}
+					p.Build().Execute(source);
 				}
-
-				LifeCycleEvent?.Invoke(this,
-					new ExecutorLifeCycleEventArgs(ExecutorLifeCycleEventType.SourceExecutionFinished, source));
-
-				if (error && DieOnException)
+				catch (Exception e)
 				{
-					new Thread(Stop).Start(); // call stop in another thread, so that it won't cause a deadlock.
-				} 
+					error = true;
+
+					LifeCycleEvent?.Invoke(this, new ExecutorLifeCycleEventArgs(p, source, e));
+					if (AbortPipelineOnError) break;
+				}
+			}
+
+			LifeCycleEvent?.Invoke(this,
+				new ExecutorLifeCycleEventArgs(ExecutorLifeCycleEventType.SourceExecutionFinished, source));
+
+			if (error && DieOnException)
+			{
+				new Thread(Stop).Start(); // call stop in another thread, so that it won't cause a deadlock.
 			}
 		}
 
