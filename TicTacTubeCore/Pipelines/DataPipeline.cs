@@ -69,7 +69,7 @@ namespace TicTacTubeCore.Pipelines
 		}
 
 		/// <summary>
-		///     Check whether the object is a builder or not. (Hint: it is never a builder).
+		///     Check whether the object is a builder or not. (It is never a builder).
 		/// </summary>
 		public bool IsBuilder => false;
 

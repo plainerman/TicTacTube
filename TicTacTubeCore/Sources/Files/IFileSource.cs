@@ -2,8 +2,10 @@
 
 namespace TicTacTubeCore.Sources.Files
 {
+	/// <inheritdoc />
 	/// <summary>
-	///     A datasource that is simply a file.
+	///     A <see cref="IDataSource"/> that is simply pointing to a file.
+	///		This is the most commonly used <see cref="IDataSource"/>.
 	/// </summary>
 	public interface IFileSource : IDataSource
 	{

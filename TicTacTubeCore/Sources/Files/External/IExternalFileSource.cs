@@ -16,7 +16,7 @@
 		string ExternalSource { get; }
 
 		/// <summary>
-		///     Fetch the file from the source. If it has already been fetched asnychronously,
+		///     Fetch the file from the source. If it has already been fetched asynchronously,
 		///     this method waits for the download to finish and then returns the new file path.
 		/// </summary>
 		/// <param name="destinationPath">The folder where the file should be stored.</param>

@@ -19,6 +19,11 @@ namespace TicTacTubeCore.Schedulers.Events
 		SourceReady,
 
 		/// <summary>
+		///		If the wait condition of a source throws an exception, it will be discarded.
+		/// </summary>
+		SourceDiscarded,
+
+		/// <summary>
 		///     When a scheduler stops scheduling.
 		/// </summary>
 		Stop

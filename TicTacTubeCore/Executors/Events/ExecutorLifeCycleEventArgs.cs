@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using TicTacTubeCore.Pipelines;
 using TicTacTubeCore.Sources.Files;
 
 namespace TicTacTubeCore.Executors.Events
@@ -23,6 +24,11 @@ namespace TicTacTubeCore.Executors.Events
 		///		Once a given source begins to be processed.
 		/// </summary>
 		SourceExecutionStart,
+
+		/// <summary>
+		///		If an exception is thrown during the execution of the source.
+		/// </summary>
+		SourceExecutionFailed,
 
 		/// <summary>
 		/// Once a given source finished execution.
@@ -50,6 +56,18 @@ namespace TicTacTubeCore.Executors.Events
 		/// An optional (may be <code>null</code>) <see cref="IFileSource"/> containing a reference to the source.
 		/// </summary>
 		public IFileSource FileSource { get; }
+		
+		/// <summary>
+		/// The pipeline in which a given error (see <see cref="Error"/>) was thrown.
+		/// This is <code>null</code>, except it is a <see cref="ExecutorLifeCycleEventType.SourceExecutionFailed"/> event.
+		/// </summary>
+		public IDataPipelineOrBuilder Pipeline { get; }
+
+		/// <summary>
+		/// The error that was thrown in a given pipeline (see <see cref="Pipeline"/>).
+		/// This is <code>null</code>, except it is a <see cref="ExecutorLifeCycleEventType.SourceExecutionFailed"/> event.
+		/// </summary>
+		public Exception Error { get; }
 
 		/// <summary>
 		/// Create a new container for the information about a given executor lifecycle event.
@@ -64,6 +82,19 @@ namespace TicTacTubeCore.Executors.Events
 
 			EventType = eventType;
 			FileSource = fileSource;
+		}
+
+		/// <inheritdoc />
+		/// <summary>
+		/// Create a new <see cref="F:TicTacTubeCore.Executors.Events.ExecutorLifeCycleEventType.SourceExecutionFailed" /> event args caused by a given exception.
+		/// </summary>
+		/// <param name="pipeline">The pipeline in which the error was thrown.</param>
+		/// <param name="fileSource">The <see cref="T:TicTacTubeCore.Sources.Files.IFileSource" /> that caused the exception.</param>
+		/// <param name="error">The exception that was thrown inside the pipeline.</param>
+		public ExecutorLifeCycleEventArgs(IDataPipelineOrBuilder pipeline, IFileSource fileSource, Exception error) : this(ExecutorLifeCycleEventType.SourceExecutionFailed, fileSource)
+		{
+			Pipeline = pipeline;
+			Error = error;
 		}
 	}
 }

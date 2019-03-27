@@ -2,7 +2,6 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Threading;
 using log4net;
 using TicTacTubeCore.Executors;
@@ -105,11 +104,12 @@ namespace TicTacTubeCore.Schedulers
 		///		If the scheduler is not running, the source will not be added.
 		///  </summary>
 		///  <param name="fileSource">The fileSource with which the execute will be triggered.</param>
-		///  <param name="waitCondition">A predicate determining when a given <paramref name="fileSource"/> is ready.</param>
+		///  <param name="waitCondition">
+		///		A predicate determining when a given <paramref name="fileSource"/> is ready.
+		///		If this method throws an exception, the source will be discarded.
+		///  </param>
 		protected virtual void Execute(IFileSource fileSource, Predicate<IFileSource> waitCondition)
 		{
-			// TODO: idea: if waitConditon throws an exception, discard it
-
 			if (!IsRunning) return;
 			QueuedSources.TryAdd(fileSource, waitCondition);
 			_sourceRequestedUpdate.Set();
@@ -134,13 +134,32 @@ namespace TicTacTubeCore.Schedulers
 				// Try all queued sources and find those available.
 				foreach (var queuedSource in QueuedSources)
 				{
-					if (queuedSource.Value(queuedSource.Key)
-					    && QueuedSources.TryRemove(queuedSource.Key, out _))
+					bool abort = false;
+					try
+					{
+						if (!queuedSource.Value(queuedSource.Key)) continue;	// skip if not ready
+					}
+					catch (Exception e)
+					{
+						Log.Debug(e);
+						abort = true;
+						//TODO: test discard
+						//TODO: test delaying wait condition
+					}
+
+					if (QueuedSources.TryRemove(queuedSource.Key, out _))
 					{
 						//TODO: think about logging (custom add to event?)
 						//Log.Info($"Scheduler has been triggered, executing {InternalPipelines.Count} pipelineOrBuilder(s).");
-						ExecuteEvent(SchedulerLifeCycleEventType.SourceReady);
-						Executor.Add(queuedSource.Key);
+
+						ExecuteEvent(abort
+							? SchedulerLifeCycleEventType.SourceDiscarded
+							: SchedulerLifeCycleEventType.SourceReady);
+
+						if (!abort)
+						{
+							Executor.Add(queuedSource.Key);
+						}
 					}
 				}
 			}

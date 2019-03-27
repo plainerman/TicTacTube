@@ -107,7 +107,7 @@ namespace TicTacTubeCore.Sources.Files
 		public string FileExtension => FileInfo?.Extension;
 
 		/// <inheritdoc />
-		public string Path => FileInfo?.Directory.FullName;
+		public string Path => FileInfo?.Directory?.FullName;
 
 		/// <inheritdoc />
 		public void Init()
