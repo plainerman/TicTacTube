@@ -26,8 +26,8 @@ namespace TicTacTubeTest.Sources.Files
 			}
 			catch (Exception)
 			{
-				Log.Warn(
-					$"Could not delete temporary file source {FileInfo?.FullName} in directory {FileInfo?.Directory}. - Maybe clean it yourself? Tests work nonetheless.");
+				Log.Warn($"Could not delete temporary file source {FileInfo?.FullName} " +
+				         $"in directory {FileInfo?.Directory}. Maybe clean it yourself? Tests work nonetheless.");
 			}
 		}
 	}

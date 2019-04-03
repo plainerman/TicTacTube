@@ -27,12 +27,16 @@ namespace TicTacTubeCore.Executors
 		/// When this boolean is set, the executor will stop if an exception occurs during execution of the pipeline.
 		/// Pending sources will not be aborted, simply <see cref="Stop"/> will be called automatically.
 		/// The default value is <code>false</code>.
+		///
+		/// If an error occurs inside a pipeline, the complete pipeline will always be skipped.
 		/// </summary>
 		public bool DieOnException { get; set; } = false;
 
 		/// <summary>
 		/// When this boolean is set, the executor will skip all other pipelines that should be executed for a given source.
 		/// The default value is <code>true</code>, to ignore exceptions set this to <code>true</code>.
+		///
+		/// If an error occurs inside a pipeline, the complete pipeline will always be skipped.
 		/// </summary>
 		public bool AbortPipelineOnError { get; set; } = true;
 
@@ -146,8 +150,6 @@ namespace TicTacTubeCore.Executors
 			LifeCycleEvent?.Invoke(this, new ExecutorLifeCycleEventArgs(ExecutorLifeCycleEventType.Initialize));
 		}
 
-		//TODO: test conflicting file sources
-
 		/// <summary>
 		/// The method that will actually execute the logic of the executor.
 		/// It is responsible for the correct running condition (i.e. when it should be stopped), taking sources, processing them,
@@ -208,6 +210,7 @@ namespace TicTacTubeCore.Executors
 				catch (Exception e)
 				{
 					error = true;
+					IsRunning = !DieOnException; // prevent new sources from being added (if DieOnException)
 
 					LifeCycleEvent?.Invoke(this, new ExecutorLifeCycleEventArgs(p, source, e));
 					if (AbortPipelineOnError) break;
@@ -247,7 +250,6 @@ namespace TicTacTubeCore.Executors
 		}
 
 		//TODO: format and fix imports
-		//TODO: prevent multiple threads from working on the same resource?
 
 		/// <inheritdoc />
 		public bool Add(IFileSource fileSource)
