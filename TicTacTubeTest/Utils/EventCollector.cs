@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 
 namespace TicTacTubeTest.Utils
@@ -46,25 +47,21 @@ namespace TicTacTubeTest.Utils
 			}
 		}
 
-		public bool WaitFor(Predicate<T> condition, int timeout = -1)
-		{
-			lock (_events)
-			{
-				foreach (var curArg in Events)
-				{
-					if (condition(curArg)) return true;
-				}
-
-				return WaitForNew(condition, timeout);
-			}
-		}
-
-		public bool WaitForNew(Predicate<T> condition, int timeout = -1)
+		public bool WaitFor(Predicate<T> condition, int timeout = -1, bool discardExisting = false)
 		{
 			var resetEvent = new ManualResetEventSlim();
-			lock (_waitingClients)
+
+			lock (_events)
 			{
-				_waitingClients.Add((condition, resetEvent));
+				if (!discardExisting && Events.Any(curArg => condition(curArg)))
+				{
+					return true;
+				}
+
+				lock (_waitingClients)
+				{
+					_waitingClients.Add((condition, resetEvent));
+				}
 			}
 
 			return resetEvent.Wait(timeout);
