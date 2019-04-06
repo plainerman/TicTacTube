@@ -89,7 +89,7 @@ namespace TicTacTubeCore.Telegram.Schedulers
 			UserList = userList;
 
 			if (UserList != UserList.None)
-				Log.Info($"User list specified to {userList.ToString()}");
+				Log.InfoFormat("User list specified to {0}", userList.ToString());
 		}
 
 		/// <inheritdoc />
@@ -130,8 +130,12 @@ namespace TicTacTubeCore.Telegram.Schedulers
 		{
 			if (!AllowBots && messageEventArgs.Message.From.IsBot)
 			{
-				Log.Warn(
-					$"Unauthorized bot tried to access: {messageEventArgs.Message.From.Id}, {messageEventArgs.Message.From.Username}, {messageEventArgs.Message.From.FirstName}, {messageEventArgs.Message.From.LastName}, language={messageEventArgs.Message.From.LanguageCode}, isBot={messageEventArgs.Message.From.IsBot}\n{messageEventArgs.Message.Type}: {messageEventArgs.Message.Text}");
+				Log.WarnFormat(
+					"Unauthorized bot tried to access: {0}, {1}, {2}, {3}, language={4}\n{5}: {6}",
+					messageEventArgs.Message.From.Id, messageEventArgs.Message.From.Username,
+					messageEventArgs.Message.From.FirstName, messageEventArgs.Message.From.LastName,
+					messageEventArgs.Message.From.LanguageCode, messageEventArgs.Message.Type,
+					messageEventArgs.Message.Text);
 
 				if (UserNotAllowedText != null)
 					SendTextMessage(messageEventArgs.Message, UserNotAllowedText);
@@ -144,9 +148,12 @@ namespace TicTacTubeCore.Telegram.Schedulers
 					if (UserNotAllowedText != null)
 						SendTextMessage(messageEventArgs.Message, UserNotAllowedText);
 
-					Log.Warn(
-						$"Unauthorized user tried to access: {messageEventArgs.Message.From.Id}, {messageEventArgs.Message.From.Username}, {messageEventArgs.Message.From.FirstName}, {messageEventArgs.Message.From.LastName}, language={messageEventArgs.Message.From.LanguageCode}, isBot={messageEventArgs.Message.From.IsBot}\n{messageEventArgs.Message.Type}: {messageEventArgs.Message.Text}");
-
+					Log.WarnFormat(
+						"Unauthorized user tried to access: {0}, {1}, {2}, {3}, language={4}\n{5}: {6}",
+						messageEventArgs.Message.From.Id, messageEventArgs.Message.From.Username,
+						messageEventArgs.Message.From.FirstName, messageEventArgs.Message.From.LastName,
+						messageEventArgs.Message.From.LanguageCode, messageEventArgs.Message.Type,
+						messageEventArgs.Message.Text);
 					return;
 				}
 
@@ -192,8 +199,9 @@ namespace TicTacTubeCore.Telegram.Schedulers
 			if (message.Text.StartsWith("/start"))
 			{
 				SendTextMessage(message, WelcomeText);
-				Log.Info(
-					$"New user! {message.From.Id}, {message.From.Username}, {message.From.FirstName}, {message.From.LastName}, language={message.From.LanguageCode}, isBot={message.From.IsBot}");
+				Log.InfoFormat("New user! {0}, {1}, {2}, {3}, language={4}, isBot={5}",
+					message.From.Id, message.From.Username, message.From.FirstName, message.From.LastName,
+					message.From.LanguageCode, message.From.IsBot);
 			}
 			else if (message.Text.StartsWith("/ping"))
 			{
@@ -215,7 +223,7 @@ namespace TicTacTubeCore.Telegram.Schedulers
 				if (!ProcessCustomCommands(message))
 				{
 					SendTextMessage(message, "I'm sorry, but I don't understand this command.");
-					Log.Info($"An unknown command has been received {message.Text}.");
+					Log.InfoFormat("An unknown command has been received {0}.", message.Text);
 				}
 			}
 		}
@@ -255,7 +263,7 @@ namespace TicTacTubeCore.Telegram.Schedulers
 		protected virtual void OnUnknownMessageTypeReceived(Message message)
 		{
 			SendTextMessage(message, "I'm sorry, but I don't support this message type.");
-			Log.Debug($"An unknown message type has been received {message.Type}.");
+			Log.DebugFormat("An unknown message type has been received {0}.", message.Type);
 		}
 
 		/// <inheritdoc />

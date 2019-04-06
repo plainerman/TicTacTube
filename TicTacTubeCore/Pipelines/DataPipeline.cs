@@ -48,7 +48,7 @@ namespace TicTacTubeCore.Pipelines
 		/// <inheritdoc />
 		public void Execute(IFileSource fileSource)
 		{
-			Log.Info($"Executing pipeline with fileSource {fileSource.GetType().Name}");
+			Log.InfoFormat("Executing pipeline with fileSource {0}", fileSource.GetType().Name);
 			IFileSource prev = null;
 			DataProcessors.Aggregate(fileSource, (current, processor) =>
 			{

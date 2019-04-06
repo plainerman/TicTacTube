@@ -72,10 +72,11 @@ namespace TicTacTubeCore.Sources.Files
 			if (!Directory.Exists(_filePath))
 			{
 				Directory.CreateDirectory(_filePath);
-				Log.Info($"Creating directory {_filePath}");
+				Log.InfoFormat("Creating directory {0}", _filePath);
 			}
 
-			Log.Info($"Fetching external source {_externalSource} to {_filePath}" + (async ? " asynchronously." : "."));
+			Log.InfoFormat("Fetching external source {0} to {1}" + (async ? " asynchronously." : "."),
+				_externalSource, _filePath);
 
 			if (async)
 			{
@@ -87,7 +88,7 @@ namespace TicTacTubeCore.Sources.Files
 
 				AssignFilePath(path);
 
-				Log.Info($"Fetched external source {_externalSource} to {path}.");
+				Log.InfoFormat("Fetched external source {0} to {1}.", _externalSource, path);
 
 				_externalSource = null;
 				_filePath = null;
