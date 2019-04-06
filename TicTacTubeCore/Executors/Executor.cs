@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using log4net;
 using TicTacTubeCore.Executors.Events;
 using TicTacTubeCore.Pipelines;
 using TicTacTubeCore.Sources.Files;
@@ -18,6 +19,8 @@ namespace TicTacTubeCore.Executors
 	/// </summary>
 	public class Executor : IExecutor
 	{
+		private static readonly ILog Log = LogManager.GetLogger(typeof(Executor));
+
 		/// <inheritdoc />
 		public event EventHandler<ExecutorLifeCycleEventArgs> LifeCycleEvent;
 
@@ -197,6 +200,8 @@ namespace TicTacTubeCore.Executors
 			LifeCycleEvent?.Invoke(this,
 				new ExecutorLifeCycleEventArgs(ExecutorLifeCycleEventType.SourceExecutionStart, source));
 
+			Log.DebugFormat("Starting to process {0}.", source?.FileInfo);
+
 			bool error = false;
 
 			foreach (var p in Pipeline)
@@ -211,6 +216,7 @@ namespace TicTacTubeCore.Executors
 					IsRunning = !DieOnException; // prevent new sources from being added (if DieOnException)
 
 					LifeCycleEvent?.Invoke(this, new ExecutorLifeCycleEventArgs(p, source, e));
+					Log.WarnFormat("Source {0} has thrown an exception.", source?.FileInfo);
 					if (AbortPipelineOnError) break;
 				}
 			}
