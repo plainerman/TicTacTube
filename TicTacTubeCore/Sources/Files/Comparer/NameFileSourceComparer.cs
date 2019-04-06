@@ -17,8 +17,6 @@ namespace TicTacTubeCore.Sources.Files.Comparer
 			if (x == null && y == null) return true;
 			if (x == null || y == null) return false;
 
-			//TODO: ensure that it works properly with lazy external sources
-
 			return x.FileInfo?.FullName == y.FileInfo?.FullName;
 		}
 

@@ -32,8 +32,6 @@ namespace TicTacTubeCore.Pipelines
 		/// </summary>
 		public bool IsLocked { get; private set; }
 
-		// todo: data pipeline source?
-
 		/// <summary>
 		///     Append a <see cref="IDataProcessor"/> (or builder). This can only be done, if the pipeline is not locked.
 		/// </summary>

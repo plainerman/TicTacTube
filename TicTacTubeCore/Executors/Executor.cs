@@ -21,8 +21,6 @@ namespace TicTacTubeCore.Executors
 		/// <inheritdoc />
 		public event EventHandler<ExecutorLifeCycleEventArgs> LifeCycleEvent;
 
-		//TODO: test those two booleans.
-
 		/// <summary>
 		/// When this boolean is set, the executor will stop if an exception occurs during execution of the pipeline.
 		/// Pending sources will not be aborted, simply <see cref="Stop"/> will be called automatically.

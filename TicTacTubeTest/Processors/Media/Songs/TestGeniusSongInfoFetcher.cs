@@ -1,5 +1,7 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
+using System.Net;
 using TicTacTubeCore.Genius.Processors.Media.Songs;
 using TicTacTubeCore.Processors.Media.Songs;
 
@@ -40,7 +42,16 @@ namespace TicTacTubeTest.Processors.Media.Songs
 				Artists = new[] { artist }
 			};
 
-			var returnedInfo = GeniusSongInfoFetcher.ExtractAsyncTask(inputInfo).GetAwaiter().GetResult();
+			var returnedInfo = new SongInfo();
+
+			try
+			{
+				returnedInfo = GeniusSongInfoFetcher.ExtractAsyncTask(inputInfo).GetAwaiter().GetResult();
+			}
+			catch (Exception e)
+			{
+				Assert.Inconclusive("This test requires an internet connection. Manually check the error.", e);
+			}
 
 			Assert.AreEqual(inputInfo.Title.ToLower(), returnedInfo.Title.ToLower());
 
