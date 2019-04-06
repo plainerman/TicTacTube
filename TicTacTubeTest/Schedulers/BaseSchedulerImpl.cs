@@ -1,4 +1,5 @@
-﻿using TicTacTubeCore.Executors;
+﻿using System;
+using TicTacTubeCore.Executors;
 using TicTacTubeCore.Schedulers;
 using TicTacTubeCore.Sources.Files;
 
@@ -21,6 +22,11 @@ namespace TicTacTubeTest.Schedulers
 		public new void Execute(IFileSource fileSource)
 		{
 			base.Execute(fileSource);
+		}
+
+		public new void Execute(IFileSource fileSource, Predicate<IFileSource> waitCondition)
+		{
+			base.Execute(fileSource, waitCondition);
 		}
 	}
 }
