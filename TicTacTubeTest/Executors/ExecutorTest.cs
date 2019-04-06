@@ -15,8 +15,6 @@ using TicTacTubeTest.Utils.Extensions.Executors;
 
 namespace TicTacTubeTest.Executors
 {
-	//TODO: improve performance of tests!
-
 	[TestClass]
 	public class ExecutorTest
 	{
@@ -81,7 +79,7 @@ namespace TicTacTubeTest.Executors
 			// after the first pipeline, the second (which also throws an exception) should not be executed
 			Assert.AreEqual(1, failedCount);
 
-			// due to die, new sources are not accepted
+			// due to die, new sources are not accepted anymore
 			Assert.IsFalse(executor.Add(new MockFileSource()));
 
 			Assert.IsTrue(collector.WaitFor(arg => arg.EventType == ExecutorLifeCycleEventType.Stop, 5000),
@@ -96,7 +94,7 @@ namespace TicTacTubeTest.Executors
 			var executor = new Executor(4, new ReferenceFileSourceComparer());
 			var collector = new EventCollector<ExecutorLifeCycleEventArgs>(e => e.FileSource != null);
 
-			CreateAndExecuteSimplePipeline(executor, collector);
+			CreateAndExecuteSimplePipeline(executor, collector, 8);
 
 			Assert.IsTrue(HasConcurrency(collector), "It could not be observed, that two threads run concurrently. " +
 			                                         "It is very unlikely, that this was just a coincidence.");
@@ -132,11 +130,11 @@ namespace TicTacTubeTest.Executors
 		}
 
 		private static void CreateAndExecuteSimplePipeline(IExecutor executor,
-			EventCollector<ExecutorLifeCycleEventArgs> collector, int count = 8)
+			EventCollector<ExecutorLifeCycleEventArgs> collector, int count, int sleep = 125)
 		{
 			var pipeline = new DataPipelineBuilder();
 
-			pipeline.Append(new LambdaProcessor(s => Thread.Sleep(400)));
+			pipeline.Append(new LambdaProcessor(s => Thread.Sleep(sleep)));
 
 			executor.Initialize(new[] { pipeline });
 
