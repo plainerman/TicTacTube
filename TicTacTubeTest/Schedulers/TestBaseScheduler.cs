@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TicTacTubeCore.Schedulers;
 using TicTacTubeCore.Schedulers.Events;

@@ -139,10 +139,12 @@ namespace TicTacTubeCore.Schedulers
 		{
 			while (IsRunning || !QueuedSources.IsEmpty)
 			{
-				if (!IsRunning) Log.DebugFormat("{0} is waiting for {1} source(s).", GetType().Name, QueuedSources.Count);
+				if (!IsRunning)
+					Log.DebugFormat("{0} is waiting for {1} source(s).", GetType().Name, QueuedSources.Count);
 
 				if (!_sourceRequestedUpdate.Wait(SourceConditionDelay)) // wait for forced update, or else every second
-					if (!IsRunning && StopRetryCount >= 0) CurrentStopRetryCount++;
+					if (!IsRunning && StopRetryCount >= 0)
+						CurrentStopRetryCount++;
 
 				_sourceRequestedUpdate.Reset();
 

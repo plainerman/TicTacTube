@@ -1,7 +1,6 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
-using System.Net;
 using TicTacTubeCore.Genius.Processors.Media.Songs;
 using TicTacTubeCore.Processors.Media.Songs;
 

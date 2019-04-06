@@ -54,13 +54,15 @@ namespace TicTacTubeCore.Genius.Processors.Media.Songs
 				geniusApiKey = Environment.GetEnvironmentVariable(GeniusSystemVariable);
 
 			if (string.IsNullOrWhiteSpace(geniusApiKey))
-				throw new ArgumentException($"Value cannot be null or whitespace. System variable ${GeniusSystemVariable} is also not set.", nameof(geniusApiKey));
+				throw new ArgumentException(
+					$"Value cannot be null or whitespace. System variable ${GeniusSystemVariable} is also not set.",
+					nameof(geniusApiKey));
 
 			GeniusClient = new GeniusClient(geniusApiKey);
 		}
 
 		/// <summary>
-		///     Comnpare the given songinfo (<paramref name="currentInfo" />) with the genius database and create a new one.
+		///     Compare the given songinfo (<paramref name="currentInfo" />) with the genius database and create a new one.
 		///     <c>null</c> may be returned (if no match could be found).
 		/// </summary>
 		/// <param name="currentInfo">
@@ -68,7 +70,7 @@ namespace TicTacTubeCore.Genius.Processors.Media.Songs
 		///     <see cref="SongInfo.Artists" /> will be used for the query.
 		/// </param>
 		/// <returns>
-		///     A new songinfo containing relevant info from https://genius.com. It may be completly wrong - analyze the
+		///     A new songinfo containing relevant info from https://genius.com. It may be completely wrong - analyze the
 		///     songinfo before using it.
 		/// </returns>
 		public virtual async Task<SongInfo> ExtractAsyncTask(SongInfo currentInfo)
@@ -89,7 +91,10 @@ namespace TicTacTubeCore.Genius.Processors.Media.Songs
 
 				var result = (await GeniusClient.SearchClient.Search(TextFormat.Dom, searchTerm)).Response;
 
-				var correctHit = (from hit in result where hit.Type.Equals("song") select (JObject)hit.Result).FirstOrDefault();
+				var correctHit = result
+					.Where(hit => hit.Type == "song")
+					.Select(hit => (JObject) hit.Result)
+					.FirstOrDefault();
 
 				if (correctHit != null)
 				{
@@ -121,7 +126,8 @@ namespace TicTacTubeCore.Genius.Processors.Media.Songs
 				desiredPictures.Add(new GeniusPicture(song.PrimaryArtist.ImageUrl, PictureType.Artist));
 
 			// Filter all null urls, and all urls that point to the default image.
-			desiredPictures = desiredPictures.Where(p => !string.IsNullOrWhiteSpace(p.Url)).Where(p => !IsUrlDefaultImage(p.Url))
+			desiredPictures = desiredPictures.Where(p => !string.IsNullOrWhiteSpace(p.Url))
+				.Where(p => !IsUrlDefaultImage(p.Url))
 				.ToList();
 
 			// The tasks for the pictures to fetch
@@ -130,7 +136,7 @@ namespace TicTacTubeCore.Genius.Processors.Media.Songs
 			if (!string.IsNullOrWhiteSpace(song.ReleaseDate))
 			{
 				var releaseDate = DateTime.ParseExact(song.ReleaseDate, "yyyy-MM-dd", CultureInfo.InvariantCulture);
-				info.Year = (uint)releaseDate.Year;
+				info.Year = (uint) releaseDate.Year;
 			}
 
 			if (song.Album != null)

@@ -24,7 +24,8 @@ namespace TicTacTubeTest.Processors.Filesystem
 
 			if (directory != null)
 			{
-				destinationPath = Path.Combine(additionalFolders == null ? directory : Path.Combine(directory, additionalFolders),
+				destinationPath = Path.Combine(
+					additionalFolders == null ? directory : Path.Combine(directory, additionalFolders),
 					destinationPath);
 				rootFolderPath = Path.Combine(rootFolderPath, directory);
 			}

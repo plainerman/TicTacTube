@@ -121,7 +121,8 @@ namespace TicTacTubeTest.Processors.Filesystem
 
 		#region InitUtils
 
-		private static SimpleTestScheduler InitVars(out IFileSource source, out string newFolderPath, out string newFilePath)
+		private static SimpleTestScheduler InitVars(out IFileSource source, out string newFolderPath,
+			out string newFilePath)
 		{
 			var scheduler = InitVars(out source, out newFolderPath);
 			const string newFileName = ".tictactubetest";

@@ -98,7 +98,8 @@ namespace TicTacTubeCore.Processors.Media.Songs
 		{
 			var songInfo = new SongInfo();
 			// apply the preprocessors
-			songTitle = PreProcessors.Aggregate(songTitle, (current, preprocessor) => Regex.Replace(current, preprocessor, ""));
+			songTitle = PreProcessors.Aggregate(songTitle,
+				(current, preprocessor) => Regex.Replace(current, preprocessor, ""));
 
 			string[] split = null;
 
@@ -319,7 +320,8 @@ namespace TicTacTubeCore.Processors.Media.Songs
 
 			if (!RetainExistingTags || string.IsNullOrEmpty(songInfoFromFile.Title))
 				songInfoFromFile.Title = songInfo.Title;
-			if (!RetainExistingTags || songInfoFromFile.Artists == null || songInfoFromFile.Artists.Length <= 0 || string.IsNullOrEmpty(songInfoFromFile.Artists[0]))
+			if (!RetainExistingTags || songInfoFromFile.Artists == null || songInfoFromFile.Artists.Length <= 0 ||
+			    string.IsNullOrEmpty(songInfoFromFile.Artists[0]))
 				songInfoFromFile.Artists = songInfo.Artists;
 			if (string.IsNullOrEmpty(songInfoFromFile.Album))
 				songInfoFromFile.Album = songInfo.Album;

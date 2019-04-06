@@ -87,7 +87,8 @@ namespace TicTacTubeCore.Soundcloud.Processors.Media.Songs
 				var downloadCoverArt = webClient.DownloadFileTaskAsync(new Uri(coverArtUrl), coverArtDestinationFile);
 
 				var infoTask =
-					SongInfoExtractor.ExtractFromStringAsyncTask(HttpUtility.HtmlDecode(coverArtNode.Attributes["alt"].Value));
+					SongInfoExtractor.ExtractFromStringAsyncTask(
+						HttpUtility.HtmlDecode(coverArtNode.Attributes["alt"].Value));
 
 				var genreNode = articleNode.SelectSingleNode("//header/meta[@itemprop='genre']");
 				if (genreNode == null) throw new MissingGenreException("No genre node found.");

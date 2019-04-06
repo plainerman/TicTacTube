@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TicTacTubeCore.Processors.Logical;
 using TicTacTubeCore.Sources.Files;
@@ -19,7 +18,7 @@ namespace TicTacTubeTest.Processors.Logical
 			processor = new MultiProcessor(
 				new LambdaProcessor(source => new FileSource(source.FileName + "1")),
 				new LambdaProcessor(source => new FileSource(source.FileName + "2"))
-				);
+			);
 			Assert.AreEqual("test12", processor.Build().Execute(new FileSource("test")).FileName);
 
 			processor = new MultiProcessor(

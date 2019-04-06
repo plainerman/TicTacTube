@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Runtime.InteropServices;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TicTacTubeCore.Schedulers;
 using TicTacTubeCore.Schedulers.Events;
-using TicTacTubeCore.Sources.Files;
 using TicTacTubeTest.Sources.Files;
 
 namespace TicTacTubeTest.Schedulers

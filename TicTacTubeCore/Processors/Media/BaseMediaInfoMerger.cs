@@ -99,7 +99,8 @@ namespace TicTacTubeCore.Processors.Media
 
 			infos = allInfos.Where(i => i != null).ToArray();
 
-			if (infos.Length < 2) throw new ArgumentException("Too few infos specified. An info that is null will be ignored.");
+			if (infos.Length < 2)
+				throw new ArgumentException("Too few infos specified. An info that is null will be ignored.");
 
 			return MergeUnchecked(infos, greedy);
 		}

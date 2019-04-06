@@ -1,11 +1,8 @@
 ﻿using System;
-using System.IO;
-using System.Reflection;
 using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TicTacTubeCore.Executors;
 using TicTacTubeCore.Executors.Events;
-using TicTacTubeCore.Schedulers;
 using TicTacTubeCore.Sources.Files;
 
 namespace TicTacTubeTest.Utils.Extensions.Executors

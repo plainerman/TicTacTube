@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TicTacTubeCore.Pipelines;
 using TicTacTubeCore.Schedulers;

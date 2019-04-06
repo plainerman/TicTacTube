@@ -14,7 +14,7 @@ namespace TicTacTubeCore.Executors.Events
 		///     Once the executor has been initialized.
 		/// </summary>
 		Initialize,
-		
+
 		/// <summary>
 		///		Once a new source will be added.
 		/// </summary>
@@ -51,12 +51,12 @@ namespace TicTacTubeCore.Executors.Events
 		/// The type of the event that has been triggered.
 		/// </summary>
 		public ExecutorLifeCycleEventType EventType { get; }
-		
+
 		/// <summary>
 		/// An optional (may be <code>null</code>) <see cref="IFileSource"/> containing a reference to the source.
 		/// </summary>
 		public IFileSource FileSource { get; }
-		
+
 		/// <summary>
 		/// The pipeline in which a given error (see <see cref="Error"/>) was thrown.
 		/// This is <code>null</code>, except it is a <see cref="ExecutorLifeCycleEventType.SourceExecutionFailed"/> event.
@@ -91,7 +91,8 @@ namespace TicTacTubeCore.Executors.Events
 		/// <param name="pipeline">The pipeline in which the error was thrown.</param>
 		/// <param name="fileSource">The <see cref="T:TicTacTubeCore.Sources.Files.IFileSource" /> that caused the exception.</param>
 		/// <param name="error">The exception that was thrown inside the pipeline.</param>
-		public ExecutorLifeCycleEventArgs(IDataPipelineOrBuilder pipeline, IFileSource fileSource, Exception error) : this(ExecutorLifeCycleEventType.SourceExecutionFailed, fileSource)
+		public ExecutorLifeCycleEventArgs(IDataPipelineOrBuilder pipeline, IFileSource fileSource, Exception error) :
+			this(ExecutorLifeCycleEventType.SourceExecutionFailed, fileSource)
 		{
 			Pipeline = pipeline;
 			Error = error;

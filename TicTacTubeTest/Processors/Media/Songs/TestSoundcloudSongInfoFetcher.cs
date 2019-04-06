@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Net;
-using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TicTacTubeCore.Processors.Media.Songs;
 using TicTacTubeCore.Soundcloud.Processors.Media.Songs;

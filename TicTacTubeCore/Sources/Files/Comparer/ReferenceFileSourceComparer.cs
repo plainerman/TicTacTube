@@ -10,7 +10,7 @@ namespace TicTacTubeCore.Sources.Files.Comparer
 	{
 		/// <inheritdoc />
 		/// <summary>Check the reference of the two file sources and determine whether they are equal.</summary>
-		public bool Equals(IFileSource x, IFileSource y) => ReferenceEquals(x,y);
+		public bool Equals(IFileSource x, IFileSource y) => ReferenceEquals(x, y);
 
 		/// <inheritdoc />
 		public int GetHashCode(IFileSource obj) => obj.GetHashCode();

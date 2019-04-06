@@ -61,7 +61,8 @@ namespace TicTacTubeCore.Schedulers.Events
 		public SchedulerLifeCycleEventArgs(bool isRunning, IFileSource source, SchedulerLifeCycleEventType eventType)
 		{
 			if (!Enum.IsDefined(typeof(SchedulerLifeCycleEventType), eventType))
-				throw new InvalidEnumArgumentException(nameof(eventType), (int) eventType, typeof(SchedulerLifeCycleEventType));
+				throw new InvalidEnumArgumentException(nameof(eventType), (int) eventType,
+					typeof(SchedulerLifeCycleEventType));
 
 			IsRunning = isRunning;
 			EventType = eventType;

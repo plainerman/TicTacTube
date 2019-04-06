@@ -253,8 +253,6 @@ namespace TicTacTubeCore.Executors
 			return false;
 		}
 
-		//TODO: format and fix imports
-
 		/// <inheritdoc />
 		public bool Add(IFileSource fileSource)
 		{

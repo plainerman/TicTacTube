@@ -1,7 +1,4 @@
-﻿using System;
-using System.Threading;
-using TicTacTubeCore.Executors.Events;
-using TicTacTubeCore.Pipelines;
+﻿using TicTacTubeCore.Pipelines;
 using TicTacTubeCore.Sources.Files;
 using TicTacTubeTest.Schedulers;
 using TicTacTubeTest.Utils.Extensions.Schedulers;
