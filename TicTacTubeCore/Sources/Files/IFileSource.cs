@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using TicTacTubeCore.Sources.Files.External;
 
 namespace TicTacTubeCore.Sources.Files
 {
@@ -9,6 +10,12 @@ namespace TicTacTubeCore.Sources.Files
 	/// </summary>
 	public interface IFileSource : IDataSource
 	{
+		/// <summary>
+		/// The external file sources that will be fetched (once required).
+		/// This may be <code>null</code> if the source is already locally available.
+		/// </summary>
+		IExternalFileSource ExternalSource { get; }
+
 		/// <summary>
 		///     The file info containing all information of the file.
 		/// </summary>

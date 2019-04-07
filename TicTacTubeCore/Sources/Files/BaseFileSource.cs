@@ -11,7 +11,9 @@ namespace TicTacTubeCore.Sources.Files
 	public abstract class BaseFileSource : IFileSource
 	{
 		private static readonly ILog Log = LogManager.GetLogger(typeof(BaseFileSource));
-		private IExternalFileSource _externalSource;
+
+		/// <inheritdoc />
+		public IExternalFileSource ExternalSource { get; private set; }
 
 		/// <summary>
 		///     The local filepath used temporarily for external sources;
@@ -40,10 +42,10 @@ namespace TicTacTubeCore.Sources.Files
 			if (string.IsNullOrWhiteSpace(localPath))
 				throw new ArgumentException("Value cannot be null or whitespace.", nameof(localPath));
 
-			_externalSource = externalSource ?? throw new ArgumentNullException(nameof(externalSource));
+			ExternalSource = externalSource ?? throw new ArgumentNullException(nameof(externalSource));
 			_filePath = localPath;
 
-			if (!_externalSource.LazyLoading)
+			if (!ExternalSource.LazyLoading)
 				FetchExternalSource(true);
 		}
 
@@ -66,7 +68,7 @@ namespace TicTacTubeCore.Sources.Files
 		/// <param name="async">Whether the external source will be fetched asynchronously or not.</param>
 		protected virtual void FetchExternalSource(bool async)
 		{
-			if (_externalSource == null)
+			if (ExternalSource == null)
 				return;
 
 			if (!Directory.Exists(_filePath))
@@ -76,21 +78,21 @@ namespace TicTacTubeCore.Sources.Files
 			}
 
 			Log.InfoFormat("Fetching external source {0} to {1}" + (async ? " asynchronously." : "."),
-				_externalSource, _filePath);
+				ExternalSource, _filePath);
 
 			if (async)
 			{
-				_externalSource.FetchFileAsync(_filePath);
+				ExternalSource.FetchFileAsync(_filePath);
 			}
 			else
 			{
-				string path = _externalSource.FetchFile(_filePath);
+				string path = ExternalSource.FetchFile(_filePath);
 
 				AssignFilePath(path);
 
-				Log.InfoFormat("Fetched external source {0} to {1}.", _externalSource, path);
+				Log.InfoFormat("Fetched external source {0} to {1}.", ExternalSource, path);
 
-				_externalSource = null;
+				ExternalSource = null;
 				_filePath = null;
 			}
 		}

@@ -57,11 +57,12 @@ namespace TicTacTubeCore.Executors
 		protected readonly IList<IFileSource> ActiveFileSources;
 
 		/// <summary>
-		/// In this collection, all conflicting file sources are stored. Conflicted file sources, are file sources
-		/// that are pending but locked due to a thread currently processing an identical source.
+		/// In this collection, all conflicting file sources are stored and their conflicts.
+		/// Conflicted file sources, are file sources that are pending but locked
+		/// due to a thread currently processing an identical source.
 		/// If two sources are identical is determined by <see cref="FileSourceComparer"/>.
 		/// </summary>
-		protected readonly IList<IFileSource> ConflictingFileSources;
+		protected readonly IDictionary<IFileSource, ISet<IFileSource>> ConflictingFileSources;
 
 		/// <summary>
 		/// The pipeline that will be executed by this executor. Is <code>null</code>,
@@ -117,7 +118,7 @@ namespace TicTacTubeCore.Executors
 			_queuedSemaphore = new SemaphoreSlim(0);
 			PendingFileSources = new ConcurrentBag<IFileSource>();
 			ActiveFileSources = new List<IFileSource>();
-			ConflictingFileSources = new List<IFileSource>();
+			ConflictingFileSources = new Dictionary<IFileSource, ISet<IFileSource>>();
 
 			Executors = new Thread[threadCount];
 
@@ -178,16 +179,34 @@ namespace TicTacTubeCore.Executors
 				{
 					if (ActiveFileSources.Remove(source))
 					{
-						var conflictingSource =
-							ConflictingFileSources.FirstOrDefault(s => FileSourceComparer.Equals(s, source));
-
-						if (conflictingSource != null && PendingFileSources.TryAdd(conflictingSource))
-						{
-							ConflictingFileSources.Remove(conflictingSource);
-							_queuedSemaphore.Release();
-						}
+						ReleaseConflicts(source);
 					}
 				}
+			}
+		}
+
+		/// <summary>
+		/// This method detects all conflicts for a given source, and if the conflict is now resolved, re-adds those
+		/// sources.
+		/// This method requires a lock of <see cref="ActiveFileSources"/> (which has to be acquired beforehand).
+		/// </summary>
+		/// <param name="source">The source that has been finished and frees all others.</param>
+		protected virtual void ReleaseConflicts(IFileSource source)
+		{
+			var conflictResolved = ConflictingFileSources
+				.Where(kv => kv.Value.Remove(source)) // remove source from dependency
+				.Where(kv => kv.Value.Count <= 0) // select those that do not have a conflict anymore
+				.Select(kv => kv.Key)
+				.ToArray();
+
+			var newSources = conflictResolved
+				.Where(s => PendingFileSources.TryAdd(s))
+				.ToArray();
+
+			foreach (var newSource in newSources)
+			{
+				ConflictingFileSources.Remove(newSource);
+				_queuedSemaphore.Release();
 			}
 		}
 
@@ -240,14 +259,16 @@ namespace TicTacTubeCore.Executors
 		/// <code>false</code> otherwise.</returns>
 		protected virtual bool TryAddConflicting(IFileSource source)
 		{
-			lock (ActiveFileSources)
+			var conflicts = PendingFileSources
+				.Where(s => FileSourceComparer.Equals(s, source))
+				.Concat(
+					ActiveFileSources.Where(s => FileSourceComparer.Equals(s, source))
+				).ToArray();
+
+			if (conflicts.Any())
 			{
-				if (PendingFileSources.Any(s => FileSourceComparer.Equals(s, source)) ||
-				    ActiveFileSources.Any(s => FileSourceComparer.Equals(s, source)))
-				{
-					ConflictingFileSources.Add(source);
-					return true;
-				}
+				ConflictingFileSources.Add(source, new HashSet<IFileSource>(conflicts));
+				return true;
 			}
 
 			return false;
@@ -262,11 +283,14 @@ namespace TicTacTubeCore.Executors
 			{
 				if (!IsRunning) return false;
 
-				if (!TryAddConflicting(fileSource))
+				lock (ActiveFileSources)
 				{
-					if (!PendingFileSources.TryAdd(fileSource)) return false;
+					if (!TryAddConflicting(fileSource))
+					{
+						if (!PendingFileSources.TryAdd(fileSource)) return false;
 
-					_queuedSemaphore.Release();
+						_queuedSemaphore.Release();
+					}
 				}
 			}
 

@@ -185,11 +185,14 @@ namespace TicTacTubeCore.Schedulers
 					Log.InfoFormat("Source has become ready, executing {0} pipelineOrBuilder(s).",
 						InternalPipelines.Count);
 
+					if (!abort)
+					{
+						abort = !Executor.Add(queuedSource.Key);
+					}
+
 					ExecuteEvent(abort
 						? SchedulerLifeCycleEventType.SourceDiscarded
 						: SchedulerLifeCycleEventType.SourceReady, queuedSource.Key);
-
-					if (!abort) Executor.Add(queuedSource.Key);
 				}
 			}
 		}
@@ -227,12 +230,12 @@ namespace TicTacTubeCore.Schedulers
 						"The scheduler has already been stopped and cannot be restarted.");
 				if (IsRunning) return;
 
-				ExecuteStart();
-
 				_sourceRequestedUpdate = new ManualResetEventSlim();
 				_sourceUpdater = new Thread(SourceUpdater_Thread);
 
 				Executor.Initialize(Pipelines);
+
+				ExecuteStart();
 
 				IsRunning = true;
 
