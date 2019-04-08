@@ -149,6 +149,8 @@ namespace TicTacTubeCore.Executors
 				Initialized = true;
 			}
 
+			Log.Info("Executor has been initialized.");
+
 			LifeCycleEvent?.Invoke(this, new ExecutorLifeCycleEventArgs(ExecutorLifeCycleEventType.Initialize));
 		}
 
@@ -219,7 +221,7 @@ namespace TicTacTubeCore.Executors
 			LifeCycleEvent?.Invoke(this,
 				new ExecutorLifeCycleEventArgs(ExecutorLifeCycleEventType.SourceExecutionStart, source));
 
-			Log.DebugFormat("Starting to process {0}.", source?.FileInfo);
+			Log.DebugFormat("Starting to process {0}.", source);
 
 			bool error = false;
 
@@ -235,7 +237,7 @@ namespace TicTacTubeCore.Executors
 					IsRunning = !DieOnException; // prevent new sources from being added (if DieOnException)
 
 					LifeCycleEvent?.Invoke(this, new ExecutorLifeCycleEventArgs(p, source, e));
-					Log.WarnFormat("Source {0} has thrown an exception.", source?.FileInfo);
+					Log.WarnFormat("Source {0} has thrown an exception.", source);
 					if (AbortPipelineOnError) break;
 				}
 			}
@@ -245,6 +247,7 @@ namespace TicTacTubeCore.Executors
 
 			if (error && DieOnException)
 			{
+				Log.Warn("Executor is about to stop due to an exception ...");
 				new Thread(Stop).Start(); // call stop from another thread, so that it won't cause a deadlock.
 			}
 		}

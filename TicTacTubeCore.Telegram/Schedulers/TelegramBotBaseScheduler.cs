@@ -89,7 +89,7 @@ namespace TicTacTubeCore.Telegram.Schedulers
 			UserList = userList;
 
 			if (UserList != UserList.None)
-				Log.InfoFormat("User list specified to {0}", userList.ToString());
+				Log.InfoFormat("User list specified to {0}", userList);
 		}
 
 		/// <inheritdoc />

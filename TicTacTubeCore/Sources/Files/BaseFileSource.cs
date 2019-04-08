@@ -127,5 +127,12 @@ namespace TicTacTubeCore.Sources.Files
 		public void EndExecute()
 		{
 		}
+
+		/// <inheritdoc />
+		public override string ToString()
+		{
+			string ret = $"{FileInfo?.FullName}[{GetType().Name}]";
+			return ExternalSource == null ? ret : $"{ExternalSource} -> {ret}";
+		}
 	}
 }

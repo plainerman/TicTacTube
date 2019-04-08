@@ -154,10 +154,16 @@ namespace TicTacTubeCore.Schedulers
 				if (!IsRunning && StopRetryCount >= 0 && CurrentStopRetryCount >= StopRetryCount) break;
 			}
 
-			// discard the remaining sources
-			foreach (var source in QueuedSources.Keys)
+			Log.InfoFormat("{0} has stopped updating.", GetType().Name);
+
+			if (QueuedSources.Count > 0)
 			{
-				ExecuteEvent(SchedulerLifeCycleEventType.SourceDiscarded, source);
+				Log.WarnFormat("{0} sources will be discarded.", QueuedSources.Keys.Count);
+				// discard the remaining sources
+				foreach (var source in QueuedSources.Keys)
+				{
+					ExecuteEvent(SchedulerLifeCycleEventType.SourceDiscarded, source);
+				}
 			}
 		}
 
@@ -185,10 +191,9 @@ namespace TicTacTubeCore.Schedulers
 					Log.InfoFormat("Source has become ready, executing {0} pipelineOrBuilder(s).",
 						InternalPipelines.Count);
 
-					if (!abort)
-					{
-						abort = !Executor.Add(queuedSource.Key);
-					}
+					if (!abort) abort = !Executor.Add(queuedSource.Key);
+
+					Log.DebugFormat("{0} has been added to executor. Failed={1}", queuedSource.Key, abort);
 
 					ExecuteEvent(abort
 						? SchedulerLifeCycleEventType.SourceDiscarded
