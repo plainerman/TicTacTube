@@ -1,38 +1,37 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Title>TicTacTube</Title>
-    <TargetFramework>netstandard2.0</TargetFramework>
+	<Title>TicTacTube</Title>
+	<TargetFramework>netstandard2.0</TargetFramework>
 	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageId>TTT.TicTacTube</PackageId>
-    <Authors>Michael Plainer</Authors>
-    <Company>Michael Plainer</Company>
-    <Product>TicTacTube</Product>
-    <Description>A versatile pipelining library, created with media organization in mind and meant to be run as a service.</Description>
-    <PackageLicenseUrl>https://choosealicense.com/licenses/mit/</PackageLicenseUrl>
-    <PackageProjectUrl>https://github.com/plainerman/TicTacTube</PackageProjectUrl>
-    <Copyright>MIT</Copyright>
-    <RepositoryUrl>https://github.com/plainerman/TicTacTube</RepositoryUrl>
-    <RepositoryType>Git</RepositoryType>
-    <Version>0.3.2</Version>
-    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <SignAssembly>false</SignAssembly>
-    <AssemblyVersion>0.3.1.0</AssemblyVersion>
-    <FileVersion>0.3.1.0</FileVersion>
-    <PackageTags>dataprocessing pipeline pipeline-framework genius telegram telegram-bot youtube-dl soundcloud album metadata metadata-management songs media</PackageTags>
-    <NeutralLanguage>(None)</NeutralLanguage>
-    <PackageReleaseNotes>Allow SongInfoExtractor to prefer filename or existing tags.</PackageReleaseNotes>
+	<PackageId>TTT.TicTacTube</PackageId>
+	<Authors>Michael Plainer</Authors>
+	<Product>TicTacTube</Product>
+	<Description>A versatile pipelining library, created with media organization in mind and meant to be run as a service.</Description>
+	<PackageProjectUrl>https://github.com/plainerman/TicTacTube</PackageProjectUrl>
+	<Copyright>Michael Plainer</Copyright>
+	<RepositoryUrl>https://github.com/plainerman/TicTacTube</RepositoryUrl>
+	<RepositoryType>Git</RepositoryType>
+	<Version>0.3.2</Version>
+	<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+	<SignAssembly>false</SignAssembly>
+	<AssemblyVersion>0.3.1.0</AssemblyVersion>
+	<FileVersion>0.3.1.0</FileVersion>
+	<PackageTags>dataprocessing pipeline pipeline-framework genius telegram telegram-bot youtube-dl soundcloud album metadata metadata-management songs media</PackageTags>
+	<NeutralLanguage>(None)</NeutralLanguage>
+	<PackageReleaseNotes>Allow SongInfoExtractor to prefer filename or existing tags.</PackageReleaseNotes>
+	<PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin\Release\netstandard2.0\TicTacTubeCore.xml</DocumentationFile>
+	<DocumentationFile>bin\Release\netstandard2.0\TicTacTubeCore.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>bin\Debug\netstandard2.0\TicTacTubeCore.xml</DocumentationFile>
+	<DocumentationFile>bin\Debug\netstandard2.0\TicTacTubeCore.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
 	<PackageReference Include="System.Net.NameResolution" Version="4.3.0" />
-    <PackageReference Include="log4net" Version="2.0.8" />
-    <PackageReference Include="taglib-sharp-netstandard2.0" Version="2.1.0" />
+	<PackageReference Include="log4net" Version="2.0.8" />
+	<PackageReference Include="taglib-sharp-netstandard2.0" Version="2.1.0" />
   </ItemGroup>
 
 </Project>

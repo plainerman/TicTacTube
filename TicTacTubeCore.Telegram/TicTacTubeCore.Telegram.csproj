@@ -7,11 +7,9 @@
     <PackageId>TTT.TicTacTube.Telegram</PackageId>
     <Version>0.1.0</Version>
     <Authors>Michael Plainer</Authors>
-    <Company>Michael Plainer</Company>
     <Product>TicTacTube.Telegram</Product>
     <Description>An extension for the easy to use data processing pipeline that allows the integration of telegram bots.</Description>
-    <Copyright>MIT</Copyright>
-    <PackageLicenseUrl>https://choosealicense.com/licenses/mit/</PackageLicenseUrl>
+    <Copyright>Michael Plainer</Copyright>
     <PackageProjectUrl>https://github.com/plainerman/TicTacTube</PackageProjectUrl>
     <RepositoryUrl>https://github.com/plainerman/TicTacTube</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
@@ -19,6 +17,7 @@
     <AssemblyVersion>0.1.0.0</AssemblyVersion>
     <FileVersion>0.1.0.0</FileVersion>
     <PackageReleaseNotes>This is the initial version of the project. In combination with the TicTacTube core, it enables users to create a simple Telegram bot that can interact with it's users.</PackageReleaseNotes>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
