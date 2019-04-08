@@ -58,14 +58,16 @@ namespace TicTacTubeCore.Soundcloud.Processors.Media.Songs
 		}
 
 		/// <summary>
-		///     This method extracts a songinfo from a given string (<paramref name="url" />), which is a soundcloud url.
+		///     This method extracts a <see cref="SongInfo"/> from a given string (<paramref name="url" />), which is a soundcloud url.
 		/// </summary>
 		/// <param name="url">
-		///     The url to the soundcloud song.
+		///     The url to the Soundcloud song. May not be <code>null</code>.
 		/// </param>
 		/// <returns>A <see cref="SongInfo" /> containing the extracted information.</returns>
 		public async Task<SongInfo> ExtractFromStringAsyncTask(string url)
 		{
+			if (url == null) throw new ArgumentNullException(nameof(url));
+
 			using (var webClient = new DecompressingWebClient())
 			{
 				var doc = await CreateDoc(webClient, url);
@@ -85,14 +87,16 @@ namespace TicTacTubeCore.Soundcloud.Processors.Media.Songs
 				var downloadCoverArt = webClient.DownloadFileTaskAsync(new Uri(coverArtUrl), coverArtDestinationFile);
 
 				var infoTask =
-					SongInfoExtractor.ExtractFromStringAsyncTask(HttpUtility.HtmlDecode(coverArtNode.Attributes["alt"].Value));
+					SongInfoExtractor.ExtractFromStringAsyncTask(
+						HttpUtility.HtmlDecode(coverArtNode.Attributes["alt"].Value));
 
 				var genreNode = articleNode.SelectSingleNode("//header/meta[@itemprop='genre']");
 				if (genreNode == null) throw new MissingGenreException("No genre node found.");
 
 				var info = await infoTask;
 
-				info.Genres = HttpUtility.HtmlDecode(genreNode.Attributes["content"].Value).Split('&').Select(g => g.Trim())
+				info.Genres = HttpUtility.HtmlDecode(genreNode.Attributes["content"].Value)
+					?.Split('&').Select(g => g.Trim())
 					.ToArray();
 
 				await downloadCoverArt;

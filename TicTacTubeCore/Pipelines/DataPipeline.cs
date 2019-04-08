@@ -48,28 +48,31 @@ namespace TicTacTubeCore.Pipelines
 		/// <inheritdoc />
 		public void Execute(IFileSource fileSource)
 		{
-			Log.Info($"Executing pipeline with fileSource {fileSource.GetType().Name}");
+			Log.InfoFormat("Executing pipeline with {0} {1}", fileSource?.GetType().Name, fileSource);
+
 			IFileSource prev = null;
 			DataProcessors.Aggregate(fileSource, (current, processor) =>
 			{
 				if (current != prev)
 				{
-					current.Init();
+					current?.Init();
 					prev = current;
 				}
 
-				current.BeginExecute();
+				current?.BeginExecute();
 
 				var newSource = processor.Execute(current);
 
-				current.EndExecute();
+				current?.EndExecute();
 
 				return newSource;
 			});
+
+			Log.InfoFormat("Executed pipeline with {0} {1}", fileSource?.GetType().Name, fileSource);
 		}
 
 		/// <summary>
-		///     Check whether the object is a builder or not. (Hint: it is never a builder).
+		///     Check whether the object is a builder or not. (It is never a builder).
 		/// </summary>
 		public bool IsBuilder => false;
 

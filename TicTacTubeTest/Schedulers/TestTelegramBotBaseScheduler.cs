@@ -5,6 +5,5 @@ namespace TicTacTubeTest.Schedulers
 	[TestClass]
 	public class TestTelegramBotBaseScheduler
 	{
-		
 	}
 }

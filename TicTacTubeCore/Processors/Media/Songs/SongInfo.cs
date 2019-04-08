@@ -98,7 +98,8 @@ namespace TicTacTubeCore.Processors.Media.Songs
 		/// </summary>
 		/// <param name="path">The path from which the information will be read.</param>
 		/// <returns>The extracted songinfo from the file.</returns>
-		public static async Task<SongInfo> ReadFromFileAsyncTask(string path) => await Task.Run(() => ReadFromFile(path));
+		public static async Task<SongInfo> ReadFromFileAsyncTask(string path) =>
+			await Task.Run(() => ReadFromFile(path));
 
 		/// <summary>
 		///     Create a picture frame from the given iamge—meaning that the picture can be displayed in apps like iTunes or Google

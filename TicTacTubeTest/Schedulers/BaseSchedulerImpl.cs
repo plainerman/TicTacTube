@@ -1,10 +1,16 @@
-﻿using TicTacTubeCore.Schedulers;
+﻿using System;
+using TicTacTubeCore.Executors;
+using TicTacTubeCore.Schedulers;
 using TicTacTubeCore.Sources.Files;
 
 namespace TicTacTubeTest.Schedulers
 {
 	public class BaseSchedulerImpl : BaseScheduler
 	{
+		public BaseSchedulerImpl(IExecutor executor = null) : base(executor)
+		{
+		}
+
 		protected override void ExecuteStart()
 		{
 		}
@@ -16,6 +22,11 @@ namespace TicTacTubeTest.Schedulers
 		public new void Execute(IFileSource fileSource)
 		{
 			base.Execute(fileSource);
+		}
+
+		public new void Execute(IFileSource fileSource, Predicate<IFileSource> waitCondition)
+		{
+			base.Execute(fileSource, waitCondition);
 		}
 	}
 }

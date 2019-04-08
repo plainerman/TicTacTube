@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TicTacTubeCore.Pipelines;
 using TicTacTubeCore.Schedulers;
@@ -30,10 +29,8 @@ namespace TicTacTubeTest.Schedulers
 			File.Delete(Path.Combine(path, "tmp2.txt"));
 
 			scheduler.Stop();
+			scheduler.Join();
 			DisposeScheduler(scheduler);
-
-			// TODO: fix this
-			Thread.Sleep(1000);
 
 			Assert.AreEqual(3, dataProcessor.ExecutionCount);
 		}
@@ -45,7 +42,7 @@ namespace TicTacTubeTest.Schedulers
 			return new FileSystemScheduler(path);
 		}
 
-		private void DisposeScheduler(FileSystemScheduler scheduler)
+		private static void DisposeScheduler(FileSystemScheduler scheduler)
 		{
 			Directory.Delete(scheduler.Path, true);
 		}

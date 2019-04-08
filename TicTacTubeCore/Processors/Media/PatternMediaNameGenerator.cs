@@ -105,11 +105,13 @@ namespace TicTacTubeCore.Processors.Media
 
 			for (int i = 0; i < VariableNames.Length; i++)
 			{
-				var current = typeof(T).GetField(VariableNames[i], BindingFlags.Public | BindingFlags.Instance).GetValue(info);
+				var current = typeof(T).GetField(VariableNames[i], BindingFlags.Public | BindingFlags.Instance)
+					.GetValue(info);
 
 				string currentAsString;
 				if (current is Array)
-					currentAsString = string.Join(", ", ((IEnumerable) current).Cast<object>().Select(o => o.ToString()));
+					currentAsString = string.Join(", ",
+						((IEnumerable) current).Cast<object>().Select(o => o.ToString()));
 				else
 					currentAsString = current?.ToString();
 

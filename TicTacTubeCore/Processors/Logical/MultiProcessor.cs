@@ -19,6 +19,24 @@ namespace TicTacTubeCore.Processors.Logical
 		/// <summary>
 		///     Create a new multi processor (that acts like a nested pipeline) with given processors.
 		/// </summary>
+		/// <param name="processor">The first processor that will be executed. This one is required.</param>
+		/// <param name="processors">The processors that will be managed and processed. May be <code>null</code> or empty.</param>
+		public MultiProcessor(IDataProcessorOrBuilder processor, params IDataProcessorOrBuilder[] processors)
+		{
+			var dataProcessorOrBuilders = new IDataProcessorOrBuilder[(processors?.Length ?? 0) + 1];
+			dataProcessorOrBuilders[0] = processor ?? throw new ArgumentNullException(nameof(processor));
+
+			if (processors != null)
+			{
+				Array.Copy(processors, 0, dataProcessorOrBuilders, 1, processors.Length);
+			}
+
+			Processors = dataProcessorOrBuilders;
+		}
+
+		/// <summary>
+		///     Create a new multi processor (that acts like a nested pipeline) with given processors.
+		/// </summary>
 		/// <param name="processors">The processors that will be managed and processed.</param>
 		public MultiProcessor(IEnumerable<IDataProcessorOrBuilder> processors)
 		{

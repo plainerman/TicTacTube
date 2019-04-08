@@ -20,7 +20,8 @@ namespace TicTacTubeCore.Soundcloud.Processors.Media.Songs.Exceptions
 		/// </summary>
 		/// <param name="message">The message (i.e. cause) of the exception.</param>
 		/// <param name="innerException">The inner (causing) exception of this exception.</param>
-		public InvalidSoundcloudPageTypeException(string message, Exception innerException) : base(message, innerException)
+		public InvalidSoundcloudPageTypeException(string message, Exception innerException) : base(message,
+			innerException)
 		{
 		}
 	}

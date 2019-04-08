@@ -29,7 +29,7 @@ namespace TicTacTubeCore.Sources.Files.External
 		}
 
 		/// <summary>
-		///     Actually download a given file synchronously. If correctly assigned, this method does autoamtically work with
+		///     Actually download a given file synchronously. If correctly assigned, this method does automatically work with
 		///     previously fetched asynchronous sources.
 		///     <see cref="FinishedPath" /> has to be correctly set inside this method.
 		/// </summary>
@@ -37,7 +37,7 @@ namespace TicTacTubeCore.Sources.Files.External
 		protected abstract void Download(string destinationPath);
 
 		/// <summary>
-		///     Actually download a givenf ile asynchronously.
+		///     Actually download a given file asynchronously.
 		///     <see cref="FinishedPath" /> and <see cref="CurrentDownloadTask" /> have to be assigned correctly in
 		///     order to automatically work with synchronous sources.
 		/// </summary>
@@ -47,7 +47,7 @@ namespace TicTacTubeCore.Sources.Files.External
 		/// <summary>
 		///     Find a filename that is as close as possible to the desired filename.
 		/// </summary>
-		/// <param name="destinationPath">The path in wehich the desired file will be stored.</param>
+		/// <param name="destinationPath">The path in which the desired file will be stored.</param>
 		/// <param name="desiredFileName">The desired filename.</param>
 		/// <returns>The new file name.</returns>
 		protected virtual string GetAllowedFileName(string destinationPath, string desiredFileName)
@@ -121,5 +121,8 @@ namespace TicTacTubeCore.Sources.Files.External
 
 		/// <inheritdoc />
 		public abstract string ExternalSource { get; }
+
+		/// <inheritdoc />
+		public override string ToString() => ExternalSource;
 	}
 }

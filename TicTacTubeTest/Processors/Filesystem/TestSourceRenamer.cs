@@ -19,23 +19,25 @@ namespace TicTacTubeTest.Processors.Filesystem
 			var source = new TempFileSource();
 			long sourceSize = source.FileInfo.Length;
 
-			string destinatioPath = newFileName;
+			string destinationPath = newFileName;
 			string rootFolderPath = source.Path;
 
 			if (directory != null)
 			{
-				destinatioPath = Path.Combine(additionalFolders == null ? directory : Path.Combine(directory, additionalFolders),
-					destinatioPath);
+				destinationPath = Path.Combine(
+					additionalFolders == null ? directory : Path.Combine(directory, additionalFolders),
+					destinationPath);
 				rootFolderPath = Path.Combine(rootFolderPath, directory);
 			}
 
-			string fullDestinationPath = Path.Combine(source.Path, destinatioPath);
+			string fullDestinationPath = Path.Combine(source.Path, destinationPath);
 
-			Assert.IsFalse(File.Exists(destinatioPath));
+			Assert.IsFalse(File.Exists(destinationPath));
 
-			scheduler.Builder.Append(new SourceRenamer(f => destinatioPath));
+			scheduler.Builder.Append(new SourceRenamer(f => destinationPath));
+			scheduler.Start();
 
-			scheduler.Execute(source);
+			scheduler.ExecuteBlocking(source);
 
 			Assert.IsTrue(File.Exists(fullDestinationPath));
 			Assert.AreEqual(sourceSize, new FileInfo(fullDestinationPath).Length);

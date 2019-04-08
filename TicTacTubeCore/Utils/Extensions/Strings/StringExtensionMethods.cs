@@ -84,7 +84,8 @@ namespace TicTacTubeCore.Utils.Extensions.Strings
 				int difference = localSplit[i].MatchLength;
 				for (int j = i + 1; j < localSplit.Count; j++)
 				{
-					localSplit[j] = new StringPosition(localSplit[j].StartIndex - difference, localSplit[j].MatchLength);
+					localSplit[j] =
+						new StringPosition(localSplit[j].StartIndex - difference, localSplit[j].MatchLength);
 				}
 			}
 

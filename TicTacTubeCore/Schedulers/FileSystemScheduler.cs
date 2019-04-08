@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-using System.Threading;
+using TicTacTubeCore.Executors;
 using TicTacTubeCore.Sources.Files;
 
 namespace TicTacTubeCore.Schedulers
@@ -22,6 +22,19 @@ namespace TicTacTubeCore.Schedulers
 		/// </summary>
 		public FileSystemWatcher Watcher { get; }
 
+		/// <summary>
+		/// Whether the scheduler should wait for the file to be readable.
+		/// Is highly recommended, since the event is triggered once the file is created but if it is (e.g.) still copying,
+		/// it will create issues when opening the files.
+		/// </summary>
+		public bool WaitForRead { get; set; } = true;
+
+		/// <summary>
+		/// Whether the scheduler should wait for the file to be writable.
+		/// Use this option with caution: if the user does not have enough permission it will prevent stopping the scheduler.
+		/// </summary>
+		public bool WaitForWrite { get; set; } = false;
+
 		/// <inheritdoc />
 		/// <summary>
 		///     Create a new scheduler that watches a given <paramref name="path" />, filters files (<paramref name="filter" /> see
@@ -29,12 +42,13 @@ namespace TicTacTubeCore.Schedulers
 		///     and the <paramref name="filters" /> that specify when to trigger (see <see cref="P:System.IO.FileSystemWatcher.NotifyFilter" />
 		///     ).
 		/// </summary>
+		/// <param name="executor">The executor that will be used when executing the pipeline.</param>
 		/// <param name="path">The path that will be watched.</param>
 		/// <param name="filters">The filters that decide when to trigger.</param>
 		/// <param name="filter">A filter that is applied to file names.</param>
-		public FileSystemScheduler(string path,
+		public FileSystemScheduler(IExecutor executor, string path,
 			NotifyFilters filters = NotifyFilters.LastAccess | NotifyFilters.LastWrite | NotifyFilters.FileName |
-			                        NotifyFilters.DirectoryName, string filter = "*.*")
+			                        NotifyFilters.DirectoryName, string filter = "*.*") : base(executor)
 		{
 			Path = path;
 			Watcher = new FileSystemWatcher(path, filter) { NotifyFilter = filters };
@@ -42,6 +56,24 @@ namespace TicTacTubeCore.Schedulers
 			Watcher.Changed += OnChanged;
 			Watcher.Renamed += OnChanged;
 		}
+
+		/// <inheritdoc />
+		/// <summary>
+		///     Create a new scheduler that watches a given <paramref name="path" />, filters files (<paramref name="filter" /> see
+		///     <see cref="P:System.IO.FileSystemWatcher.Filter" />),
+		///     and the <paramref name="filters" /> that specify when to trigger (see <see cref="P:System.IO.FileSystemWatcher.NotifyFilter" />
+		///     ). The default executor specified in <see cref="BaseScheduler"/> will be used.
+		/// </summary>
+		/// <param name="path">The path that will be watched.</param>
+		/// <param name="filters">The filters that decide when to trigger.</param>
+		/// <param name="filter">A filter that is applied to file names.</param>
+		public FileSystemScheduler(string path,
+			NotifyFilters filters = NotifyFilters.LastAccess | NotifyFilters.LastWrite | NotifyFilters.FileName |
+			                        NotifyFilters.DirectoryName, string filter = "*.*") :
+			this(null, path, filters, filter)
+		{
+		}
+
 
 		/// <inheritdoc />
 		protected override void ExecuteStart()
@@ -55,8 +87,22 @@ namespace TicTacTubeCore.Schedulers
 		/// <param name="source">The source of the event.</param>
 		/// <param name="e">The args for the triggered event.</param>
 		protected virtual void OnChanged(object source, FileSystemEventArgs e)
-		{ 
-			Execute(new FileSource(e.FullPath));
+		{
+			Execute(new FileSource(e.FullPath), f =>
+			{
+				if (!WaitForRead && !WaitForWrite) return true;
+				try
+				{
+					using (new FileStream(f.FileInfo.FullName, WaitForWrite ? FileMode.Append : FileMode.Open))
+					{
+						return true;
+					}
+				}
+				catch
+				{
+					return false;
+				}
+			});
 		}
 
 		/// <inheritdoc />

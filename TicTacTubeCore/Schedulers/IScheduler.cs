@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using TicTacTubeCore.Executors;
 using TicTacTubeCore.Pipelines;
 using TicTacTubeCore.Schedulers.Events;
 
@@ -11,9 +12,20 @@ namespace TicTacTubeCore.Schedulers
 	public interface IScheduler
 	{
 		/// <summary>
+		/// The executor capable of actually processing the pipeline. It has to be assumed, that once stopped,
+		/// the executor cannot be reused.
+		/// </summary>
+		IExecutor Executor { get; }
+
+		/// <summary>
 		///     Determine whether this scheduler is currently running.
 		/// </summary>
 		bool IsRunning { get; }
+
+		/// <summary>
+		/// Determine whether the scheduler has already been stopped.
+		/// </summary>
+		bool Stopped { get; }
 
 		/// <summary>
 		///     The pipelines that will be executed.

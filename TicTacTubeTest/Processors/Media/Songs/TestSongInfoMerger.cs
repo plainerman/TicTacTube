@@ -18,9 +18,11 @@ namespace TicTacTubeTest.Processors.Media.Songs
 			"Jax Jones~Ina Wroldsen")]
 		[DataRow("Breathe", "Ina Wroldsen~Jax Jones", "Breathe", "Jax Jones~Ina Wroldsen~me", false, "Breathe",
 			"Jax Jones~Ina Wroldsen~me")]
-		[DataRow("Break Up Every Night (Dark Heart Remix)", "The Chainsmokers", "Break Up Every Night", "The Chainsmokers",
+		[DataRow("Break Up Every Night (Dark Heart Remix)", "The Chainsmokers", "Break Up Every Night",
+			"The Chainsmokers",
 			false, "Break Up Every Night (Dark Heart Remix)", "The Chainsmokers")]
-		[DataRow("Break Up Every Night (TYNAN Remix)", "The Chainsmokers", "Break Up Every Night", "The Chainsmokers", false,
+		[DataRow("Break Up Every Night (TYNAN Remix)", "The Chainsmokers", "Break Up Every Night", "The Chainsmokers",
+			false,
 			"Break Up Every Night (TYNAN Remix)", "The Chainsmokers")]
 		public void TestSongInfoMerging(string title1, string artist1, string title2, string artist2, bool greedy,
 			string newTitle, string newArtists)

@@ -1,4 +1,7 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System;
+using System.Net;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using TicTacTubeCore.Processors.Media.Songs;
 using TicTacTubeCore.Soundcloud.Processors.Media.Songs;
 using TicTacTubeCore.Soundcloud.Processors.Media.Songs.Exceptions;
 
@@ -20,7 +23,16 @@ namespace TicTacTubeTest.Processors.Media.Songs
 		public void TestExtractFromUrl(string url, string title, string firstArtist, string firstGenre)
 		{
 			var fetcher = new SoundcloudSongInfoFetcher();
-			var result = fetcher.ExtractFromStringAsyncTask(url).GetAwaiter().GetResult();
+			var result = new SongInfo();
+
+			try
+			{
+				result = fetcher.ExtractFromStringAsyncTask(url).GetAwaiter().GetResult();
+			}
+			catch (WebException e)
+			{
+				Assert.Inconclusive("An error with the connection occured. The state of this test is inconclusive.", e);
+			}
 
 			Assert.AreEqual(title, result.Title);
 			Assert.AreEqual(firstArtist, result.Artists[0]);
@@ -36,8 +48,20 @@ namespace TicTacTubeTest.Processors.Media.Songs
 		public void TestExtractFromBadUrl(string badUrl)
 		{
 			var fetcher = new SoundcloudSongInfoFetcher();
-			Assert.ThrowsExceptionAsync<InvalidSoundcloudPageTypeException>(() => fetcher.ExtractFromStringAsyncTask(badUrl))
-				.GetAwaiter().GetResult();
+			try
+			{
+				fetcher.ExtractFromStringAsyncTask(badUrl).GetAwaiter().GetResult();
+			}
+			catch (InvalidSoundcloudPageTypeException) // expected
+			{
+				return;
+			}
+			catch (Exception e)
+			{
+				Assert.Inconclusive("This test requires an internet connection. Manually check the error.", e);
+			}
+
+			Assert.Fail("No exception has been thrown.");
 		}
 	}
 }

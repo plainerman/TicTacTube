@@ -52,12 +52,6 @@ namespace TicTacTubeTest.Processors.Media.Songs
 			new[] { "Marshmello", "Anne-Marie" })]
 		public void TestSongInfoExtractionByName(string input, string title, string[] artists)
 		{
-			//TODO: readd / think about other concept, once the file has to exist in order to be analyzed
-			//because bitrate
-			//var tmpFile = Path.GetTempFileName();
-			//var testFile = Path.Combine(Path.GetDirectoryName(tmpFile), input);
-			//File.Move(tmpFile, testFile);
-
 			var extracted = new SongInfoExtractor(false).ExtractFromStringAsyncTask(input).GetAwaiter().GetResult();
 			Assert.AreEqual(title, extracted.Title);
 
@@ -67,8 +61,6 @@ namespace TicTacTubeTest.Processors.Media.Songs
 			{
 				Assert.AreEqual(artists[i], extracted.Artists[i]);
 			}
-
-			//File.Delete(testFile);
 		}
 	}
 }

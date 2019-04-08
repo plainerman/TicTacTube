@@ -48,8 +48,9 @@ namespace TicTacTubeCore.Sources.Files.External
 
 			string headerContentDisposition = client.ResponseHeaders["content-disposition"];
 
-			string filename = string.IsNullOrEmpty(headerContentDisposition) ?
-				Path.GetFileName(url) : new ContentDisposition(headerContentDisposition).FileName;
+			string filename = string.IsNullOrEmpty(headerContentDisposition)
+				? Path.GetFileName(url)
+				: new ContentDisposition(headerContentDisposition).FileName;
 
 			filename = GetAllowedFileName(destinationPath, filename);
 

@@ -1,6 +1,7 @@
 ﻿using TicTacTubeCore.Pipelines;
 using TicTacTubeCore.Sources.Files;
 using TicTacTubeTest.Schedulers;
+using TicTacTubeTest.Utils.Extensions.Schedulers;
 
 namespace TicTacTubeTest.Processors
 {
@@ -19,6 +20,16 @@ namespace TicTacTubeTest.Processors
 		public virtual void Execute(IFileSource source)
 		{
 			Scheduler.Execute(source);
+		}
+
+		public virtual void Start()
+		{
+			Scheduler.Start();
+		}
+
+		public virtual void ExecuteBlocking(IFileSource source, int timeOut = 5000)
+		{
+			Scheduler.ExecuteBlocking(source, timeOut);
 		}
 	}
 }

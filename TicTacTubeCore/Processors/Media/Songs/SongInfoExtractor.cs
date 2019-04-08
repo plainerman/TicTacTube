@@ -98,7 +98,8 @@ namespace TicTacTubeCore.Processors.Media.Songs
 		{
 			var songInfo = new SongInfo();
 			// apply the preprocessors
-			songTitle = PreProcessors.Aggregate(songTitle, (current, preprocessor) => Regex.Replace(current, preprocessor, ""));
+			songTitle = PreProcessors.Aggregate(songTitle,
+				(current, preprocessor) => Regex.Replace(current, preprocessor, ""));
 
 			string[] split = null;
 
@@ -209,7 +210,7 @@ namespace TicTacTubeCore.Processors.Media.Songs
 		/// <returns>A collection of all found featuring parts (e.g. Marshmello, Porter Robinson).</returns>
 		protected virtual IEnumerable<string> FindFeaturingParts(ref string input, bool artistsOnly)
 		{
-			// the indexes where a new autor line begins or ends
+			// the indexes where a new author line begins or ends
 			var splitStartIndexes = new List<int>();
 			var splitEndIndexes = new List<int>();
 
@@ -239,7 +240,7 @@ namespace TicTacTubeCore.Processors.Media.Songs
 			var featuringParts = new List<string>();
 			foreach (int splitStart in splitStartIndexes)
 			{
-				// find the closest matching end indexs (e.g. closes closing bracket)
+				// find the closest matching end indices (e.g. closes closing bracket)
 				var end = FindClosest(splitStart, splitEndIndexes);
 				int splitEnd;
 				bool toBreak = false;
@@ -319,7 +320,8 @@ namespace TicTacTubeCore.Processors.Media.Songs
 
 			if (!RetainExistingTags || string.IsNullOrEmpty(songInfoFromFile.Title))
 				songInfoFromFile.Title = songInfo.Title;
-			if (!RetainExistingTags || songInfoFromFile.Artists == null || songInfoFromFile.Artists.Length <= 0 || string.IsNullOrEmpty(songInfoFromFile.Artists[0]))
+			if (!RetainExistingTags || songInfoFromFile.Artists == null || songInfoFromFile.Artists.Length <= 0 ||
+			    string.IsNullOrEmpty(songInfoFromFile.Artists[0]))
 				songInfoFromFile.Artists = songInfo.Artists;
 			if (string.IsNullOrEmpty(songInfoFromFile.Album))
 				songInfoFromFile.Album = songInfo.Album;
