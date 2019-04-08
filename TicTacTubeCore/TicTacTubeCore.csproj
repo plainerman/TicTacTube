@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
 	<Title>TicTacTube</Title>
 	<TargetFramework>netstandard2.0</TargetFramework>
@@ -11,14 +11,15 @@
 	<Copyright>Michael Plainer</Copyright>
 	<RepositoryUrl>https://github.com/plainerman/TicTacTube</RepositoryUrl>
 	<RepositoryType>Git</RepositoryType>
-	<Version>0.3.2</Version>
+	<Version>0.4.0</Version>
 	<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
 	<SignAssembly>false</SignAssembly>
-	<AssemblyVersion>0.3.1.0</AssemblyVersion>
-	<FileVersion>0.3.1.0</FileVersion>
+	<AssemblyVersion>0.4.0.0</AssemblyVersion>
+	<FileVersion>0.4.0.0</FileVersion>
 	<PackageTags>dataprocessing pipeline pipeline-framework genius telegram telegram-bot youtube-dl soundcloud album metadata metadata-management songs media</PackageTags>
 	<NeutralLanguage>(None)</NeutralLanguage>
-	<PackageReleaseNotes>Allow SongInfoExtractor to prefer filename or existing tags.</PackageReleaseNotes>
+	<PackageReleaseNotes>* Add a new execution system which allows to manage processing pipelines, delay and discard sources, and operate on sources from multiple threads
+* Improve documentation</PackageReleaseNotes>
 	<PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
