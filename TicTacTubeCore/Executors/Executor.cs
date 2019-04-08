@@ -96,8 +96,17 @@ namespace TicTacTubeCore.Executors
 
 		/// <inheritdoc />
 		/// <summary>
+		/// Create a new executor with a thread for every logical processor. To compare two file sources,
+		/// the full file names (i.e. full path) will be compared with <see cref="NameFileSourceComparer"/>.
+		/// </summary>
+		public Executor() : this(Environment.ProcessorCount)
+		{
+		}
+
+		/// <inheritdoc />
+		/// <summary>
 		/// Create a new executor with a given number of threads. To compare two file sources, the
-		/// full file names (i.e. full path) will be compared with <see cref="T:TicTacTubeCore.Sources.Files.Comparer.NameFileSourceComparer" />.
+		/// full file names (i.e. full path) will be compared with <see cref="NameFileSourceComparer"/>.
 		/// </summary>
 		/// <param name="threadCount">The number of threads that will process in parallel.
 		/// This number has to be greater than zero.</param>
