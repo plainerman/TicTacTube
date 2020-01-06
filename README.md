@@ -10,7 +10,7 @@ To prevent your packages from getting bloated, the TicTacTube core package only 
 Some packages are:
 * [Telegram Integration](https://www.nuget.org/packages/TTT.TicTacTube.Telegram/) Enabling users to easily create telegram bots.
 * [Genius.com Info Fetcher](https://www.nuget.org/packages/TTT.TicTacTube.Genius/) Making it easy to update meta-info for songs by using a Genius API-token.
-* [YouTube-DL Integration]() (working on it...) Make use of a local youtube-dl installation to download content and convert files.
+* [YouTube-DL Integration](https://github.com/plainerman/TicTacTube/tree/master/TicTacTubeCore.YoutubeDL) (working on it...) Make use of a local youtube-dl installation to download content and convert files.
 * ... and more!
 
 ## Table of Contents
