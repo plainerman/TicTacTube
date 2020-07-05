@@ -99,7 +99,7 @@ In this application, the music folder of the system is observed. Whenever a new 
 4. The new ID3-tag (including the album cover) will be written, the file moved to a new folder, and renamed to a concise name.
 
 Everything described in steps 1&ndash;4 can be seen in this short gif: 
-![TicTacTube in action (organizing media)](https://giant.gfycat.com/SlightGivingInvisiblerail.gif)
+![TicTacTube in action (organizing media)](https://i.imgur.com/1TcVyIt.gif)
 
 ----------------------------------------------------------------
 ### The Code
