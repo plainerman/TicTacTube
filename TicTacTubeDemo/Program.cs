@@ -20,11 +20,14 @@ using TicTacTubeCore.Sources.Files.Comparer;
 using TicTacTubeCore.Telegram.Schedulers;
 using TicTacTubeCore.YoutubeDL.Sources.Files.External;
 using File = System.IO.File;
+using TicTacTubeCore.Processors.Filesystem;
 
 namespace TicTacTubeDemo
 {
 	public class Program
 	{
+		private static readonly ILog Log = LogManager.GetLogger(typeof(Program));
+
 		private static void Main(string[] args)
 		{
 			var logRepository = LogManager.GetRepository(Assembly.GetEntryAssembly());
@@ -34,23 +37,50 @@ namespace TicTacTubeDemo
 				File.ReadAllText("telegram.token"));
 			var pipelineBuilder = new DataPipelineBuilder();
 
-			var fetcher = new GeniusSongInfoFetcher();
 			var extractor = new SongInfoExtractor(false);
+
+			GeniusSongInfoFetcher genius = null;
+			try {
+				string apiKey = null;
+				if (File.Exists("genius.token")) apiKey = File.ReadAllText("genius.token");
+
+				genius = new GeniusSongInfoFetcher(apiKey);
+			}
+			catch (ArgumentException) {} // will be thrown if no token could be found
+
+			if (genius == null) {
+				Log.Warn("Neither a genius.token file nor the corresponding environmental variable has been set. -Skipping genius");
+			}
+
+			var merger = new SongInfoMerger(); // a class that can merge multiple SongInfo instances
 
 			pipelineBuilder.Append(new LambdaProcessor(source =>
 			{
-				var info = extractor.ExtractFromString(source.FileName);
+				// load already stored ID3-tags (if any) from the specified file
+				var originalInfo = SongInfo.ReadFromFile(source.FileInfo.FullName);
 
-				//TODO: SongInfoMerger
+				// try to parse the filename and extract the title, and artist(s)
+				var parsedInfo = extractor.ExtractFromString(source.FileName);
+				// merge the metadata but ensure that they are (probably) identical
+				// greedy ensures that null values are overridden
+				originalInfo = merger.Merge(originalInfo, parsedInfo, greedy: true);
 
-				info.WriteToFile(source.FileInfo.FullName);
-				info = fetcher.ExtractAsyncTask(info).GetAwaiter().GetResult();
-				info.WriteToFile(source.FileInfo.FullName);
+				if (genius != null) { // if a genius client is available
+					// search for the info on genius
+					parsedInfo = genius.ExtractAsyncTask(originalInfo).GetAwaiter().GetResult();
+					// since the fetched result could be completely different, non-greedy merging is important
+					originalInfo = merger.Merge(originalInfo, parsedInfo, greedy: false);
+				}
 
+				originalInfo.WriteToFile(source.FileInfo.FullName); // write new metadata back
 				return source;
 			}));
-			scheduler.Add(pipelineBuilder);
 
+			// Move the finished files into the downloads folder
+			pipelineBuilder.Append(new SourceMover("/downloads", keepName: true));
+			
+			scheduler.Add(pipelineBuilder);
+			
 			scheduler.Start();
 
 			scheduler.Join();
@@ -124,10 +154,14 @@ namespace TicTacTubeDemo
 				SendTextMessage(chatId,
 					$"{source.FileName}\nTitle:\t{f.Tag.Title}\nArtists:\t{string.Join(", ", f.Tag.Performers)}");
 
-
-				BotClient.SendAudioAsync(chatId,
-					new FileToSend(source.FileInfo.FullName, File.OpenRead(source.FileInfo.FullName)), f.Tag.Lyrics,
-					(int) f.Properties.Duration.TotalSeconds, string.Join(' ', f.Tag.Performers), f.Tag.Title);
+				BotClient.SendAudioAsync(
+					chatId: chatId,
+					audio: File.OpenRead(source.FileInfo.FullName),
+					caption: f.Tag.Lyrics,
+					duration: (int) f.Properties.Duration.TotalSeconds,
+					performer: string.Join(' ', f.Tag.Performers),
+					title: f.Tag.Title
+				);
 			}
 
 			protected override void ProcessTextMessage(Message message)

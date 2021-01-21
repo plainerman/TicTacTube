@@ -168,7 +168,7 @@ namespace TicTacTubeCore.Telegram.Schedulers
 		/// </summary>
 		/// <param name="type">The type that will be checked.</param>
 		/// <returns><c>True</c>, if the type is supported — <c>false</c> otherwise.</returns>
-		protected virtual bool IsMessageTypeSupported(MessageType type) => type == MessageType.TextMessage;
+		protected virtual bool IsMessageTypeSupported(MessageType type) => type == MessageType.Text;
 
 		/// <summary>
 		///     Once a supported message is received, this method is called.
@@ -176,7 +176,7 @@ namespace TicTacTubeCore.Telegram.Schedulers
 		/// <param name="message">The message that contains all information from the new message.</param>
 		protected virtual void ProcessMessage(Message message)
 		{
-			if (message.Type != MessageType.TextMessage) return;
+			if (message.Type != MessageType.Text) return;
 
 			if (message.Text.StartsWith("/"))
 				ProcessTextCommands(message);

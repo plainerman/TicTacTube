@@ -176,6 +176,23 @@ scheduler.Start(); // activate the scheduler
 scheduler.Join(); // run until a stop*-file has been created
 ```
 
+## Docker
+This repository contains a Dockerfile capable of executing the TicTacTubeDemo project. Currently, it is configured with a Telegram download demo similar to the examples above. Creating a `telegram.token` is required for the docker container to run with the current demo and if a file `genius.token` exists, genius integration will be activated. Those files have to be added before build or passed with the `-v` option.
+
+Build the docker image:
+
+```
+docker build -t TicTacTube .
+```
+
+Run the docker image:
+
+```
+docker run TicTacTube
+```
+
+Downloaded files will be stored in the `/downloads` folder, so specify a mounted directory with the docker `-v` option to route it to the host.
+
 ## Used Libraries
 For reference, a list of all libraries used inside the core project:
 
