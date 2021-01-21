@@ -182,7 +182,7 @@ This repository contains a Dockerfile capable of executing the TicTacTubeDemo pr
 Build the docker image:
 
 ```
-docker build -t TicTacTube .
+docker build -t tictactube .
 ```
 
 Run the docker image:
