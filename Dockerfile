@@ -1,4 +1,10 @@
-FROM slavik0/docker-alpine-phantomjs
+FROM microsoft/dotnet:2.1-sdk
 
-RUN apk update \
-	&& apk add youtube-dl
+RUN apt-get update && apt-get install -y libunwind8
+
+WORKDIR /ttt/src/
+COPY . .
+
+RUN dotnet restore
+
+CMD ["dotnet", "run", "--project", "TicTacTubeDemo"]
